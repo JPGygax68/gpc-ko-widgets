@@ -1,0 +1,125 @@
+2014-02-26
+==========
+
+
+2014-02-25
+==========
+
+Project description
+-------------------
+
+This is where I'm going to develop and maintain my library of reusable widgets based on Knockout, Jade, and Stylus; plus possibly jQuery-UI.
+
+The idea is not to create something incredibly sophisticated here (though it may develop into just that in time), but rather to keep it as simple as possible.
+
+In terms of the triad of building blocks mentioned above, this means:
+
+- Use Knockout as the mechanism binding data to visual (i.e. DOM) elements; in particular, use Knockout "templates" to create reusable building blocks.
+
+- Use Jade as the means to bring knockout templates into the HTML (as pseudo-script elements) and provide mixins that generate app-specific DOM subtrees (e.g. forms)
+
+
+First step: a Tree View to navigate a JSON data object
+------------------------------------------------------
+
+(Project ls-instr-editor)
+
+JSON data is comprised of nodes, each containing named properties that can be either simple data values, other nodes or arrays.
+
+The challenge is to make this into a useful tree view without having the code getting overly complex.
+
+Knockout's named template mechanism provides a possibility here: have a property in each node of the view model that determines which of the available node-rendering templates should be used for that particular node.
+
+[Another question is how to get node-specific content into the tree view (though that may be for a future version). It could be done through viewmodel properties with HTML content; precompiled Jade templates can help here - the question is whether those can contain Knockout in turn. Or is it necessary (and possible ?) to generate named templates on-the-fly?]
+
+Concretizing
+------------
+
+Let's call our visual components "widgets". What's in a widget ?
+
+- There is Jade source code common to all instances of the widget. This code defines:
+  a) the named templates that widget instances' building blocks may use
+  b) the mixins defining the building blocks
+  c) CSS include directives [not sure yet - it may be easier to let users add the link rel themselves]
+
+- There is Stylus source code, defining the CSS required by the widget instances.
+
+- There is JavaScript code:
+  - There may be JS code defining a custom binding. [This will probably not be required for all widgets.]
+  - There may be event handlers (afterRender, afterAdd, beforeRemove)
+  
+Output file structure
+---------------------
+
+This is the structure the fully built widget library should have:
+
+dist 
+  common
+    css
+      style.css
+    javascript
+      gpc-ko-widgets.js
+    html
+      <block1>.html
+  <widget1>
+    css
+      <widget>.css
+    javascript
+      <widget>.js
+    templates
+      <block1>.html
+      <block2>.html
+      templates.jade
+  <widget2>
+  ...
+  <widget_n>
+
+
+The top-level DOM element of every widget is assigned two classes, "gpc-ko-widget" plus the name of the widget itself, e.g. "treeview".
+
+The common/css/style.css file contains style definitions common to all GPC Knockout widgets.
+
+The file gpc-ko-widgets.js exports the object "gpc", which will contain a subjobject "ko_widgets". The latter is the namespace object for this library.
+
+The <widget>.css file contains style rules specific to the widget.
+
+The <widget>.js file registers the custom binding (if any). It may also add members to the gpc.ko_widgets namespace object.
+
+Each of the .html files under "templates" contains a single template that may be used by the widget. Its ID is prefixed with "gpckow-<widget>-". 
+
+The special file templates.jade can be included from a Jade source file. It will do the same thing as adding external script tags for each <blockX>.html file.
+
+Javascript code will not be packaged, neither in CommonJS nor in AMD format. I'd like to make shimming as straightforward as possible though.
+
+
+About the development process
+-----------------------------
+
+There shall be a test page (or sub-page) for each widget, with at least one test case each. More sophisticated testing (Karma?) may be added later.
+
+Building will be done using Gulp (initially - maybe something better will turn up later).
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
