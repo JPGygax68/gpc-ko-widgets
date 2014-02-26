@@ -16,15 +16,15 @@ var browserify_shims = {
   'knockout-mapping'  : { path: './components/knockout.mapping-latest.js', exports: 'ko.mapping' },
 };
 
-gulp.task('ko-templates', [], function() {
+gulp.task('copy-templates', [], function() {
 
-  gulp.src( './src/treeview/templates.include.jade' )
+  return gulp.src( './src/treeview/templates.include.jade' )
     .pipe( gulp.dest('./dist/treeview/') );
 });
 
 gulp.task('stylus', [], function() {
 
-  gulp.src('src/client/style.styl')
+  return gulp.src('src/client/style.styl')
     .pipe( stylus({}) )
     .pipe( gulp.dest('./build/client/') );
     
@@ -32,7 +32,7 @@ gulp.task('stylus', [], function() {
 
 gulp.task('browserify', [], function() {
 
-  gulp.src( 'src/client/main.js' )
+  return gulp.src( 'src/client/main.js' )
     .pipe( browserify({
       shim: browserify_shims,
       transform: ['jadeify'],
@@ -45,16 +45,27 @@ gulp.task('browserify', [], function() {
     
 });
 
-gulp.task('build', ['ko-templates']);
+gulp.task('build', ['copy-templates'] ); // TODO: add Stylus, others
 
-gulp.task('test', function() {
+/*--- TEST HARNESS ---------------------------------------*/
 
-  gulp.src('test/test.jade')
+gulp.task('test-jade', ['copy-templates'], function() {
+
+  return gulp.src('test/test.jade')
     .pipe( jade({ pretty: true }) )
     .pipe( gulp.dest('./testbed/') );    
+});
 
-  gulp.src( 'scripts/**/*.js' )
+gulp.task('test-copy', function() {
+
+  return gulp.src( 'scripts/**/*.js' )
     .pipe( gulp.dest('./testbed/scripts/') );
 });
+
+gulp.task('test-build', ['build'], function() {
+  return gulp.start( 'test-jade', 'test-copy' );
+});
+
+gulp.task('test', ['test-build']);
 
 gulp.task('default', ['build']); //, 'watch']);
