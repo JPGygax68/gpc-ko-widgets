@@ -1,0 +1,22 @@
+doctype html
+html
+  head
+    title GPC Knockout Widgets Test Page
+    include ../dist/treeview/templates.include.jade
+    script(src="scripts/knockout-3.0.0.debug.js")
+  body
+    div(data-bind="template: {name: 'gpckoTreeView', data: treeView }")
+    script.
+      "use strict";
+      
+      var myViewModel = {
+        treeView: {
+          name: 'Root Node',
+          children: [
+            { name: 'Child #1', children: [] },
+            { name: 'Child #2' }
+          ]
+        }
+      };
+      
+      ko.applyBindings(myViewModel);

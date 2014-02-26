@@ -1,6 +1,9 @@
 2014-02-26
 ==========
 
+- It starts to look like Injector will really be necessary; adding knockout templates by hand is incredibly tedious.
+
+
 
 2014-02-25
 ==========
@@ -67,6 +70,7 @@ dist
     javascript
       <widget>.js
     templates
+      <widget>.html
       <block1>.html
       <block2>.html
       templates.jade
@@ -79,7 +83,7 @@ The top-level DOM element of every widget is assigned two classes, "gpc-ko-widge
 
 The common/css/style.css file contains style definitions common to all GPC Knockout widgets.
 
-The file gpc-ko-widgets.js exports the object "gpc", which will contain a subjobject "ko_widgets". The latter is the namespace object for this library.
+The file gpc-ko-widgets.js exports the object "gpc", which will contain a subobject "ko_widgets". The latter is the namespace object for this library.
 
 The <widget>.css file contains style rules specific to the widget.
 
@@ -87,7 +91,7 @@ The <widget>.js file registers the custom binding (if any). It may also add memb
 
 Each of the .html files under "templates" contains a single template that may be used by the widget. Its ID is prefixed with "gpckow-<widget>-". 
 
-The special file templates.jade can be included from a Jade source file. It will do the same thing as adding external script tags for each <blockX>.html file.
+The special file templates.jade can be included from a Jade source file. It will do the same thing as adding external script tags for each of the .html files under "templates".
 
 Javascript code will not be packaged, neither in CommonJS nor in AMD format. I'd like to make shimming as straightforward as possible though.
 

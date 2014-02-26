@@ -17,5 +17,8 @@
     "Stylus"
   ],
   "author": "Jean-Pierre Gygax",
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "gulp-jade": "^0.4.2"
+  }
 }
