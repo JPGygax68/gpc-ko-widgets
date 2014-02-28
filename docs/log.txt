@@ -1,3 +1,8 @@
+2014-02-27
+==========
+
+- I've fallen back for now to adding the knockout templates by including a single Jade include file. But I think I will replace this with a browserify or RequireJS plugin to read in the code as text, then use document.write() to inject those templates into the DOM (alternative: override ko.templateEngine.makeTemplateSource()).
+
 2014-02-26
 ==========
 

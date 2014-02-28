@@ -6,6 +6,7 @@ var gutil = require('gulp-util');
 var jade = require('gulp-jade');
 //var stylus = require('gulp-stylus');
 //var browserify = require('gulp-browserify');
+var rjs = require('requirejs');
 
 var browserify_shims = {
 	// jQuery attaches itself to the window as '$' so we assign the exports accordingly
@@ -15,6 +16,8 @@ var browserify_shims = {
   'knockout': { path: './components/knockout-3.0.0.js', exports: 'ko' },
   'knockout-mapping'  : { path: './components/knockout.mapping-latest.js', exports: 'ko.mapping' },
 };
+
+// BUILD TASKS ----------------------------------
 
 gulp.task('copy-templates', [], function() {
 
@@ -30,24 +33,44 @@ gulp.task('stylus', [], function() {
     
 });
 
-gulp.task('browserify', [], function() {
+gulp.task('requirejs', function(cb) {
+  
+  rjs.optimize({
+    //appDir: 'src',
+    baseUrl: './',
+    paths: {
+      //app: '../app'
+      'underscore': './node_modules/underscore/underscore-min'
+    },
+    name: './src/treeview/treeview.js',
+    out: 'dist/treeview/javascript/treeview.js',
+    shim: {
+      'underscore': { exports: '_' }
+    }
+    /*
+    modules: [
+      //First set up the common build layer.
+      {
+        name: 'treeview/treeview.js',
+        include: [
+          //'jquery',
+          //'app/lib',
+          //'app/controller/Base',
+          //'app/model/Base'
+        ]
+      }
+    ]
+    */
+  }, function(buildResponse) {
+    console.log('requirejs response', buildResponse);
+    cb();
+  }, cb);
 
-  return gulp.src( 'src/client/main.js' )
-    .pipe( browserify({
-      shim: browserify_shims,
-      transform: ['jadeify'],
-      insertGlobals: false,
-      detectGlobals: false,
-      debug: !gutil.env.production
-    }) )
-    .pipe( concat('client.js') )
-    .pipe( gulp.dest('./build/client/') );
-    
 });
 
-gulp.task('build', ['copy-templates'] ); // TODO: add Stylus, others
+gulp.task('build', ['copy-templates', 'requirejs'] ); // TODO: add Stylus, others
 
-/*--- TEST HARNESS ---------------------------------------*/
+// TEST HARNESS -------------------------------
 
 gulp.task('test-jade', ['copy-templates'], function() {
 
@@ -67,5 +90,7 @@ gulp.task('test-build', ['build'], function() {
 });
 
 gulp.task('test', ['test-build']);
+
+// DEFAULT TASK ---------------------------------
 
 gulp.task('default', ['build']); //, 'watch']);

@@ -19,6 +19,7 @@
   "author": "Jean-Pierre Gygax",
   "license": "MIT",
   "devDependencies": {
-    "gulp-jade": "^0.4.2"
+    "gulp-jade": "^0.4.2",
+    "requirejs": "^2.1.11"
   }
 }
