@@ -21,5 +21,8 @@
   "devDependencies": {
     "gulp-jade": "^0.4.2",
     "requirejs": "^2.1.11"
+  },
+  "dependencies": {
+    "almond": "^0.2.9"
   }
 }

@@ -3,8 +3,9 @@ html
   head
     title GPC Knockout Widgets Test Page
     include ../dist/treeview/templates.include.jade
-    script(src="scripts/knockout-3.0.0.debug.js")
-    script(src="scripts/gpcko-widgets/treeview.js")
+    script(src="scripts/knockout/knockout-3.0.0.debug.js")
+    script(src="scripts/underscore/underscore.js")
+    script(src="scripts/gpc/ko_widgets/treeview/treeview.js")
   body
     div(data-bind="template: {name: 'gpckoTreeView', data: treeView }")
     script.
@@ -213,5 +214,7 @@ html
         ],
         "click_areas": []
       }      
+      
+      var myViewModel = { treeView: gpc.ko_widgets.treeView.fromJSON(data) };
       
       ko.applyBindings(myViewModel);

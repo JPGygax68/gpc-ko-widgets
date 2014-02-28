@@ -37,30 +37,19 @@ gulp.task('requirejs', function(cb) {
   
   rjs.optimize({
     //appDir: 'src',
-    baseUrl: './',
+    baseUrl: './src',
     paths: {
-      //app: '../app'
-      'underscore': './node_modules/underscore/underscore-min'
+      //'underscore': '../node_modules/underscore/underscore-min',
+      'treeview': 'treeview/treeview'
     },
-    name: './src/treeview/treeview.js',
-    out: 'dist/treeview/javascript/treeview.js',
-    shim: {
-      'underscore': { exports: '_' }
-    }
-    /*
-    modules: [
-      //First set up the common build layer.
-      {
-        name: 'treeview/treeview.js',
-        include: [
-          //'jquery',
-          //'app/lib',
-          //'app/controller/Base',
-          //'app/model/Base'
-        ]
-      }
-    ]
-    */
+    wrap: {
+      startFile: 'build/wrap_start.js',
+      endFile: 'build/wrap_end.js'
+    },
+    optimize: 'none',
+    name: '../node_modules/almond/almond',
+    include: ['treeview'],
+    out: './dist/treeview/treeview.js' // TODO: use main.js instead ?
   }, function(buildResponse) {
     console.log('requirejs response', buildResponse);
     cb();
@@ -72,21 +61,33 @@ gulp.task('build', ['copy-templates', 'requirejs'] ); // TODO: add Stylus, other
 
 // TEST HARNESS -------------------------------
 
-gulp.task('test-jade', ['copy-templates'], function() {
+gulp.task('test-jade', ['build'], function() {
 
   return gulp.src('test/test.jade')
     .pipe( jade({ pretty: true }) )
     .pipe( gulp.dest('./testbed/') );    
 });
 
-gulp.task('test-copy', function() {
+gulp.task('test-copy-modules', function() {
 
-  return gulp.src( 'scripts/**/*.js' )
+  return gulp.src( './modules/**/*.js', { base: './modules/' } )
     .pipe( gulp.dest('./testbed/scripts/') );
 });
 
+gulp.task('test-copy-node_modules', function() {
+
+  return gulp.src( './node_modules/underscore/*.js', { base: './node_modules/' } )
+    .pipe( gulp.dest('./testbed/scripts/') );
+});
+
+gulp.task('test-copy-dist', function() {
+
+  return gulp.src( './dist/**/*.js', { base: './dist/' } )
+    .pipe( gulp.dest('./testbed/scripts/gpc/ko_widgets/') );
+});
+
 gulp.task('test-build', ['build'], function() {
-  return gulp.start( 'test-jade', 'test-copy' );
+  return gulp.start( 'test-jade', 'test-copy-modules', 'test-copy-node_modules', 'test-copy-dist' );
 });
 
 gulp.task('test', ['test-build']);

@@ -1,6 +1,6 @@
 "use strict";
 
-define(['underscore'], function( _ ) {
+define('treeview', [], function() {
 
   function Node() {
     this.children = [];
