@@ -217,6 +217,7 @@ html
       }      
       
       var myViewModel = { treeView: gpc.ko_widgets.treeView.fromJSON(data, { filter: filter }) };
+      //myViewModel.treeView.showRoot(true);
       
       ko.applyBindings(myViewModel);
       

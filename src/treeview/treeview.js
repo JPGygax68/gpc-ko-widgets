@@ -4,9 +4,10 @@ define('treeview', [], function() {
 
   "use strict";
   
-  function Node(level) {
+  function Node(level, label) {
     this.level = level;
     this.children = [];
+    this.label = ko.observable(label);
     this.leaf = ko.observable(false);
   }
   
@@ -17,14 +18,14 @@ define('treeview', [], function() {
     var options = options || {};
   
     return {
-      rootNode: objectToNode(obj, null, []),
+      rootNode: objectToNode(obj, null, '(ROOT)', []),
       showRoot: ko.observable(false)
     };
   
-    function objectToNode(obj, key, parents) {
+    function objectToNode(obj, key, label, parents) {
       //console.log('objectToNode()', obj, parents);
       
-      var node = new Node(parents.length);
+      var node = new Node(parents.length, label);
       
       var usage = options.filter ? options.filter(node, obj, key, parents) : node;
       
@@ -39,9 +40,8 @@ define('treeview', [], function() {
             var items = _.filter(obj, function(item) { return _.isObject(item); } );
             _.each(items, function(item, index) {
               //console.log('array child node #'+index+':', item.toString(), parents.length);
-              var child = makeChildNode(item, index);
+              var child = makeChildNode(item, index, '#' + index);
               if (child) {
-                child.name = '#' + index;
                 // TODO: recurse depending on item type
                 node.children.push( child );
               }
@@ -50,11 +50,8 @@ define('treeview', [], function() {
           else if (_.isObject(obj)) {
             _.each(obj, function(item, key) {
               if (_.isObject(item)) {
-                var child = makeChildNode(item, key);
-                if (child) {
-                  child.name = key;
-                  node.children.push( child );
-                }
+                var child = makeChildNode(item, key, key);
+                if (child) node.children.push( child );
               }
             });
           }
@@ -68,7 +65,7 @@ define('treeview', [], function() {
       
       //---
       
-      function makeChildNode(item, key) { return objectToNode(item, key, parents.concat([obj])); }
+      function makeChildNode(item, key, label) { return objectToNode(item, key, label, parents.concat([obj])); }
     }
   }
   
