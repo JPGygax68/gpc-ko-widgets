@@ -19,6 +19,10 @@ Misc:
 
 - Is it possible to have knockout remove/omit the structural stuff when generating DOM content from templates ?
 
+---------------
+
+- The root node is actually already being rendered, but without a label
+
 2014-02-27
 ==========
 
