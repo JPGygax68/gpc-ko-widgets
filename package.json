@@ -20,7 +20,8 @@
   "license": "MIT",
   "devDependencies": {
     "gulp-jade": "^0.4.2",
-    "requirejs": "^2.1.11"
+    "requirejs": "^2.1.11",
+    "gulp-stylus": "0.0.13"
   },
   "dependencies": {
     "almond": "^0.2.9"

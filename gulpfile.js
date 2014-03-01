@@ -4,7 +4,7 @@ var gulp = require('gulp');
 var gutil = require('gulp-util');
 //var concat = require('gulp-concat');
 var jade = require('gulp-jade');
-//var stylus = require('gulp-stylus');
+var stylus = require('gulp-stylus');
 //var browserify = require('gulp-browserify');
 var rjs = require('requirejs');
 
@@ -27,9 +27,9 @@ gulp.task('copy-templates', [], function() {
 
 gulp.task('stylus', [], function() {
 
-  return gulp.src('src/client/style.styl')
+  return gulp.src('./src/treeview/treeview.styl')
     .pipe( stylus({}) )
-    .pipe( gulp.dest('./build/client/') );
+    .pipe( gulp.dest('./dist/treeview/') );
     
 });
 
@@ -57,7 +57,7 @@ gulp.task('requirejs', function(cb) {
 
 });
 
-gulp.task('build', ['copy-templates', 'requirejs'] ); // TODO: add Stylus, others
+gulp.task('build', ['copy-templates', 'requirejs', 'stylus'] );
 
 // TEST HARNESS -------------------------------
 
@@ -82,7 +82,7 @@ gulp.task('copy-node_modules-test', function() {
 
 gulp.task('copy-dist-test', ['build'], function() {
 
-  return gulp.src( './dist/**/*.js', { base: './dist/' } )
+  return gulp.src( ['./dist/**/*.js', './dist/**/*.css'], { base: './dist/' } )
     .pipe( gulp.dest('./testbed/scripts/gpc/ko_widgets/') );
 });
 
