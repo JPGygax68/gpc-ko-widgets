@@ -1,9 +1,9 @@
-script(type="text/html", id="gpckoTreeView")
-  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gpckotvNode' }")
+script(type="text/html", id="gktvTree")
+  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNode' }")
   
-script(type="text/html", id="gpckotvNode")
+script(type="text/html", id="gktvNode")
   h1(data-bind="text: name")
   // ko if: !!$data.children
   ul(data-bind="foreach: children")
-    li(data-bind="template: { name: 'gpckotvNode' }")
+    li(data-bind="template: { name: 'gktvNode' }")
   // /ko 

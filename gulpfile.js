@@ -59,39 +59,47 @@ gulp.task('requirejs', function(cb) {
 
 gulp.task('build', ['copy-templates', 'requirejs'] ); // TODO: add Stylus, others
 
+gulp.task('watch-source', function() {
+  gulp.watch(['src/**/*'], ['build']);
+});
+
 // TEST HARNESS -------------------------------
 
-gulp.task('test-jade', ['build'], function() {
+gulp.task('jade-test', ['build'], function() {
 
   return gulp.src('test/test.jade')
     .pipe( jade({ pretty: true }) )
     .pipe( gulp.dest('./testbed/') );    
 });
 
-gulp.task('test-copy-modules', function() {
+gulp.task('copy-modules-test', function() {
 
   return gulp.src( './modules/**/*.js', { base: './modules/' } )
     .pipe( gulp.dest('./testbed/scripts/') );
 });
 
-gulp.task('test-copy-node_modules', function() {
+gulp.task('copy-node_modules-test', function() {
 
   return gulp.src( './node_modules/underscore/*.js', { base: './node_modules/' } )
     .pipe( gulp.dest('./testbed/scripts/') );
 });
 
-gulp.task('test-copy-dist', function() {
+gulp.task('copy-dist-test', function() {
 
   return gulp.src( './dist/**/*.js', { base: './dist/' } )
     .pipe( gulp.dest('./testbed/scripts/gpc/ko_widgets/') );
 });
 
-gulp.task('test-build', ['build'], function() {
-  return gulp.start( 'test-jade', 'test-copy-modules', 'test-copy-node_modules', 'test-copy-dist' );
+gulp.task('build-test', ['build'], function() {
+  return gulp.start( 'jade-test', 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
 });
 
-gulp.task('test', ['test-build']);
+gulp.task('test', ['build-test']);
+
+gulp.task('watch-test', ['watch-source'], function() {
+  gulp.watch(['test/**/*'], ['build-test']);
+});
 
 // DEFAULT TASK ---------------------------------
 
-gulp.task('default', ['build']); //, 'watch']);
+gulp.task('default', ['build-test', 'watch-test']);

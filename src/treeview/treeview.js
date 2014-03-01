@@ -24,7 +24,7 @@ define('treeview', [], function() {
           var child = new Node();
           child.name = '#' + i;
           // TODO: recurse depending on item type
-          node.children.push( item.toString() );
+          node.children.push( child );
         }      
       }
       else if (_.isObject(obj)) {
