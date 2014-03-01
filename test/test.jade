@@ -216,6 +216,13 @@ html
         "click_areas": []
       }      
       
-      var myViewModel = { treeView: gpc.ko_widgets.treeView.fromJSON(data) };
+      var myViewModel = { treeView: gpc.ko_widgets.treeView.fromJSON(data, { filter: filter }) };
       
       ko.applyBindings(myViewModel);
+      
+      //----
+      
+      function filter(node, obj, key, parents) {
+        console.log('filter():', node, obj, key, parents);
+        if (key === 'adjustments') node.leaf(true);
+      }

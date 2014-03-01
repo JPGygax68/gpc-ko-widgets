@@ -1,3 +1,24 @@
+2014-03-01
+==========
+
+Lots of todos:
+
+- option to include root node
+
+- open/close - mouse or keyboard 
+  -> what about tab behavior ?
+  
+- callback function(s) to customize fromJSON()
+  - "default property" (typically an array) that is represented by its parent node ?
+
+- ability to attach additional "columns"
+
+- emit events when node is entered or exited; same for hover
+
+Misc:
+
+- Is it possible to have knockout remove/omit the structural stuff when generating DOM content from templates ?
+
 2014-02-27
 ==========
 
