@@ -16,7 +16,10 @@ define('treeview', [], function() {
   
     var options = options || {};
   
-    return objectToNode(obj, null, []);
+    return {
+      rootNode: objectToNode(obj, null, []),
+      showRoot: ko.observable(false)
+    };
   
     function objectToNode(obj, key, parents) {
       //console.log('objectToNode()', obj, parents);

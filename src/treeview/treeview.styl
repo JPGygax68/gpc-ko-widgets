@@ -11,10 +11,22 @@
 
   padding: 1em;
   
-  ul {
-    padding-left: 1em;
-    li {
+  ul.children {
+    margin: 0;
+    padding: 0;
+    > li {
       list-style-type: none;
+      margin-left: 0; // if the root node is not displayed (only its children), there is no indent
     }
+  }
+  
+  .node ul.children > li {
+    margin-left: 1em; // in all nodes actually displayed, we indent the children
+  }
+  
+  // DEBUGGING
+  
+  .node {
+    background-color: rgba(0, 100, 255, 0.5);
   }
 }

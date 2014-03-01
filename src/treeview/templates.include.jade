@@ -1,29 +1,20 @@
 script(type="text/html", id="gktvTree")
-  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNode' }")
+  // ko if: showRoot
+  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNode', data: rootNode }")
+  // /ko
+  // ko ifnot: showRoot
+  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNodeContent', data: rootNode }")
+  // /ko
   
+script(type="text/html", id="gktvNodeContent")
+  // ko if: !!$data.children
+  ul.children(data-bind="foreach: children")
+    li(data-bind="template: { name: 'gktvNode' }")
+  // /ko   
+    
 script(type="text/html", id="gktvNode")
-  div(data-bind="css: 'level'+level")
+  div.node(data-bind="css: 'level'+level")
     div.header
-      // ko if: level === 1
-      h1(data-bind="text: name")
-      // /ko
-      // ko if: level === 2
-      h2(data-bind="text: name")
-      // /ko
-      // ko if: level === 3
-      h3(data-bind="text: name")
-      // /ko
-      // ko if: level === 4
-      h4(data-bind="text: name")
-      // /ko
-      // ko if: level === 5
-      h5(data-bind="text: name")
-      // /ko
-      // ko if: level >= 6
-      h6(data-bind="text: name")
-      // /ko
-    div.content
-      // ko if: !!$data.children
-      ul(data-bind="foreach: children")
-        li(data-bind="template: { name: 'gktvNode' }")
-      // /ko 
+      span(data-bind="text: name")
+    // ko template: { name: 'gktvNodeContent' }
+    // /ko
