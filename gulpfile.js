@@ -59,10 +59,6 @@ gulp.task('requirejs', function(cb) {
 
 gulp.task('build', ['copy-templates', 'requirejs'] ); // TODO: add Stylus, others
 
-gulp.task('watch-source', function() {
-  gulp.watch(['src/**/*'], ['build']);
-});
-
 // TEST HARNESS -------------------------------
 
 gulp.task('jade-test', ['build'], function() {
@@ -84,7 +80,7 @@ gulp.task('copy-node_modules-test', function() {
     .pipe( gulp.dest('./testbed/scripts/') );
 });
 
-gulp.task('copy-dist-test', function() {
+gulp.task('copy-dist-test', ['build'], function() {
 
   return gulp.src( './dist/**/*.js', { base: './dist/' } )
     .pipe( gulp.dest('./testbed/scripts/gpc/ko_widgets/') );
@@ -96,10 +92,14 @@ gulp.task('build-test', ['build'], function() {
 
 gulp.task('test', ['build-test']);
 
-gulp.task('watch-test', ['watch-source'], function() {
+gulp.task('watch-test', function() {
   gulp.watch(['test/**/*'], ['build-test']);
 });
 
-// DEFAULT TASK ---------------------------------
+// DEFAULT TASK / WATCHES -----------------------
 
-gulp.task('default', ['build-test', 'watch-test']);
+gulp.task('watch-all', function() {
+  gulp.watch(['src/**/*', 'test/**/*'], ['build-test']);
+});
+
+gulp.task('default', ['build-test', 'watch-all']);

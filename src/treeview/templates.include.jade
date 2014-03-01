@@ -2,8 +2,26 @@ script(type="text/html", id="gktvTree")
   div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNode' }")
   
 script(type="text/html", id="gktvNode")
-  h1(data-bind="text: name")
-  // ko if: !!$data.children
-  ul(data-bind="foreach: children")
-    li(data-bind="template: { name: 'gktvNode' }")
-  // /ko 
+  div(data-bind="css: 'level'+level")
+    // ko if: level === 1
+    h1(data-bind="text: name")
+    // /ko
+    // ko if: level === 2
+    h2(data-bind="text: name")
+    // /ko
+    // ko if: level === 3
+    h3(data-bind="text: name")
+    // /ko
+    // ko if: level === 4
+    h4(data-bind="text: name")
+    // /ko
+    // ko if: level === 5
+    h5(data-bind="text: name")
+    // /ko
+    // ko if: level >= 6
+    h6(data-bind="text: name")
+    // /ko
+    // ko if: !!$data.children
+    ul(data-bind="foreach: children")
+      li(data-bind="template: { name: 'gktvNode' }")
+    // /ko 
