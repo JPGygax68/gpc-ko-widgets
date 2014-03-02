@@ -8,8 +8,14 @@ define('treeview', [], function() {
     this.level = level;
     this.children = [];
     this.label = ko.observable(label);
+    this.open = ko.observable(true);
     this.leaf = ko.observable(false);
   }
+  
+  Node.prototype.onClick = function(self, event) {
+    console.log('Node.onClick():', self, event);
+    self.open( !self.open() );
+  };
   
   // Create a Node for each level
   

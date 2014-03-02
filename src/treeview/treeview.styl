@@ -9,7 +9,7 @@
   background-color: orange;
   display: inline-block;
 
-  padding: 1em;
+  padding: 0.5em;
   
   ul.children {
     margin: 0;
@@ -22,6 +22,37 @@
   
   .node ul.children > li {
     margin-left: 1em; // in all nodes actually displayed, we indent the children
+  }
+  
+  .node .header {
+    
+    .handle {
+      position: relative;
+      top: 0.2em;
+      display: inline-block;
+      width: 0.8em;
+      height: 0.8em;
+      background-color: yellow;
+      //vertical-align: -5%;
+      border: solid 0.1em black;
+    }
+    
+    .label {
+      margin: 0.15em;
+    }
+  }
+  
+  .node.open .header .handle::before {
+    position: relative;
+    left: 0.25em;
+    top: -0.25em;
+    content: '-';
+  }
+  .node.closed .header .handle::before {
+    position: relative;
+    left: 0.25em;
+    top: -0.25em;
+    content: '+';
   }
   
   // DEBUGGING

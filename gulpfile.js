@@ -19,9 +19,9 @@ var browserify_shims = {
 
 // BUILD TASKS ----------------------------------
 
-gulp.task('copy-templates', [], function() {
+gulp.task('copy', [], function() {
 
-  return gulp.src( './src/treeview/templates.include.jade' )
+  return gulp.src( ['./src/treeview/templates.include.jade', './src/treeview/**/*.png'] )
     .pipe( gulp.dest('./dist/treeview/') );
 });
 
@@ -57,7 +57,7 @@ gulp.task('requirejs', function(cb) {
 
 });
 
-gulp.task('build', ['copy-templates', 'requirejs', 'stylus'] );
+gulp.task('build', ['copy', 'requirejs', 'stylus'] );
 
 // TEST HARNESS -------------------------------
 
@@ -82,7 +82,7 @@ gulp.task('copy-node_modules-test', function() {
 
 gulp.task('copy-dist-test', ['build'], function() {
 
-  return gulp.src( ['./dist/**/*.js', './dist/**/*.css'], { base: './dist/' } )
+  return gulp.src( ['./dist/**/*.js', './dist/**/*.css', './dist/**/*.png'], { base: './dist/' } )
     .pipe( gulp.dest('./testbed/scripts/gpc/ko_widgets/') );
 });
 
