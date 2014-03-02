@@ -24,17 +24,19 @@
     margin-left: 1em; // in all nodes actually displayed, we indent the children
   }
   
-  .node .header {
+  .node > .header {
     
-    .handle {
+    > .handle {
       position: relative;
       top: 0.2em;
       display: inline-block;
       width: 0.8em;
       height: 0.8em;
       background-color: yellow;
-      //vertical-align: -5%;
+      vertical-align: 5%;
       border: solid 0.1em black;
+      background-repeat: no-repeat;
+      background-position: 50% 50%;
     }
     
     .label {
@@ -42,17 +44,21 @@
     }
   }
   
-  .node.open .header .handle::before {
-    position: relative;
-    left: 0.25em;
-    top: -0.25em;
-    content: '-';
+  .node.open {
+    > .header > .handle {
+      background-image: url('minus.png');
+    }
+    > .children {
+      display: block;
+    }
   }
-  .node.closed .header .handle::before {
-    position: relative;
-    left: 0.25em;
-    top: -0.25em;
-    content: '+';
+  .node.closed {
+    > .header > .handle {
+      background-image: url('plus.png');
+    }
+    > .children {
+      display: none;
+    }
   }
   
   // DEBUGGING
