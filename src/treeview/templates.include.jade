@@ -1,9 +1,9 @@
 script(type="text/html", id="gktvTree")
   // ko if: showRoot
-  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNode', data: rootNode }, click: onClick")
+  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNode', data: rootNode }")
   // /ko
   // ko ifnot: showRoot
-  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNodeContent', data: rootNode }, click: onClick")
+  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNodeContent', data: rootNode }")
   // /ko
   
 script(type="text/html", id="gktvNodeContent")
@@ -15,7 +15,9 @@ script(type="text/html", id="gktvNodeContent")
 script(type="text/html", id="gktvNode")
   div.node(data-bind="css: 'level'+level, css: { open: children.length && open(), closed: children.length && !open() }")
     div.header
+      // ko if: children.length > 0
       span.handle(data-bind="click: onClick")
+      // /ko
       span.label(data-bind="text: label")
     // ko template: { name: 'gktvNodeContent' }
     // /ko
