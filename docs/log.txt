@@ -1,6 +1,7 @@
 2014-03-02
 ==========
 
+- distinguish between nodes that are necessarily leafs and those that could have children but don't for the time being
 
 2014-03-01
 ==========

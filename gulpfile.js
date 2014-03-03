@@ -7,6 +7,7 @@ var jade = require('gulp-jade');
 var stylus = require('gulp-stylus');
 //var browserify = require('gulp-browserify');
 var rjs = require('requirejs');
+var prefix = require('gulp-autoprefixer');
 
 var browserify_shims = {
 	// jQuery attaches itself to the window as '$' so we assign the exports accordingly
@@ -25,10 +26,11 @@ gulp.task('copy', [], function() {
     .pipe( gulp.dest('./dist/treeview/') );
 });
 
-gulp.task('stylus', [], function() {
+gulp.task('css', [], function() {
 
   return gulp.src('./src/treeview/treeview.styl')
     .pipe( stylus({}) )
+    .pipe( prefix('last 20 versions', 'ie 8', 'ie 9') )
     .pipe( gulp.dest('./dist/treeview/') );
     
 });
@@ -57,14 +59,14 @@ gulp.task('requirejs', function(cb) {
 
 });
 
-gulp.task('build', ['copy', 'requirejs', 'stylus'] );
+gulp.task('build', ['copy', 'requirejs', 'css'] );
 
 // TEST HARNESS -------------------------------
 
 gulp.task('jade-test', ['build'], function() {
 
   return gulp.src('test/test.jade')
-    .pipe( jade({ pretty: true }) )
+    .pipe( jade({ pretty: false }) )
     .pipe( gulp.dest('./testbed/') );    
 });
 

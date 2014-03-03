@@ -15,6 +15,8 @@ define('treeview', [], function() {
   Node.prototype.onClick = function(self, event) {
     console.log('Node.onClick():', self, event);
     self.open( !self.open() );
+    event.preventDefault();
+    event.stopPropagation();
   };
   
   // Create a Node for each level
