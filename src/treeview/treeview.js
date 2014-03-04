@@ -8,7 +8,7 @@ define('treeview', [], function() {
   var DEFAULT_LABEL_COLUMN_WIDTH    = 200;
   var DEFAULT_SPACING_AFTER_HANDLE  = 4;
   
-  function Node(treeview, parent, level, label) {
+  function Node(treeview, parent, level, label, value) {
     this.treeview = treeview;
     // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
     this.parent = parent;
@@ -33,6 +33,7 @@ define('treeview', [], function() {
       }
       return width;
     }, this);
+    this.value = ko.observable(''); // default
   }
   
   Node.prototype.onClick = function(self, event) {
