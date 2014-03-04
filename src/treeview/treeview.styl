@@ -6,7 +6,6 @@
 
 .gpc-ko-widget.treeview {
 
-  background-color: orange;
   display: inline-block;
 
   padding: 0.5em;
@@ -42,7 +41,7 @@
     }
     
     .label {
-      margin: 0.15em;
+      margin: 0.15em 0.25em;
     }
   }
   
@@ -63,9 +62,17 @@
     }
   }
   
-  // DEBUGGING
-  
-  .node {
-    background-color: rgba(0, 100, 255, 0.5);
-  }
 }
+ 
+// DEBUGGING -------------------
+  
+if (false)
+
+  .gpc-ko-widget.treeview {
+
+    background-color: orange;
+    
+    .node {
+      background-color: rgba(0, 100, 255, 0.5);
+    }
+  }

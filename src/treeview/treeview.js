@@ -37,6 +37,8 @@ define('treeview', [], function() {
       
       var usage = options.filter ? options.filter(node, obj, key, parents) : node;
       
+      if (usage === false) return null; // filter discarded this item
+      
       if (usage !== false) {
         
         if (typeof usage !== 'undefined') { 
@@ -68,12 +70,14 @@ define('treeview', [], function() {
           }
         }
       }
+      else console.log('skipping content');
       
       return node;
       
       //---
       
-      function makeChildNode(item, key, label) { return objectToNode(item, key, label, parents.concat([obj])); }
+      function makeChildNode(subitem, subkey, label) { 
+        return objectToNode(subitem, subkey, label, parents.concat([{key: key, obj: obj}])); }
     }
   }
   

@@ -224,6 +224,8 @@ html
       //----
       
       function filter(node, obj, key, parents) {
-        //console.log('filter():', node, obj, key, parents);
+        console.log('filter():', parents.length > 0 ? _.last(parents).key : ''); //node, obj, key, parents);
         if (key === 'adjustments') node.leaf(true);
+        //if (parents.length > 0 && _.last(parents).key === 'adjustments') return false;
+        node.label( node.label()[0].toUpperCase() + node.label().slice(1) );
       }
