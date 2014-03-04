@@ -19,6 +19,13 @@ define('treeview', [], function() {
     event.stopPropagation();
   };
   
+  Node.prototype.onMouseOverLabel = function(self, event) {
+    console.log('Node.onMouseOverLabel():', self, event);
+  }
+  Node.prototype.onMouseLeaveLabel = function(self, event) {
+    console.log('Node.onMouseLeaveLabel():', self, event);
+  }
+  
   // Create a Node for each level
   
   function fromJSON(obj, options) {

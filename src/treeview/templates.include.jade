@@ -13,11 +13,11 @@ script(type="text/html", id="gktvNodeContent")
   // /ko   
     
 script(type="text/html", id="gktvNode")
-  div.node(data-bind="css: 'level'+level, css: { open: children.length && open(), closed: children.length && !open() }")
+  div.node(data-bind="css: 'level'+level, css: { open: open(), closed: !open() }")
     div.header
-      // ko if: children.length > 0
+      // ko if: !leaf()
       span.handle(data-bind="click: onClick")
       // /ko
-      span.label(data-bind="text: label")
+      span.label(data-bind="text: label, event: { mouseover: onMouseOverLabel, mouseout: onMouseLeaveLabel }")
     // ko template: { name: 'gktvNodeContent' }
     // /ko

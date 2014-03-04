@@ -225,7 +225,16 @@ html
       
       function filter(node, obj, key, parents) {
         console.log('filter():', parents.length > 0 ? _.last(parents).key : ''); //node, obj, key, parents);
-        if (key === 'adjustments') node.leaf(true);
-        //if (parents.length > 0 && _.last(parents).key === 'adjustments') return false;
+        if (key === 'adjustments') node.open(false);
+        if (parents.length > 0 ) {
+          var parent = _.last(parents);
+          if (parent.key === 'textures') {
+            node.label( node.label() + ': ' + obj.filename );
+            node.leaf(true);
+          }
+          else if (parent.key === 'adjustments') {
+            node.leaf(true);
+          }
+        }
         node.label( node.label()[0].toUpperCase() + node.label().slice(1) );
       }
