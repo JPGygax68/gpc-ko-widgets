@@ -5,7 +5,7 @@ define('treeview', [], function() {
   "use strict";
   
   var HANDLE_WIDTH                  = 11;
-  var DEFAULT_LABEL_WIDTH           = 200;
+  var DEFAULT_LABEL_COLUMN_WIDTH    = 200;
   var DEFAULT_SPACING_AFTER_HANDLE  = 4;
   
   function Node(treeview, parent, level, label) {
@@ -20,17 +20,18 @@ define('treeview', [], function() {
     this.labelWidth = ko.computed( function() {
       var width;
       if (!this.parent) {
-        width = DEFAULT_LABEL_WIDTH;
+        width = this.treeview.labelColumnWidth();
         if (this.treeview.showRoot()) width -= HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE;
-        console.log('top-level width:', width);
+        //console.log('top-level width:', width);
       }
       else {
         width = this.parent.labelWidth();
         if (!this.leaf()) width -= HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE;
       }
-      console.log('width:', width);
+      //console.log('width:', width);
       return width;
     }, this);
+    this.indent = ko.observable(level > 0 || this.treeview.showRoot() ? HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE : 0);
   }
   
   Node.prototype.onClick = function(self, event) {
@@ -54,7 +55,8 @@ define('treeview', [], function() {
     var options = options || {};
   
     var treeview = {
-      showRoot: ko.observable(false)
+      showRoot: ko.observable(false),
+      labelColumnWidth: ko.observable(DEFAULT_LABEL_COLUMN_WIDTH)
     }
     
     treeview.rootNode = itemToNode(obj, null, '(ROOT)', []);

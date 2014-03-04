@@ -13,7 +13,7 @@ script(type="text/html", id="gktvNodeContent")
   // /ko   
     
 script(type="text/html", id="gktvNode")
-  div.node(data-bind="css: 'level'+level, css: { open: open(), closed: !open() }")
+  div.node(data-bind="style: { 'margin-left': $parent.indent()+'px' }, css: 'level'+level, css: { open: open(), closed: !open() }")
     div.header
       // ko if: !leaf()
       span.handle(data-bind="click: onClick")
