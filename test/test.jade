@@ -224,7 +224,7 @@ html
       //----
       
       function filter(node, obj, key, parents) {
-        console.log('filter():', parents.length > 0 ? _.last(parents).key : ''); //node, obj, key, parents);
+        console.log('filter():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, obj, key, parents);
         if (key === 'adjustments') node.open(false);
         if (parents.length > 0 ) {
           var parent = _.last(parents);
@@ -235,6 +235,6 @@ html
           else if (parent.key === 'adjustments') {
             node.leaf(true);
           }
+          node.label( node.label()[0].toUpperCase() + node.label().slice(1) );
         }
-        node.label( node.label()[0].toUpperCase() + node.label().slice(1) );
       }

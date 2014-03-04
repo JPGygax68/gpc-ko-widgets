@@ -3,6 +3,19 @@
 
 - fromJSON(): option to automatically make children-less object into leaf nodes ?
 
+- Should nodes be Observables ? 
+- Should children array be an observableArray ?
+
+- Option to leave out non-object (implying non-array) items ?
+
+- Implement a way to order children
+
+- Implement extra columns
+
+- Implement two-way binding (with callback to enable updating)
+
+- Implement a way to delay loading of contents
+  - Possibly give visual feedback to distinguish between "has children" and "content not loaded yet" ?
 
 2014-03-02
 ==========
