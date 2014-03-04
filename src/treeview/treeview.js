@@ -4,7 +4,7 @@ define('treeview', [], function() {
 
   "use strict";
   
-  var HANDLE_WIDTH                  = 11;
+  var DEFAULT_HANDLE_WIDTH          = 11;
   var DEFAULT_LABEL_COLUMN_WIDTH    = 200;
   var DEFAULT_SPACING_AFTER_HANDLE  = 4;
   
@@ -17,21 +17,22 @@ define('treeview', [], function() {
     this.label = ko.observable(label);
     this.open = ko.observable(true);
     this.leaf = ko.observable(false);
+    this.indent = ko.computed( function() {
+      // TODO: use treeview properties instead of defaults!
+      return level > 0 || this.treeview.showRoot() ? DEFAULT_HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE : 0;
+    }, this);
     this.labelWidth = ko.computed( function() {
       var width;
       if (!this.parent) {
         width = this.treeview.labelColumnWidth();
-        if (this.treeview.showRoot()) width -= HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE;
-        //console.log('top-level width:', width);
+        if (this.treeview.showRoot()) width -= this.indent();
       }
       else {
         width = this.parent.labelWidth();
-        if (!this.leaf()) width -= HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE;
+        if (!this.leaf()) width -= this.indent();
       }
-      //console.log('width:', width);
       return width;
     }, this);
-    this.indent = ko.observable(level > 0 || this.treeview.showRoot() ? HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE : 0);
   }
   
   Node.prototype.onClick = function(self, event) {
