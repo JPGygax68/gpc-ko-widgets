@@ -20,18 +20,19 @@
   }
   
   .node ul.children > li {
-    margin-left: 1em; // in all nodes actually displayed, we indent the children
+    margin-left: 15px; // in all nodes actually displayed, we indent the children
   }
   
   .node > .header {
     
     > .handle {
       position: relative;
-      //top: 0.2em;
+      top: 3px;
       display: inline-block;
       width: 11px;
       height: 11px;
-      vertical-align: baseline;
+      margin-right: 4px;
+      vertical-align: top;
       //background-color: yellow;
       //border: solid 0.1em black;
       //background-position: 50% 50%;
@@ -41,8 +42,13 @@
     }
     
     .label {
-      margin: 0.15em 0.25em;
+      box-sizing: border-box;
+      //margin: 0 4px;
+      padding: 1px 2px;
       &:first-child { margin-left: 0; }
+      display: inline-block;
+      text-overflow: ellipsis;
+      overflow: hidden;
     }
   }
   
@@ -79,3 +85,10 @@ if (false)
       background-color: rgba(0, 100, 255, 0.5);
     }
   }
+
+.gpc-ko-widget.treeview {
+
+  .node .label {
+    background-color: orange;
+  }
+}

@@ -4,12 +4,33 @@ define('treeview', [], function() {
 
   "use strict";
   
-  function Node(level, label) {
+  var HANDLE_WIDTH                  = 11;
+  var DEFAULT_LABEL_WIDTH           = 200;
+  var DEFAULT_SPACING_AFTER_HANDLE  = 4;
+  
+  function Node(treeview, parent, level, label) {
+    this.treeview = treeview;
+    // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
+    this.parent = parent;
     this.level = level;
     this.children = ko.observableArray();
     this.label = ko.observable(label);
     this.open = ko.observable(true);
     this.leaf = ko.observable(false);
+    this.labelWidth = ko.computed( function() {
+      var width;
+      if (!this.parent) {
+        width = DEFAULT_LABEL_WIDTH;
+        if (this.treeview.showRoot()) width -= HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE;
+        console.log('top-level width:', width);
+      }
+      else {
+        width = this.parent.labelWidth();
+        if (!this.leaf()) width -= HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE;
+      }
+      console.log('width:', width);
+      return width;
+    }, this);
   }
   
   Node.prototype.onClick = function(self, event) {
@@ -32,15 +53,21 @@ define('treeview', [], function() {
   
     var options = options || {};
   
-    return {
-      rootNode: itemToNode(obj, null, '(ROOT)', []),
+    var treeview = {
       showRoot: ko.observable(false)
-    };
+    }
+    
+    treeview.rootNode = itemToNode(obj, null, '(ROOT)', []);
+    
+    return treeview;
+    
+    //-------
   
     function itemToNode(item, key, label, parents) {
       //console.log('itemToNode()', item, parents);
       
-      var node = new Node(parents.length, label);
+      var parent_node = parents.length > 0 ? _.last(parents).node : null;
+      var node = new Node(treeview, parent_node, parents.length, label);
       
       node.leaf( !_.isObject(item) );
       var usage = options.filter ? options.filter(node, item, key, parents) : node;
@@ -90,7 +117,7 @@ define('treeview', [], function() {
       //---
       
       function makeChildNode(subitem, subkey, label) { 
-        return itemToNode(subitem, subkey, label, parents.concat([{key: key, obj: obj}])); }
+        return itemToNode(subitem, subkey, label, parents.concat([{key: key, obj: obj, node: node}])); }
     }
   }
   

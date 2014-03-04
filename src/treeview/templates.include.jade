@@ -18,6 +18,6 @@ script(type="text/html", id="gktvNode")
       // ko if: !leaf()
       span.handle(data-bind="click: onClick")
       // /ko
-      span.label(data-bind="text: label, event: { mouseover: onMouseOverLabel, mouseout: onMouseLeaveLabel }")
+      span.label(data-bind="text: label, style: { width: labelWidth()+'px' }, event: { mouseover: onMouseOverLabel, mouseout: onMouseLeaveLabel }")
     // ko template: { name: 'gktvNodeContent' }
     // /ko
