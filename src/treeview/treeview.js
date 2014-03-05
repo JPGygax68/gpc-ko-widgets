@@ -66,6 +66,7 @@ define('treeview', [], function() {
   
     var treeview = {
       showRoot: ko.observable(false),
+      showValueColumn: ko.observable(false),
       labelColumnWidth: ko.observable(DEFAULT_LABEL_COLUMN_WIDTH)
     }
     

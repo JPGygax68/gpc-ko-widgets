@@ -219,6 +219,7 @@ html
       
       var myViewModel = { treeView: gpc.ko_widgets.treeView.fromJSON(data, { filter: filter }) };
       //myViewModel.treeView.showRoot(true);
+      myViewModel.treeView.showValueColumn(true);
       
       ko.applyBindings(myViewModel);
       
@@ -243,7 +244,7 @@ html
         }
         else {
           // Capitalize label
-          node.label( node.label()[0].toUpperCase() + node.label().slice(1) );
+          node.label( node.label()[0].toUpperCase() + node.label().slice(1) + '-' + node.label() );
           // 
           var parent = _.last(parents);
           if (parent.key === 'adjustments') {

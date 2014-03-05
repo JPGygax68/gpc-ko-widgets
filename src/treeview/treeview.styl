@@ -2,110 +2,111 @@
 
 .gpc-ko-widget {
   font-family: Arial, Sans-Serif;
+  display: inline-block;
+  padding: 0.5em;
 }
 
 .gpc-ko-widget.treeview {
 
-  display: inline-block;
-
-  padding: 0.5em;
+  // The tree view is based on an unnumbered list, but we remove the decorations and spacing
   
   ul.children {
     margin: 0;
     padding: 0;
     > li {
       list-style-type: none;
-      margin-left: 0; // if the root node is not displayed (only its children), there is no indent
+      margin-left: 0; // only for the root node, and only if it is not shown
     }
   }
   
   .node {
+  
+    // The "header" of a node is its first row, where its "handle", label and possibly 
+    // additional columns are displayed
+    
+    > .header {
+
+      display: table;
+      
+      border: 0;
+      margin: 0;
+      border-spacing: 0;
+      
+      // The "main" part of the header row is what contains the "handle" (to show/hide 
+      // child nodes) and the "label". The "main" span is separate from any additional
+      // ones because this is where indentation occurs, whereas subsequent columns
+      // are aligned.
+      
+      > .main {
+      
+        display: table-row;
+        overflow: hidden;
+        
+        > * {
+          //vertical-align: baseline;
+          display: table-cell;
+        }
+        
+        > *:not(:first-child) {
+          margin-left: 4px; // TODO: inline styling (property-controlled?)
+        }
+        
+        > .handle {
+          //position: relative;
+          //top: 4px;
+          width: 11+4 px;
+          //height: 11px;
+          background-position: 0 4px;
+          background-repeat: no-repeat;
+          user-select: none;
+        }
+
+        > .label {
+          box-sizing: border-box;
+          //padding: 1px 2px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+          &:first-child: { padding-left: 0; }
+        }
+        
+      } // > .main
+      
+      > .value {
+        //padding: 1px 2px;
+      }
+      
+      :not(:first-child) {
+        margin-left: 0.15em;
+      }
+      
+    } // > .header
+
+    > .children {
+      margin-left: 15px;
+    }
+
   }
   
-  .node > .header {
-
-    //display: inline-block;
-    
-    * {
-      vertical-align: baseline;
-    }
-    
-    > * {
-      //display: table-cell;
-      box-sizing: border-box;
-      display: inline-block;
-    }
-    
-    //line-height: 94%; // determined experimentally: this reduces interline to a minimum while leaving letters ('g') intact
-      
-    .main {
-    
-      //overflow: hidden;
-      text-overflow: ellipsis;
-      //vertical-align: baseline;
-      
-      > * {
-        display: inline-block;
-        vertical-align: baseline;
-      }
-      
-      > *:not(:first-child) {
-        margin-left: 4px; // TODO: inline styling (property-controlled?)
-      }
-      
-      > .handle {
-        position: relative;
-        top: -1px;
-        width: 11px;
-        height: 11px;
-        //vertical-align: top;
-        background-repeat: no-repeat;
-        user-select: none;
-      }
-
-      > .label {
-        //text-overflow: ellipsis;
-        //overflow: hidden;
-        padding: 1px 2px;
-      }
-      
-      .label {
-        &:first-child { margin-left: 0; }
-      }
-    
-    }
-    
-    > .value {
-      //padding: 1px 2px;
-    }
-    
-    :not(:first-child) {
-      margin-left: 0.15em;
-    }
-  }
-  
-  .node > .children {
-    margin-left: 15px;
-  }
-
   .node {
     // TODO: generate those in a loop ?
-    &.level0 > .header > .main > .label { width: 200px; &:not(:first-child) { width: 185px; } }
-    &.level1 > .header > .main > .label { width: 185px; &:not(:first-child) { width: 170px; } }
-    &.level2 > .header > .main > .label { width: 170px; &:not(:first-child) { width: 155px; } }
-    &.level3 > .header > .main > .label { width: 155px; &:not(:first-child) { width: 140px; } }
-    &.level4 > .header > .main > .label { width: 140px; &:not(:first-child) { width: 125px; } }
-    &.level5 > .header > .main > .label { width: 125px; &:not(:first-child) { width: 100px; } }
-    &.level6 > .header > .main > .label { width: 125px; &:not(:first-child) { width: 100px; } }
-    &.level7 > .header > .main > .label { width: 125px; &:not(:first-child) { width: 100px; } }
-    &.level8 > .header > .main > .label { width: 125px; &:not(:first-child) { width: 100px; } }
-    &.level9 > .header > .main > .label { width: 125px; &:not(:first-child) { width: 100px; } }
+    // Note: :not(:first-child) serves to compensate for the space taken by the "handle" if there is one
+    &.level0 > .header .main .label { width: 200px; max-width: 200px; }
+    &.level1 > .header .main .label { width: 185px; max-width: 185px; }
+    &.level2 > .header .main .label { width: 170px; max-width: 170px; }
+    &.level3 > .header .main .label { width: 155px; max-width: 155px; }
+    &.level4 > .header .main .label { width: 140px; max-width: 140px; }
+    &.level5 > .header .main .label { width: 125px; max-width: 125px; }
+    &.level6 > .header .main .label { width: 125px; max-width: 125px; }
+    &.level7 > .header .main .label { width: 125px; max-width: 125px; }
+    &.level8 > .header .main .label { width: 125px; max-width: 125px; }
+    &.level9 > .header .main .label { width: 125px; max-width: 125px; }
   }
   
   // A node not explicitly marked as a "leaf" will have a "handle"
   
   .node.open {
-    > .header > .main > .handle {
+    > .header .main .handle {
       background-image: url('minus.png');
     }
     > .children {
@@ -113,7 +114,7 @@
     }
   }
   .node.closed {
-    > .header > .main > .handle {
+    > .header .main .handle {
       background-image: url('plus.png');
     }
     > .children {
@@ -139,7 +140,7 @@ if (false)
 .gpc-ko-widget.treeview {
 
   .node > .header {
-    > .main > .label { background-color: orange; }
-    > .value { background-color: lime; }
+    // > .main > .label { background-color: orange; }
+    // > .value { background-color: lime; }
   }
 }

@@ -1,11 +1,10 @@
 script(type="text/html", id="gktvTree")
-  form
-    // ko if: showRoot
-    div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNode', data: rootNode }")
-    // /ko
-    // ko ifnot: showRoot
-    div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNodeChildren', data: rootNode }")
-    // /ko
+  // ko if: showRoot
+  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNode', data: rootNode }")
+  // /ko
+  // ko ifnot: showRoot
+  div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNodeChildren', data: rootNode }")
+  // /ko
   
 script(type="text/html", id="gktvNodeChildren")
   // ko if: !!$data.children
@@ -16,11 +15,13 @@ script(type="text/html", id="gktvNodeChildren")
 script(type="text/html", id="gktvNode")
   div.node(data-bind="css: cssString()")
     div.header
-      span.main
+      div.main
         // ko if: !leaf()
-        span.handle(data-bind="click: onClick")
+        div.handle(data-bind="click: onClick")
         // /ko
-        span.label(data-bind="text: label, event: { mouseover: onMouseOverLabel, mouseout: onMouseLeaveLabel }")
-      span.value(data-bind="html: value")
+        div.label(data-bind="attr: { colspan: leaf() ? '2' : '1' }, text: label, event: { mouseover: onMouseOverLabel, mouseout: onMouseLeaveLabel }")
+        // ko if: treeview.showValueColumn()
+        div.value(data-bind="html: value")
+        // /ko
     // ko template: { name: 'gktvNodeChildren' }
     // /ko
