@@ -12,11 +12,18 @@ define('treeview', [], function() {
     this.treeview = treeview;
     // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
     this.parent = parent;
-    this.level = level;
+    //this.levelClass = function() { return 'level' + level; }
     this.children = ko.observableArray();
     this.label = ko.observable(label);
     this.open = ko.observable(true);
     this.leaf = ko.observable(false);
+    this.cssString = ko.computed( function() {
+      var classes = [];
+      if (this.open()) classes.push('open'); else classes.push('closed');
+      classes.push( 'level' + level ); // TODO: observable ?
+      return classes.join(' ');
+    }, this);
+    /* THE FOLLOWING IS ONLY NEEDED IF INDENTATION IS DONE BY INLINE CSS
     this.indent = ko.computed( function() {
       // TODO: use treeview properties instead of defaults!
       return level > 0 || this.treeview.showRoot() ? DEFAULT_HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE : 0;
@@ -33,6 +40,7 @@ define('treeview', [], function() {
       }
       return width;
     }, this);
+    */
     this.value = ko.observable(''); // default
   }
   

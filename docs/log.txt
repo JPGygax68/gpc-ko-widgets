@@ -1,3 +1,14 @@
+2014-03-05
+==========
+
+- It may be interesting to investigate an alternative way to layout the tree view, based on CSS table styling. This depends on whether or not it is possible to "wrap" table-row-group elements.
+
+- As an alternative, just use tables (or equivalently styled elements) as they are supposed to and use generated class tags to show/hide node content.
+
+The advantage of any of these methods (only the second would probably work) is that layout can be done by CSS alone.
+
+UPDATE: I have found and implemented a way to do it CSS-only with the current approach by wrapping the "main" part of each node header and setting the width of that.
+
 2014-03-03
 ==========
 

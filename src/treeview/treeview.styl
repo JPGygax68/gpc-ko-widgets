@@ -19,45 +19,92 @@
     }
   }
   
+  .node {
+  }
+  
   .node > .header {
 
+    //display: inline-block;
+    
+    * {
+      vertical-align: baseline;
+    }
+    
     > * {
+      //display: table-cell;
       box-sizing: border-box;
       display: inline-block;
     }
     
-    > *:not(:first-child) {
-      margin-left: 4px; // TODO: inline styling (property-controlled?)
-    }
+    //line-height: 94%; // determined experimentally: this reduces interline to a minimum while leaving letters ('g') intact
+      
+    .main {
     
-    > .handle {
-      position: relative;
-      top: 3px;
-      width: 11px;
-      height: 11px;
-      vertical-align: top;
-      //background-color: yellow;
-      background-repeat: no-repeat;
-      user-select: none;
-    }
-
-    > .label, > .value {
+      //overflow: hidden;
       text-overflow: ellipsis;
-      overflow: hidden;
+      //vertical-align: baseline;
+      
+      > * {
+        display: inline-block;
+        vertical-align: baseline;
+      }
+      
+      > *:not(:first-child) {
+        margin-left: 4px; // TODO: inline styling (property-controlled?)
+      }
+      
+      > .handle {
+        position: relative;
+        top: -1px;
+        width: 11px;
+        height: 11px;
+        //vertical-align: top;
+        background-repeat: no-repeat;
+        user-select: none;
+      }
+
+      > .label {
+        //text-overflow: ellipsis;
+        //overflow: hidden;
+        padding: 1px 2px;
+      }
+      
+      .label {
+        &:first-child { margin-left: 0; }
+      }
+    
     }
     
-    .label {
-      //margin: 0 4px;
-      padding: 1px 2px;
-      &:first-child { margin-left: 0; }
+    > .value {
+      //padding: 1px 2px;
     }
     
+    :not(:first-child) {
+      margin-left: 0.15em;
+    }
+  }
+  
+  .node > .children {
+    margin-left: 15px;
+  }
+
+  .node {
+    &.level0 > .header > .main > .label { width: 200px; &:not(:first-child) { width: 185px; } }
+    &.level1 > .header > .main > .label { width: 185px; &:not(:first-child) { width: 170px; } }
+    &.level2 > .header > .main > .label { width: 170px; &:not(:first-child) { width: 155px; } }
+    &.level3 > .header > .main > .label { width: 155px; &:not(:first-child) { width: 140px; } }
+    &.level4 > .header > .main > .label { width: 140px; &:not(:first-child) { width: 125px; } }
+    &.level5 > .header > .main > .label { width: 125px; &:not(:first-child) { width: 100px; } }
+    &.level6 > .header > .main > .label { width: 125px; &:not(:first-child) { width: 100px; } }
+    &.level7 > .header > .main > .label { width: 125px; &:not(:first-child) { width: 100px; } }
+    &.level8 > .header > .main > .label { width: 125px; &:not(:first-child) { width: 100px; } }
+    &.level9 > .header > .main > .label { width: 125px; &:not(:first-child) { width: 100px; } }
   }
   
   // A node not explicitly marked as a "leaf" will have a "handle"
   
   .node.open {
-    > .header > .handle {
+    > .header > .main > .handle {
       background-image: url('minus.png');
     }
     > .children {
@@ -65,7 +112,7 @@
     }
   }
   .node.closed {
-    > .header > .handle {
+    > .header > .main > .handle {
       background-image: url('plus.png');
     }
     > .children {
@@ -90,7 +137,8 @@ if (false)
 
 .gpc-ko-widget.treeview {
 
-  .node .label {
-    background-color: orange;
+  .node > .header {
+    > .main > .label { background-color: orange; }
+    > .value { background-color: lime; }
   }
 }

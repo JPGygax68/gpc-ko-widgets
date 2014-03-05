@@ -230,7 +230,7 @@ html
         if (parents.length > 0 ) {
           var parent = _.last(parents);
           if (parent.key === 'textures') {
-            node.label( node.label() + ': ' + obj.filename );
+            node.value( obj.filename );
             node.leaf(true);
           }
           else if (parent.key === 'adjustments') {
