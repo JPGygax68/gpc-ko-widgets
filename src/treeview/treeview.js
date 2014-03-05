@@ -8,7 +8,7 @@ define('treeview', [], function() {
   var DEFAULT_LABEL_COLUMN_WIDTH    = 200;
   var DEFAULT_SPACING_AFTER_HANDLE  = 4;
   
-  function Node(treeview, parent, level, label, value) {
+  function Node(treeview, parent, level, label) {
     this.treeview = treeview;
     // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
     this.parent = parent;
@@ -115,7 +115,7 @@ define('treeview', [], function() {
         }
         else {
           //throw new Error('TreeView.fromJSON(): unsupported item type:', item);
-          node.value = ko.observable(item);
+          if (typeof node.value() === 'undefined' || node.value() === null) node.value( _.escape(item.toString()) );
           node.leaf(true);
         }
         

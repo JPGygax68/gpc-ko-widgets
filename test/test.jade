@@ -224,18 +224,30 @@ html
       
       //----
       
-      function filter(node, obj, key, parents) {
-        console.log('filter():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, obj, key, parents);
+      function filter(node, item, key, parents) {
+        console.log('filter():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, item, key, parents);
         if (key === 'adjustments') node.open(false);
-        if (parents.length > 0 ) {
-          var parent = _.last(parents);
-          if (parent.key === 'textures') {
-            node.value( obj.filename );
-            node.leaf(true);
+        // Non-object items
+        if (!_.isObject(item)) {
+          if (_.isNumber(item)) {
+            node.value('<input type="number" value="'+item+'"></input>');
           }
-          else if (parent.key === 'adjustments') {
-            node.leaf(true);
+          else if (_.isBoolean(item)) {
+            node.value('<input type="checkbox" '+(item?'checked':'')+'"></input>');
           }
+          else if (_.isString(item)) {
+            node.value('<input type="text" value="'+_.escape(item)+'"></input>');
+          }
+        }
+        if (parents.length === 0) {          
+        }
+        else {
+          // Capitalize label
           node.label( node.label()[0].toUpperCase() + node.label().slice(1) );
+          // 
+          var parent = _.last(parents);
+          if (parent.key === 'adjustments') {
+            node.open(false);
+          }
         }
       }
