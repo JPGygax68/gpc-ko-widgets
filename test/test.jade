@@ -226,7 +226,7 @@ html
       //----
       
       function filter(node, item, key, parents) {
-        console.log('filter():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, item, key, parents);
+        //console.log('filter():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, item, key, parents);
         if (key === 'adjustments') node.open(false);
         // Non-object items
         if (!_.isObject(item)) {
@@ -244,7 +244,7 @@ html
         }
         else {
           // Capitalize label
-          node.label( node.label()[0].toUpperCase() + node.label().slice(1) + '-' + node.label() );
+          node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); // + '-' + node.label() );
           // 
           var parent = _.last(parents);
           if (parent.key === 'adjustments') {

@@ -23,11 +23,12 @@ define('treeview', [], function() {
       classes.push( 'level' + level ); // TODO: observable ?
       return classes.join(' ');
     }, this);
-    /* THE FOLLOWING IS ONLY NEEDED IF INDENTATION IS DONE BY INLINE CSS
     this.indent = ko.computed( function() {
       // TODO: use treeview properties instead of defaults!
       return level > 0 || this.treeview.showRoot() ? DEFAULT_HANDLE_WIDTH + DEFAULT_SPACING_AFTER_HANDLE : 0;
     }, this);
+    this.value = ko.observable(null); // default
+    this.hasValue = ko.computed( function() { return typeof this.value() !== 'undefined' && this.value() !== null; }, this );
     this.labelWidth = ko.computed( function() {
       var width;
       if (!this.parent) {
@@ -40,8 +41,10 @@ define('treeview', [], function() {
       }
       return width;
     }, this);
-    */
-    this.value = ko.observable(''); // default
+    this.labelWidthCss = ko.computed( function() { return this.hasValue() ? this.labelWidth()+'px' : ''; }, this );
+    this.labelColspan = ko.computed( function() {
+      return (this.leaf() ? 2 : 1) + (this.hasValue() ? 1 : 0);
+    }, this);    
   }
   
   Node.prototype.onClick = function(self, event) {
@@ -123,7 +126,7 @@ define('treeview', [], function() {
         return node;
       }
       else {
-        console.log('skipping content');
+        //console.log('skipping content');
         return null;
       }
       

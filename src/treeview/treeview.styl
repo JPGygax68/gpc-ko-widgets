@@ -37,36 +37,29 @@
       // ones because this is where indentation occurs, whereas subsequent columns
       // are aligned.
       
-      > .main {
+      > tbody > .main {
       
-        display: table-row;
         overflow: hidden;
         
-        > * {
-          //vertical-align: baseline;
-          display: table-cell;
-        }
+        box-sizing: border-box;
+        white-space: nowrap;
         
-        > *:not(:first-child) {
-          margin-left: 4px; // TODO: inline styling (property-controlled?)
+        > * {
+          display: inline-block;
         }
         
         > .handle {
-          //position: relative;
-          //top: 4px;
-          width: 11+4 px;
-          //height: 11px;
-          background-position: 0 4px;
+          position: relative;
+          top: 0px;
+          width: 11+4px;
+          height: 11px;
           background-repeat: no-repeat;
           user-select: none;
         }
 
         > .label {
-          box-sizing: border-box;
-          //padding: 1px 2px;
           overflow: hidden;
           text-overflow: ellipsis;
-          white-space: nowrap;
           &:first-child: { padding-left: 0; }
         }
         
@@ -91,16 +84,18 @@
   .node {
     // TODO: generate those in a loop ?
     // Note: :not(:first-child) serves to compensate for the space taken by the "handle" if there is one
-    &.level0 > .header .main .label { width: 200px; max-width: 200px; }
-    &.level1 > .header .main .label { width: 185px; max-width: 185px; }
-    &.level2 > .header .main .label { width: 170px; max-width: 170px; }
-    &.level3 > .header .main .label { width: 155px; max-width: 155px; }
-    &.level4 > .header .main .label { width: 140px; max-width: 140px; }
-    &.level5 > .header .main .label { width: 125px; max-width: 125px; }
-    &.level6 > .header .main .label { width: 125px; max-width: 125px; }
-    &.level7 > .header .main .label { width: 125px; max-width: 125px; }
-    &.level8 > .header .main .label { width: 125px; max-width: 125px; }
-    &.level9 > .header .main .label { width: 125px; max-width: 125px; }
+    /*
+    &.level0 > .header .main > *:first-child { width: 200px; max-width: 200px; }
+    &.level1 > .header .main > *:first-child { width: 185px; max-width: 185px; }
+    &.level2 > .header .main > *:first-child { width: 170px; max-width: 170px; }
+    &.level3 > .header .main > *:first-child { width: 155px; max-width: 155px; }
+    &.level4 > .header .main > *:first-child { width: 140px; max-width: 140px; }
+    &.level5 > .header .main > *:first-child { width: 125px; max-width: 125px; }
+    &.level6 > .header .main > *:first-child { width: 125px; max-width: 125px; }
+    &.level7 > .header .main > *:first-child { width: 125px; max-width: 125px; }
+    &.level8 > .header .main > *:first-child { width: 125px; max-width: 125px; }
+    &.level9 > .header .main > *:first-child { width: 125px; max-width: 125px; }
+    */
   }
   
   // A node not explicitly marked as a "leaf" will have a "handle"
@@ -140,7 +135,7 @@ if (false)
 .gpc-ko-widget.treeview {
 
   .node > .header {
-    // > .main > .label { background-color: orange; }
-    // > .value { background-color: lime; }
+    //.main > .label { background-color: orange; }
+    //.value { background-color: lime; }
   }
 }

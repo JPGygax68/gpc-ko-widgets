@@ -14,14 +14,15 @@ script(type="text/html", id="gktvNodeChildren")
     
 script(type="text/html", id="gktvNode")
   div.node(data-bind="css: cssString()")
-    div.header
-      div.main
-        // ko if: !leaf()
-        div.handle(data-bind="click: onClick")
-        // /ko
-        div.label(data-bind="attr: { colspan: leaf() ? '2' : '1' }, text: label, event: { mouseover: onMouseOverLabel, mouseout: onMouseLeaveLabel }")
-        // ko if: treeview.showValueColumn()
-        div.value(data-bind="html: value")
-        // /ko
+    table.header
+      tbody
+        tr.main
+          // ko if: !leaf()
+          td.handle(data-bind="click: onClick")
+          // /ko
+          td.label(data-bind="attr: { colspan: labelColspan() }, style: { width: labelWidthCss() }, text: label, event: { mouseover: onMouseOverLabel, mouseout: onMouseLeaveLabel }")
+          // ko if: treeview.showValueColumn()
+          td.value(data-bind="html: value")
+          // /ko
     // ko template: { name: 'gktvNodeChildren' }
     // /ko
