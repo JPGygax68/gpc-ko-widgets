@@ -33,19 +33,20 @@
       border-spacing: 0;
       
       // The "main" part of the header row is what contains the "handle" (to show/hide 
-      // child nodes) and the "label". The "main" span is separate from any additional
-      // ones because this is where indentation occurs, whereas subsequent columns
-      // are aligned.
+      // child nodes) and the "label". The "main" pseudo-"column" is separate from any 
+      // additional ones because this is where indentation occurs, whereas subsequent 
+      // columns are aligned.
       
       > tbody > .main {
       
         overflow: hidden;
         
-        box-sizing: border-box;
         white-space: nowrap;
         
         > * {
           display: inline-block;
+          box-sizing: border-box;
+          padding: 0;
         }
         
         > .handle {
@@ -69,34 +70,9 @@
         //padding: 1px 2px;
       }
       
-      :not(:first-child) {
-        margin-left: 0.15em;
-      }
-      
     } // > .header
 
-    > .children {
-      margin-left: 15px;
-    }
-
-  }
-  
-  .node {
-    // TODO: generate those in a loop ?
-    // Note: :not(:first-child) serves to compensate for the space taken by the "handle" if there is one
-    /*
-    &.level0 > .header .main > *:first-child { width: 200px; max-width: 200px; }
-    &.level1 > .header .main > *:first-child { width: 185px; max-width: 185px; }
-    &.level2 > .header .main > *:first-child { width: 170px; max-width: 170px; }
-    &.level3 > .header .main > *:first-child { width: 155px; max-width: 155px; }
-    &.level4 > .header .main > *:first-child { width: 140px; max-width: 140px; }
-    &.level5 > .header .main > *:first-child { width: 125px; max-width: 125px; }
-    &.level6 > .header .main > *:first-child { width: 125px; max-width: 125px; }
-    &.level7 > .header .main > *:first-child { width: 125px; max-width: 125px; }
-    &.level8 > .header .main > *:first-child { width: 125px; max-width: 125px; }
-    &.level9 > .header .main > *:first-child { width: 125px; max-width: 125px; }
-    */
-  }
+  } // .node
   
   // A node not explicitly marked as a "leaf" will have a "handle"
   
@@ -117,6 +93,9 @@
     }
   }
   
+  // We want to remove unnecessary padding from input fields in a treeview
+  
+  input { padding: 0; }
 }
  
 // DEBUGGING -------------------
