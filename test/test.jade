@@ -5,6 +5,7 @@ html
     title GPC Knockout Widgets Test Page
     include ../dist/treeview/templates.include.jade
     script(src="scripts/knockout/knockout-3.0.0.debug.js")
+    script(src="scripts/knockout/knockout.mapping-latest.debug.js")
     script(src="scripts/underscore/underscore.js")
     script(src="scripts/gpc/ko_widgets/treeview/treeview.js")
     link(rel="stylesheet",href="scripts/gpc/ko_widgets/treeview/treeview.css")
@@ -217,7 +218,9 @@ html
         "click_areas": []
       }      
       
-      var myViewModel = { treeView: gpc.ko_widgets.treeView.fromJSON(data, { filter: filter }) };
+      var myModel = ko.mapping.fromJS( data );
+      
+      var myViewModel = { treeView: gpc.ko_widgets.treeView.fromModel(data, { filter: filter }) };
       //myViewModel.treeView.showRoot(true);
       myViewModel.treeView.showValueColumn(true);
       

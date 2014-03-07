@@ -1,3 +1,13 @@
+2014-03-07
+==========
+
+- Customize Node objects by assigning a "prototype" ?
+  -> no longer create default node instances in advance ? create it afterwards unless the filter function provides one
+  
+- Provide hooks in Node - as virtual methods or as events ?
+
+- Provide CollectionNode, HashNode, ValueNode derived classes ?
+  
 2014-03-05
 ==========
 
@@ -8,6 +18,11 @@
 The advantage of any of these methods (only the second would probably work) is that layout can be done by CSS alone.
 
 UPDATE: I have found and implemented a way to do it CSS-only with the current approach by wrapping the "main" part of each node header and setting the width of that.
+
+--------------
+
+UPDATE #2: back to computed indenting - easier in the end. Implementing ellipses for labels was tricky, it require using tables because inline-block elements that have overflow != visible cannot align on the baseline (for no reason I can understand).
+
 
 2014-03-03
 ==========
