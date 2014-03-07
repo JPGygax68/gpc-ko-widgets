@@ -2,16 +2,14 @@
 
 define(['./node', './defs'], function(Node, Defs) {
 
-  /** Create a TreeView view-model from a "generic" model.
-      Typically, the model would be the product of the ko.mapping.fromJS() function;
-      i.e., an object containing observables.
-   */
   // Create a Node for each level
   
   function fromModel(obj, options) {
   
     var options = options || {};
   
+    // TODO: create a class for this
+    
     var treeview = {
       showRoot: ko.observable(false),
       showValueColumn: ko.observable(false),
@@ -39,10 +37,10 @@ define(['./node', './defs'], function(Node, Defs) {
           // TODO: special usage options
         }
         
-        if (_.isArray(item)) {
-          var items = _.filter(item, function(item) { return _.isObject(item); } );
+        if (isArray(item)) {
           if (!node.leaf()) {
-            _.each(items, function(subitem, index) {
+            var subitems = _.filter(ko.unwrap(item), function(subitem) { return isObject(subitem); } );
+            _.each(subitems, function(subitem, index) {
               //console.log('array child node #'+index+':', item.toString(), parents.length);
               var child = makeChildNode(subitem, index, '#' + index);
               if (child) {
@@ -52,10 +50,10 @@ define(['./node', './defs'], function(Node, Defs) {
             });
           }
         }
-        else if (_.isObject(item)) {
+        else if (isObject(item)) {
           //console.log('item is object');
           if (!node.leaf()) {
-            _.each(item, function(subitem, subkey) {
+            _.each(ko.unwrap(item), function(subitem, subkey) {
               //console.log('  ', subkey, ':', subitem);
               var child = makeChildNode(subitem, subkey, subkey);
               if (child) node.children.push( child );
@@ -75,7 +73,10 @@ define(['./node', './defs'], function(Node, Defs) {
         return null;
       }
       
-      //---
+      //--------
+      
+      function isObject(item) { return _.isObject(ko.unwrap(item)); }
+      function isArray (item) { return _.isArray (ko.unwrap(item)); }
       
       function makeChildNode(subitem, subkey, label) { 
         return itemToNode(subitem, subkey, label, parents.concat([{key: key, obj: obj, node: node}])); }

@@ -218,6 +218,9 @@ html
         "click_areas": []
       }      
       
+      //var arr = ko.observableArray();
+      //console.log('arr isArray ?', _.isArray(arr()), 'isObservable ?', ko.isObservable(arr));
+      
       var myModel = ko.mapping.fromJS( data );
       
       var myViewModel = { treeView: gpc.ko_widgets.treeView.fromModel(data, { filter: filter }) };
