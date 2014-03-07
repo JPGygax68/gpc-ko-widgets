@@ -223,7 +223,7 @@ html
       
       var myModel = ko.mapping.fromJS( data );
       
-      var myViewModel = { treeView: gpc.ko_widgets.treeView.fromModel(data, { filter: filter }) };
+      var myViewModel = { treeView: gpc.ko_widgets.treeView.fromModel(myModel, { filter: filter }) };
       //myViewModel.treeView.showRoot(true);
       myViewModel.treeView.showValueColumn(true);
       

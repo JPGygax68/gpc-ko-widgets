@@ -54,15 +54,17 @@ define(['./node', './defs'], function(Node, Defs) {
           //console.log('item is object');
           if (!node.leaf()) {
             _.each(ko.unwrap(item), function(subitem, subkey) {
-              //console.log('  ', subkey, ':', subitem);
-              var child = makeChildNode(subitem, subkey, subkey);
-              if (child) node.children.push( child );
+              if (subkey.slice(0, 2) !== '__') {
+                //console.log('  ', subkey, ':', subitem);
+                var child = makeChildNode(subitem, subkey, subkey);
+                if (child) node.children.push( child );
+              }
             });
           }
         }
         else {
-          //throw new Error('TreeView.fromModel(): unsupported item type:', item);
-          if (typeof node.value() === 'undefined' || node.value() === null) node.value( _.escape(item.toString()) );
+          // TODO: generating HTML code looses the two-way binding!
+          if (typeof node.value() === 'undefined' || node.value() === null) node.value( _.escape(ko.unwrap(item).toString()) );
           node.leaf(true);
         }
         
