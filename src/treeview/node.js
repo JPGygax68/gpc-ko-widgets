@@ -23,6 +23,7 @@ define(['./node', './defs'], function(Node, Defs) {
     }, this);
     this.value = ko.observable(null); // default
     this.hasValue = ko.computed( function() { return typeof this.value() !== 'undefined' && this.value() !== null; }, this );
+    this.valueTemplateName = ko.observable();
     this.labelWidth = ko.computed( function() {
       var width;
       if (!this.parent) {

@@ -221,16 +221,11 @@ function filter(node, item, key, parents) {
   //console.log('filter():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, item, key, parents);
   if (key === 'adjustments') node.open(false);
   // Non-object items
-  if (!_.isObject(item)) {
-    if (_.isNumber(item)) {
-      node.valueTemplate('<input type="number" value="'+item+'"></input>');
-    }
-    else if (_.isBoolean(item)) {
-      node.value('<input type="checkbox" '+(item?'checked':'')+'"></input>');
-    }
-    else if (_.isString(item)) {
-      node.value('<input type="text" value="'+_.escape(item)+'"></input>');
-    }
+  var unwrapped = ko.unwrap(item);
+  if (!_.isObject(unwrapped)) {
+    if      (_.isNumber (unwrapped)) node.valueTemplateName('tmplNumericField');
+    else if (_.isBoolean(unwrapped)) node.valueTemplateName('tmplBooleanField');
+    else if (_.isString (unwrapped)) node.valueTemplateName('tmplStringField' );
   }
   if (parents.length === 0) {          
   }

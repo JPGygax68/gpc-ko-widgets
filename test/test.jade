@@ -9,8 +9,12 @@ html
     script(src="scripts/underscore/underscore.js")
     script(src="scripts/gpc/ko_widgets/treeview/treeview.js")
     link(rel="stylesheet",href="scripts/gpc/ko_widgets/treeview/treeview.css")
-    script(type="text/html", name="tmplNumericField").
-      input(type="number")
+    script(type="text/html", id="tmplNumericField").
+      <input type="number", data-bind="value: $data"></input>
+    script(type="text/html", id="tmplBooleanField").
+      <input type="checkbox", data-bind="checked: $data"></input>
+    script(type="text/html", id="tmplStringField").
+      <input type="text", data-bind="value: $data"></input>
   body
     div(data-bind="template: {name: 'gktvTree', data: treeView }")
     script(src="main.js")
