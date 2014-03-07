@@ -7,7 +7,17 @@
 - Provide hooks in Node - as virtual methods or as events ?
 
 - Provide CollectionNode, HashNode, ValueNode derived classes ?
-  
+
+---------------
+
+- fromJSON() replaced with fromModel() which is capable of working with observable-wrapped data (as obtained from ko.mapping())
+
+What is called for now is a way to add columns; or at least, for now, to apply knockout templates to cells in the "value" column. 
+
+This should be possible using Knockout named templates. I'm going to start by providing three very basic templates for numbers, booleans, and strings.
+
+Fine-tuning appearance and behaviour could be done through the use of $parent, which would, in the context of a value "cell" template, access the containing node object.
+
 2014-03-05
 ==========
 

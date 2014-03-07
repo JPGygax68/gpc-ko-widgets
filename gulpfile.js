@@ -70,6 +70,12 @@ gulp.task('jade-test', ['build'], function() {
     .pipe( gulp.dest('./testbed/') );    
 });
 
+gulp.task('copy-test', function() {
+
+  return gulp.src( './test/*.js', { base: './test/' } )
+    .pipe( gulp.dest('./testbed/') );
+});
+
 gulp.task('copy-modules-test', function() {
 
   return gulp.src( './modules/**/*.js', { base: './modules/' } )
@@ -89,7 +95,7 @@ gulp.task('copy-dist-test', ['build'], function() {
 });
 
 gulp.task('build-test', ['build'], function() {
-  return gulp.start( 'jade-test', 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
+  return gulp.start( 'jade-test', 'copy-test', 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
 });
 
 gulp.task('test', ['build-test']);
