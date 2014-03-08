@@ -1,6 +1,6 @@
 "use strict";
 
-define(['./node', './defs'], function(Node, Defs) {
+define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard) {
 
   "use strict";
   
@@ -60,9 +60,6 @@ define(['./node', './defs'], function(Node, Defs) {
     }
   };
   
-  //Node.prototype.getSuccessorOf   = function(child) { return this._getSiblingOf(child,  1); }  
-  //Node.prototype.getPredecessorOf = function(child) { return this._getSiblingOf(child, -1); }
-  
   // EVENT HANDLERS -----------------------------
   
   Node.prototype.onClick = function(self, event) {
@@ -85,17 +82,48 @@ define(['./node', './defs'], function(Node, Defs) {
 
     // TODO: use a "shortcut" registry to link keyboard input to actions
     // TODO: formalize "actions"
-    if      (!!event.key ? (event.key === 'Down') : (event.which === 40)) { if (this.goToSuccessor  ()) return; }
-    else if (!!event.key ? (event.key === 'Up'  ) : (event.which === 38)) { if (this.goToPredecessor()) return; }
+    if      (Keyboard.keyIs(event, 'Down' )) { if (this.goToSuccessor  ()) return fullStop(); }
+    else if (Keyboard.keyIs(event, 'Up'   )) { if (this.goToPredecessor()) return fullStop(); }
+    else if (Keyboard.keyIs(event, 'Left' )) { if (this.exitNode       ()) return fullStop(); }
+    else if (Keyboard.keyIs(event, 'Right')) { if (this.enterNode      ()) return fullStop(); }
     
     return true;
+    
+    //--------
+    
+    function fullStop() { event.stopPropagation(); }
+    
+    function keyIs(key) {
+      if (typeof event.key !== 'undefined') return key === event.key;
+      //if      (key === 'Down') return event.key === 40;
+      //else if (key === '
+    }
   };
 
   // ACTIONS ---------------------
   
+  // Note: Actions return true when successful
+  
   Node.prototype.goToSuccessor   = function() { return this._goToSibling( 1); }
   
   Node.prototype.goToPredecessor = function() { return this._goToSibling(-1); }
+  
+  Node.prototype.enterNode = function() {
+  
+    if (this.children().length > 0) {
+      if (!this.open()) this.open(true);
+      this.children()[0].hasFocus(true);
+      return true;
+    }
+  };
+  
+  Node.prototype.exitNode = function() {
+  
+    if (!!this.parent) {
+      this.parent.hasFocus(true);
+      return true;
+    }
+  };
   
   // EXPORT --------------
   
