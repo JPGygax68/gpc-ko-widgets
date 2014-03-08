@@ -18,6 +18,32 @@ This should be possible using Knockout named templates. I'm going to start by pr
 
 Fine-tuning appearance and behaviour could be done through the use of $parent, which would, in the context of a value "cell" template, access the containing node object.
 
+---------
+
+I've done the above experimentally, it appears to work well.
+
+Next steps:
+
+- Implement keyboard navigation
+
+- decide whether to support multiple "custom columns" or just a single one. I'm leaning towards a single one, which user code can then fill by itself
+  - The "extension column" is enabled by a property of each node, which specifies the name of the template to use.
+
+- Support read-only cells
+  - The simplest option is simply not to wrap those values as observables.
+  - Other options (a meta-info callback ?) could be implemented later
+
+- I need a means to add and delete items to and from arrays. For the time being, it will suffice if this can only be done through the keyboard [and if I get around to implement "actions" and keyboard shortcuts, this may eliminate the need to provide specific UI elements]. Validating and sorting should be doable via the mapping.fromJS() callbacks (using multi-level "mapping" properties).
+
+- I also want to provide, as a convenience, a few super-simple predefined named templates for numbers, booleans and strings 
+  - How to pass in the metadata (min, max, etc.) ?
+
+It may turn out to be necessary to wrap cells into standardized span's after all. In that case, it would also be necessary to implement a node type registry. Each node's type would then determine what additional columns it displays.
+
+I rather hope to avoid this. It would mean a lot of work for something that is beyond the scope of a simple tree view. Each extended row would, in effect, be treated like a sub-widget; and ko.mapping.fromJS's "create" hook provides the golden opportunity to create custom nodes, by using classes derived from Node.
+
+- FUTURE: support "container" child nodes that do not have a name and can contain anything
+
 2014-03-05
 ==========
 
@@ -31,7 +57,7 @@ UPDATE: I have found and implemented a way to do it CSS-only with the current ap
 
 --------------
 
-UPDATE #2: back to computed indenting - easier in the end. Implementing ellipses for labels was tricky, it require using tables because inline-block elements that have overflow != visible cannot align on the baseline (for no reason I can understand).
+UPDATE #2: back to computed indenting - easier in the end. Implementing ellipses for labels was tricky, it required using tables because inline-block elements that have overflow != visible cannot align on the baseline (for no reason I can understand).
 
 
 2014-03-03
