@@ -82,10 +82,13 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
 
     // TODO: use a "shortcut" registry to link keyboard input to actions
     // TODO: formalize "actions"
-    if      (Keyboard.keyIs(event, 'Down' )) { if (this.goNextNode    ()) return fullStop(); }
-    else if (Keyboard.keyIs(event, 'Up'   )) { if (this.goPreviousNode()) return fullStop(); }
-    else if (Keyboard.keyIs(event, 'Left' )) { if (this.exitNode      ()) return fullStop(); }
-    else if (Keyboard.keyIs(event, 'Right')) { if (this.enterNode     ()) return fullStop(); }
+    if      (Keyboard.is(event, 'Down'      )) { if (this.goNextNode    ()) return fullStop(); }
+    else if (Keyboard.is(event, 'Up'        )) { if (this.goPreviousNode()) return fullStop(); }
+    else if (Keyboard.is(event, 'Left'      )) { if (this.exitNode      ()) return fullStop(); }
+    else if (Keyboard.is(event, 'Right'     )) { if (this.enterNode     ()) return fullStop(); }
+                                            
+    else if (Keyboard.is(event, 'ctrl+Left' )) { if (this.closeNode     ()) return fullStop(); }
+    else if (Keyboard.is(event, 'ctrl+Right')) { if (this.openNode      ()) return fullStop(); }
     
     return true;
     
@@ -153,6 +156,16 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       this.parent.hasFocus(true);
       return true;
     }
+  };
+
+  Node.prototype.openNode = function() {
+    this.open(true);
+    return true;
+  };
+  
+  Node.prototype.closeNode = function() {  
+    this.open(false);
+    return true;
   };
   
   // EXPORT --------------

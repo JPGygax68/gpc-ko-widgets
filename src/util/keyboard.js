@@ -2,7 +2,7 @@
 
 define([], function() {
 
-  /* The following key codes have been excirpted from Google's closure library.
+  /* The following key codes have been excerpted from Google's closure library.
    */
    
   var Keyboard = {
@@ -131,17 +131,38 @@ define([], function() {
     PHANTOM: 255
   };
   
-  /** Determines whether the specified keydown/keyup event comes from the named key.
+  /** Determines whether the specified keydown/keyup event matches the string key combination.
    */
-  Keyboard.keyIs = function(event, key) {
-    // TODO: use a factory to create a function according to platform feature support (with option to optimize)
-    // DOM level 3
-    if (event.key) return event.key === key;
-    // Chrome, at the time of writing
-    else if (event.keyIdentifier) return event.keyIdentifier === key;
-    // Fallback 
+  Keyboard.is = function(event, key_descr) {
+  
+    // Analyze key code descriptor
+    var parts = key_descr.split('+');
+    var shift = parts.indexOf('shift') >= 0;
+    var ctrl  = parts.indexOf('ctrl' ) >= 0;
+    var alt   = parts.indexOf('alt'  ) >= 0;
+    var meta  = parts.indexOf('meta' ) >= 0;
+    var key   = parts[parts.length-1];
+    
+    // Check if modifiers match
+    if (shift != event.shiftKey) return false;
+    if (ctrl  != event.ctrlKey ) return false;
+    if (alt   != event.altKey  ) return false;
+    if (meta  != event.metaKey ) return false;
+    
+    // Are we checking against a "named" key ?
+    if (key.length > 1) {
+      // TODO: use a factory to create a function according to platform feature support (with option to optimize)
+      // DOM level 3
+      if (event.key) return event.key === key;
+      // Chrome, at the time of writing
+      else if (event.keyIdentifier) return event.keyIdentifier === key;
+      // Fallback 
+      else {
+        return this[key.toUppercase()] === event.which;
+      }
+    }
     else {
-      return this[key.toUppercase()] === event.which;
+      return event.which == key.charCodeAt(0);
     }
   };
   
