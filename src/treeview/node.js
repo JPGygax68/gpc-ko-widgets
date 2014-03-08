@@ -85,18 +85,17 @@ define(['./node', './defs'], function(Node, Defs) {
 
     // TODO: use a "shortcut" registry to link keyboard input to actions
     // TODO: formalize "actions"
-    // TODO: decouple return value of action and return value of event handler (which determines further handling)
-    if      (!!event.key ? (event.key === 'Down') : (event.which === 40)) if (this.goToSuccessor  ()) return false; }
-    else if (!!event.key ? (event.key === 'Up'  ) : (event.which === 38)) if (this.goToPredecessor()) return false; }
+    if      (!!event.key ? (event.key === 'Down') : (event.which === 40)) { if (this.goToSuccessor  ()) return; }
+    else if (!!event.key ? (event.key === 'Up'  ) : (event.which === 38)) { if (this.goToPredecessor()) return; }
     
     return true;
   };
 
   // ACTIONS ---------------------
   
-  Node.prototype.goToSuccessor   = function() { this._goToSibling( 1); }
+  Node.prototype.goToSuccessor   = function() { return this._goToSibling( 1); }
   
-  Node.prototype.goToPredecessor = function() { this._goToSibling(-1); }
+  Node.prototype.goToPredecessor = function() { return this._goToSibling(-1); }
   
   // EXPORT --------------
   

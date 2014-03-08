@@ -13,7 +13,7 @@ script(type="text/html", id="gktvNodeChildren")
   // /ko   
     
 script(type="text/html", id="gktvNode")
-  div.node(data-bind="css: cssString(), event{ keydown: onKeyDown }")
+  div.node(data-bind="css: cssString(), event: { keydown: onKeyDown }")
     table.header
       tbody
         tr.main(tabindex="0", data-bind="hasFocus: hasFocus")
