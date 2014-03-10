@@ -65,7 +65,6 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       }
       return width;
     }, this);
-    this.labelWidthCss = ko.computed( function() { return this.hasValue() ? this.labelWidth()+'px' : ''; }, this );
     this.labelColspan = ko.computed( function() {
       return (this.leaf() ? 2 : 1) + (this.treeview.showValueColumn() ? 1 : 0);
     }, this);
@@ -108,13 +107,15 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
 
     // TODO: use a "shortcut" registry to link keyboard input to actions
     // TODO: formalize "actions"
-    if      (Keyboard.is(event, 'Down' )) { if (this.goNextNode    ()) return fullStop(); }
-    else if (Keyboard.is(event, 'Up'   )) { if (this.goPreviousNode()) return fullStop(); }
+    if      (Keyboard.is(event, 'Down'  )) { if (this.goNextNode    ()) return fullStop(); }
+    else if (Keyboard.is(event, 'Up'    )) { if (this.goPreviousNode()) return fullStop(); }
     //else if (Keyboard.is(event, 'Left' )) { if (this.exitNode      ()) return fullStop(); }
     //else if (Keyboard.is(event, 'Right')) { if (this.enterNode     ()) return fullStop(); }
 
-    else if (Keyboard.is(event, 'Left' )) { if (this.closeNode     ()) return fullStop(); }
-    else if (Keyboard.is(event, 'Right')) { if (this.openNode      ()) return fullStop(); }
+    else if (Keyboard.is(event, 'Left'  )) { if (this.closeNode     ()) return fullStop(); }
+    else if (Keyboard.is(event, 'Right' )) { if (this.openNode      ()) return fullStop(); }
+    
+    else if (Keyboard.is(event, 'Insert')) { if (this.insertBefore  ()) return fullStop(); }
     
     return true;
     
@@ -192,6 +193,12 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   Node.prototype.closeNode = function() {  
     this.open(false);
     return true;
+  };
+  
+  Node.prototype.insertBefore = function() {
+    if (!!this.parent) {
+      var index = _.indexOf(this.parent.children(), this);
+    }
   };
   
   // EXPORT --------------

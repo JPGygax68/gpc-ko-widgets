@@ -3,6 +3,27 @@
 
 - Interesting: http://philipnilsson.github.io/Badness10k/articles/knockout-patterns-proxy/
 
+-----------
+
+A note about the "value" column in the present implementation, for future reference:
+
+- The "value" column is an optional feature of the treeview, and can be enabled via the showValueColumn() observable
+- The tree view cannot display anything in the value column by itself, though it does generate a container element for each cell (currently a TD); it delegates the rendering of values to the KO template that can be specified for each node via the valueTemplateName() observable
+- There is currently no observable or treeview-specific CSS rules to set the width of the value column.
+
+----------
+
+It's too late in the evening now to get started on implementing node insertion, but it'll have to be done soon. Here are my thoughts about it at this time:
+
+- There must be a way to create the actual item being added. 
+  - The filter() callback offers an opportunity to attach the relevant code to a parent node. Drawback: the separation of concerns is not clean: the responsibility for creating items should lie with its container (reminder: a node's children member is not the original container, more like a reflection of it)
+  - Attaching a createItem() function to the "real" observableArray() is also a possibility. The drawback with that is that it requires user code in one more place, i.e. in the callback passed to ko.mapping.fromJS() (for example).
+
+(Of course, there is nothing wrong with implementing both.)
+
+Another way to look at it is that JS arrays, by themselves, are simply not intended to be full-fledged collections. It would be very interesting, in the future, to integrate the tree view widget with Backbone (possibly using Knockback?), which should have all required features. In the meantime though, I guess it would be perfectly acceptable to use node-attached code to complement plain observableArrays with the code necessary to make insertion/deletion work.
+
+
 2014-03-09
 ==========
 
