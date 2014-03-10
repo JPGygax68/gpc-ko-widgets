@@ -248,7 +248,7 @@ function filter(node, item, key, parents) {
     else {
       // Capitalize label
       if (!ko.isComputed(node.label)) {
-        node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); // + '-' + node.label() );
+        node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); //+ '-' + node.label() + node.label() );
       }
     }
   }

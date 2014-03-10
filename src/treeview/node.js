@@ -67,7 +67,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     }, this);
     this.labelWidthCss = ko.computed( function() { return this.hasValue() ? this.labelWidth()+'px' : ''; }, this );
     this.labelColspan = ko.computed( function() {
-      return (this.leaf() ? 2 : 1) + (this.hasValue() ? 1 : 0);
+      return (this.leaf() ? 2 : 1) + (this.treeview.showValueColumn() ? 1 : 0);
     }, this);
   }
 
