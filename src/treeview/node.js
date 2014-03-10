@@ -10,7 +10,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     this.parent = parent;
     //this.levelClass = function() { return 'level' + level; }
     this.children = ko.observableArray();
-    this.label = ko.observable(label);
+    this.label = ko.isObservable(label) ? label : ko.observable(label);
     this.open = ko.observable(true);
     this.leaf = ko.observable(false);
     this.cssString = ko.computed( function() {

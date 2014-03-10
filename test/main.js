@@ -245,7 +245,9 @@ function filter(node, item, key, parents) {
     }
     else {
       // Capitalize label
-      node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); // + '-' + node.label() );
+      if (typeof node.label() === 'string') {
+        node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); // + '-' + node.label() );
+      }
     }
   }
 }
