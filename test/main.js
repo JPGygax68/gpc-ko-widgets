@@ -228,6 +228,8 @@ function filter(node, item, key, parents) {
     if      (_.isNumber (unwrapped)) node.valueTemplateName('tmplNumericField');
     else if (_.isBoolean(unwrapped)) node.valueTemplateName('tmplBooleanField');
     else if (_.isString (unwrapped)) node.valueTemplateName('tmplStringField' );
+    else throw new Error('unsupported type for "value" of node');
+    node.hasValue(true);
   }
   if (parents.length === 0) {          
   }
@@ -245,7 +247,7 @@ function filter(node, item, key, parents) {
     }
     else {
       // Capitalize label
-      if (typeof node.label() === 'string') {
+      if (!ko.isComputed(node.label)) {
         node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); // + '-' + node.label() );
       }
     }

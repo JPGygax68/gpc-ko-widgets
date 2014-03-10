@@ -4,13 +4,29 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
 
   "use strict";
   
+  /*  TODO: assigning the label at construction time is not really satisfactory, because the label can
+      later be replaced (e.g. by a computed observable). This wastes cycles. More importantly, it is 
+      not possible to supply a computed observable, as those as per the KO rules will be evaluated 
+      immediately (to determine dependency chains), before the node even exists, so "this" will not
+      be available.
+      
+      Possibilities:
+      - Introduce a init() method, to be called when the node has been fully defined. init() would 
+        "fill in the blanks", i.e. provide a default label if none has been defined at that point.
+      - Remove/replace observables depending on the label (labelWidth), so that the label
+        can be set at any time.
+      - Allow specifying a function for the label, which would be used to create a computed observable
+   */
+   
   function Node(treeview, parent, level, label) {
+  
     this.treeview = treeview;
     // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
     this.parent = parent;
-    //this.levelClass = function() { return 'level' + level; }
     this.children = ko.observableArray();
-    this.label = ko.isObservable(label) ? label : ko.observable(label);
+    console.assert(typeof label !== 'undefined');
+    if (typeof label === 'function') this.label = ko.computed(label);
+    else                             this.label = ko.observable( label.toString() );
     this.open = ko.observable(true);
     this.leaf = ko.observable(false);
     this.cssString = ko.computed( function() {
@@ -24,11 +40,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       return level > 0 || this.treeview.showRoot() ? Defs.DEFAULT_HANDLE_WIDTH + Defs.DEFAULT_SPACING_AFTER_HANDLE : 0;
     }, this);
     this.value = ko.observable(); // default
-    this.hasValue = ko.computed( function() { 
-      // FIXME: this is not really working - if this.value is assigned another observable, hasValue will NOT update
-      return typeof this.value !== 'undefined';
-      //return typeof this.value() !== 'undefined' && this.value() !== null; 
-    }, this );
+    this.hasValue = ko.observable(false);
     this.valueTemplateName = ko.observable();
     this.labelWidth = ko.computed( function() {
       var width;
@@ -47,6 +59,11 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       return (this.leaf() ? 2 : 1) + (this.hasValue() ? 1 : 0);
     }, this);
     this.hasFocus = ko.observable(false);
+    
+    //-----------
+    
+    function createLabel() {
+    }
   }
 
   // INTERNAL METHODS -------------------------

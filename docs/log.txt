@@ -1,3 +1,8 @@
+2014-03-10
+==========
+
+- Interesting: http://philipnilsson.github.io/Badness10k/articles/knockout-patterns-proxy/
+
 2014-03-09
 ==========
 

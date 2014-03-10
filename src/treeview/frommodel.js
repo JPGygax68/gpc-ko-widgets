@@ -42,13 +42,10 @@ define(['./node', './defs', '../util/model'], function(Node, Defs, Model) {
             var subitems = _.filter(ko.unwrap(item), function(subitem) { return isObject(subitem); } );
             _.each(subitems, function(subitem, index) {
               //console.log('array child node #'+index+':', item.toString(), parents.length);
-              var child = makeChildNode(subitem, index);
+              var child = makeChildNode(subitem, index, function() { return '#' + (_.indexOf(node.children(), child) + 1); });
               if (child) {
                 // TODO: recurse depending on item type
                 node.children.push( child );
-                if (typeof child.label() === 'undefined') {
-                  child.label = ko.computed( function() { return '#' + (_.indexOf(node.children(), child) + 1); } );
-                }
               }
             });
             // TODO: the following code belongs into the Node class
