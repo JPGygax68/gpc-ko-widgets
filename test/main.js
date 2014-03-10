@@ -232,12 +232,29 @@ function filter(node, item, key, parents) {
   if (parents.length === 0) {          
   }
   else {
-    // Capitalize label
-    node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); // + '-' + node.label() );
     // 
     var parent = _.last(parents);
     if (parent.key === 'adjustments') {
+      node.label = ko.computed( function() { 
+        return item.set().toString() + ': ' + item.actual().toString(); });
+      if (key === 0) {
+        console.log('item.set:', item.set);
+        item.set.subscribe( function(newValue) { console.log('new value:', newValue); } );
+      }
       node.open(false);
     }
+    else {
+      // Capitalize label
+      node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); // + '-' + node.label() );
+    }
   }
+}
+
+//----------------------
+
+function test() {
+  myModel.indicators()[0].adjustments.push( {
+    actual: ko.observable(99),
+    set: ko.observable(100)
+  });
 }

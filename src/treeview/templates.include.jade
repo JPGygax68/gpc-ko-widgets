@@ -22,7 +22,7 @@ script(type="text/html", id="gktvNode")
           // /ko
           td.label(data-bind="attr: { colspan: labelColspan() }, style: { width: labelWidthCss() }, text: label, event: { mouseover: onMouseOverLabel, mouseout: onMouseLeaveLabel }")
           // ko if: treeview.showValueColumn() && valueTemplateName()
-          td.value(data-bind="template: { name: valueTemplateName(), data: value }")
+          td.value(data-bind="template: { name: valueTemplateName(), data: { value: value } }")
           // /ko
     // ko template: { name: 'gktvNodeChildren' }
     // /ko

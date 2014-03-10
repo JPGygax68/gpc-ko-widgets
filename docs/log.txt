@@ -1,3 +1,37 @@
+2014-03-09
+==========
+
+About models (not view models) with two-way binding capability:
+
+- Extending observables! http://knockoutjs.com/documentation/fn.html
+
+- Knockback could probably provide the models that I need, but it seems like overkill.
+  -> https://github.com/thelinuxlich/knockout.model  ?
+  -> https://coderwall.com/p/bzmrja ?
+  
+-----------
+
+- The newer version of Knockout have an observableArray subscription "arrayChange" that should cover my needs (done a quick-and-dirty experiment).
+
+- About the labels of array elements: they should not necessarily indicate the index. Use the fromModel() filter callback for that (e.g. computed observable) [DONE for the "adjustments" array (and fixed a bug along the way)]
+  
+2014-03-08
+==========
+
+I've successfully gotten started on implementing keyboard commands (navigation only, so far).
+
+Next steps:
+
+- Although fromModel(), the (temporary?) replacement for fromJSON() now accepts KO observables, I haven't implemented bidirectional synchronization yet. However this is crucial for the tree view (and widgets generally) to reach production level, so I should do this next.
+  - I'm not sure it's possible/practical for items being added to / removed from an object (non-array), since there is no equivalent to observableArray for objects.
+  - Unidirectional updates (from the tree to the model) could be implemented using an extended version of observableArray:
+    https://groups.google.com/forum/#!topic/knockoutjs/RLzj244VGSo
+    Thinking about it, it could be made bidirectional by making ko.mapping use that extended version of observableArray as well.
+    - Care must be taken to avoid update loops. This could be done by concatenating "routes" (as arrays of objects); a simple indexOf() would then tell whether the current object could be the origin of the change notification.
+
+- Detail: having to use the ctrl modifier to open and close nodes is not really intuitive now that the up & down keys will cross levels. [CHANGED. At least I was able to test key combinations.]
+
+
 2014-03-07
 ==========
 

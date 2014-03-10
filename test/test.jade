@@ -10,11 +10,13 @@ html
     script(src="scripts/gpc/ko_widgets/treeview/treeview.js")
     link(rel="stylesheet",href="scripts/gpc/ko_widgets/treeview/treeview.css")
     script(type="text/html", id="tmplNumericField").
-      <input type="number", data-bind="value: $data"></input>
+      <input type="number", data-bind="value: value, valueUpdate: 'input'"></input>
     script(type="text/html", id="tmplBooleanField").
-      <input type="checkbox", data-bind="checked: $data"></input>
+      <input type="checkbox", data-bind="checked: value"></input>
     script(type="text/html", id="tmplStringField").
-      <input type="text", data-bind="value: $data"></input>
+      <input type="text", data-bind="value: value"></input>
   body
-    div(data-bind="template: {name: 'gktvTree', data: treeView }")
+    div(style="float:left", data-bind="template: {name: 'gktvTree', data: treeView }")
     script(src="main.js")
+    div(style="float: right")
+      input(type="button" onclick="test()" value="Click me!")

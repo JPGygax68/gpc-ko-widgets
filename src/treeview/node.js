@@ -23,8 +23,12 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       // TODO: use treeview properties instead of defaults!
       return level > 0 || this.treeview.showRoot() ? Defs.DEFAULT_HANDLE_WIDTH + Defs.DEFAULT_SPACING_AFTER_HANDLE : 0;
     }, this);
-    this.value = ko.observable(null); // default
-    this.hasValue = ko.computed( function() { return typeof this.value() !== 'undefined' && this.value() !== null; }, this );
+    this.value = ko.observable(); // default
+    this.hasValue = ko.computed( function() { 
+      // FIXME: this is not really working - if this.value is assigned another observable, hasValue will NOT update
+      return typeof this.value !== 'undefined';
+      //return typeof this.value() !== 'undefined' && this.value() !== null; 
+    }, this );
     this.valueTemplateName = ko.observable();
     this.labelWidth = ko.computed( function() {
       var width;
@@ -82,13 +86,13 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
 
     // TODO: use a "shortcut" registry to link keyboard input to actions
     // TODO: formalize "actions"
-    if      (Keyboard.is(event, 'Down'      )) { if (this.goNextNode    ()) return fullStop(); }
-    else if (Keyboard.is(event, 'Up'        )) { if (this.goPreviousNode()) return fullStop(); }
-    else if (Keyboard.is(event, 'Left'      )) { if (this.exitNode      ()) return fullStop(); }
-    else if (Keyboard.is(event, 'Right'     )) { if (this.enterNode     ()) return fullStop(); }
-                                            
-    else if (Keyboard.is(event, 'ctrl+Left' )) { if (this.closeNode     ()) return fullStop(); }
-    else if (Keyboard.is(event, 'ctrl+Right')) { if (this.openNode      ()) return fullStop(); }
+    if      (Keyboard.is(event, 'Down' )) { if (this.goNextNode    ()) return fullStop(); }
+    else if (Keyboard.is(event, 'Up'   )) { if (this.goPreviousNode()) return fullStop(); }
+    //else if (Keyboard.is(event, 'Left' )) { if (this.exitNode      ()) return fullStop(); }
+    //else if (Keyboard.is(event, 'Right')) { if (this.enterNode     ()) return fullStop(); }
+
+    else if (Keyboard.is(event, 'Left' )) { if (this.closeNode     ()) return fullStop(); }
+    else if (Keyboard.is(event, 'Right')) { if (this.openNode      ()) return fullStop(); }
     
     return true;
     

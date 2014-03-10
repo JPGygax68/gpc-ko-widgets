@@ -1,6 +1,6 @@
 "use strict";
 
-define(['./node', './defs'], function(Node, Defs) {
+define(['./node', './defs', '../util/model'], function(Node, Defs, Model) {
 
   // Create a Node for each level
   
@@ -42,12 +42,25 @@ define(['./node', './defs'], function(Node, Defs) {
             var subitems = _.filter(ko.unwrap(item), function(subitem) { return isObject(subitem); } );
             _.each(subitems, function(subitem, index) {
               //console.log('array child node #'+index+':', item.toString(), parents.length);
-              var child = makeChildNode(subitem, index, '#' + index);
+              var child = makeChildNode(subitem, index, index.toString());
               if (child) {
                 // TODO: recurse depending on item type
                 node.children.push( child );
               }
             });
+            // TODO: the following code belongs into the Node class
+            if (ko.isObservable(item)) item.subscribe( function(changes) { 
+              _.each(changes, function(change) {
+                console.log('array change:', change.status, change.value, change.index); 
+                if (change.status === 'added') {
+                  node.children.splice(change.index, 0, makeChildNode(change.value, change.index, change.index.toString()) );
+                  // TODO: renumber remaining items
+                }
+                else if (change.status === 'removed') {
+                  // TODO
+                }
+              });
+            }, null, 'arrayChange');
           }
         }
         else if (isObject(item)) {
@@ -64,7 +77,14 @@ define(['./node', './defs'], function(Node, Defs) {
         }
         else {
           // TODO: generating HTML code looses the two-way binding!
-          if (typeof node.value() === 'undefined' || node.value() === null) node.value( _.escape(ko.unwrap(item).toString()) );
+          //if (typeof node.value() === 'undefined' || node.value() === null) node.value( _.escape(ko.unwrap(item).toString()) );
+          //if (typeof node.value() === 'undefined' || node.value() === null) node.value = item;
+          if (ko.isObservable(item)) {
+            node.value = item;
+            // TODO: force update of computed's based on node.value (use dummy observable)
+          }
+          else node.value(item);
+          //if (ko.isObservable(node.value)) console.log('item "'+key+'" is observable');
           node.leaf(true);
         }
         
