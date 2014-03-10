@@ -20,15 +20,29 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
    
   function Node(treeview, parent, level, label) {
   
+    console.assert(typeof label !== 'undefined');
+    
+    // Basic structure: parents and children
     this.treeview = treeview;
     // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
     this.parent = parent;
     this.children = ko.observableArray();
-    console.assert(typeof label !== 'undefined');
-    if (typeof label === 'function') this.label = ko.computed(label);
-    else                             this.label = ko.observable( label.toString() );
-    this.open = ko.observable(true);
+    
+    // The label is mandatory: either a simple value (string) or a function that will be used as a computed
+    if (typeof label === 'function') this.label = ko.computed(label, this);
+    else this.label = ko.observable( label.toString() );
+
+    // Configuration
     this.leaf = ko.observable(false);
+    this.hasValue = ko.observable(false);
+    this.valueTemplateName = ko.observable();
+    this.value = ko.observable();
+    
+    // Interaction
+    this.open = ko.observable(true);
+    this.hasFocus = ko.observable(false);
+    
+    // Computed information for DOM and CSS
     this.cssString = ko.computed( function() {
       var classes = [];
       if (this.open()) classes.push('open'); else classes.push('closed');
@@ -39,9 +53,6 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       // TODO: use treeview properties instead of defaults!
       return level > 0 || this.treeview.showRoot() ? Defs.DEFAULT_HANDLE_WIDTH + Defs.DEFAULT_SPACING_AFTER_HANDLE : 0;
     }, this);
-    this.value = ko.observable(); // default
-    this.hasValue = ko.observable(false);
-    this.valueTemplateName = ko.observable();
     this.labelWidth = ko.computed( function() {
       var width;
       if (!this.parent) {
@@ -58,12 +69,6 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     this.labelColspan = ko.computed( function() {
       return (this.leaf() ? 2 : 1) + (this.hasValue() ? 1 : 0);
     }, this);
-    this.hasFocus = ko.observable(false);
-    
-    //-----------
-    
-    function createLabel() {
-    }
   }
 
   // INTERNAL METHODS -------------------------
