@@ -27,7 +27,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     this.level = !!parent ? parent.level + 1 : 0;
     this.children = ko.observableArray();
     
-    // Essential data: data item and index (within parent data)
+    // Essential data: data item and index/key within parent (=container)
     this.data = data;
     if (_.isFunction(index)) this.index = ko.computed(index);
     else if ( _.isNumber(index)) this.index = ko.observable(index);
@@ -216,7 +216,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
           var node_index = _.indexOf(this.parent.children(), this);
           this.parent.children.splice(node_index, 0, child_node);
           // TODO: sort
-          child_node.hasFocus(true);
+          window.setTimeout( function() { child_node.hasFocus(true); }, 1000 );
         }
       }
     }

@@ -241,7 +241,8 @@ function filter(node, item, key) {
       };
     }
     // Labels
-    if (node.parent.index === 'adjustments') {
+    // TODO: is it wise to have string indices (=keys) wrapped as observables ?
+    if (ko.unwrap(node.parent.index) === 'adjustments') {
       console.log('adding to adjustments');
       node.label = ko.computed(adjustmentLabelFunc, node);
       node.open(false);
@@ -250,6 +251,7 @@ function filter(node, item, key) {
       // Capitalize label
       // TODO: make this a feature of TreeView ?
       if (typeof node.label !== 'undefined' && !ko.isComputed(node.label)) {
+        if (typeof node.label() !== 'string') debugger;
         node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); //+ '-' + node.label() + node.label() );
       }
     }
