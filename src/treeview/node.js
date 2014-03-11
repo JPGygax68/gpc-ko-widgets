@@ -27,15 +27,21 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     this.level = !!parent ? parent.level + 1 : 0;
     this.children = ko.observableArray();
     
-    // Essential data: data item and index (within parent)
+    // Essential data: data item and index (within parent data)
     this.data = data;
-    this.index = index;
+    if (_.isFunction(index)) this.index = ko.computed(index);
+    else if ( _.isNumber(index)) this.index = ko.observable(index);
+    else this.index = index;
     
     // The label is mandatory: either a simple value (string) or a function that will be used as a computed
     if (typeof label !== 'undefined') {
       if (typeof label === 'function') this.label = ko.computed(label, this);
       else this.label = ko.observable( label.toString() );
     }
+    else if (this.parent && _.isArray(ko.unwrap(this.parent.data))) {
+      this.label = ko.observable( function() { return '#' + ko.unwrap(this.index); }, this );
+    }
+    else this.label = ko.observable(); // To be given a value externally!
 
     // Configuration
     this.leaf = ko.observable(false);
@@ -100,11 +106,11 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   };
   
   Node.prototype.onMouseOverLabel = function(self, event) {
-    console.log('Node.onMouseOverLabel():', self, event);
+    //console.log('Node.onMouseOverLabel():', self, event);
   };
   
   Node.prototype.onMouseLeaveLabel = function(self, event) {
-    console.log('Node.onMouseLeaveLabel():', self, event);
+    //console.log('Node.onMouseLeaveLabel():', self, event);
   };
   
   Node.prototype.onKeyDown = function(self, event) {
@@ -201,18 +207,26 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   };
   
   Node.prototype.insertBefore = function() {
+    console.log('insertBefore()');
     if (!!this.parent) {
-      if (!!this.parent.onInsertNewChild) {
-        var index = ko.unwrap(this.index); // the index of this node might change after insertion of new one
-        var node = this.parent.onInsertNewChild(this.parent.data, index);
-        if (!!node) {
-          this.parent.children.splice(index, 0, node);
+      if (!!this.parent.onCreateNewChild) {
+        var item_index = ko.unwrap(this.index); // the index of this node might change after insertion of new one
+        var child_node = this.parent.onCreateNewChild(this.parent.data, item_index);
+        if (!!child_node) {
+          var node_index = _.indexOf(this.parent.children(), this);
+          this.parent.children.splice(node_index, 0, child_node);
+          // TODO: sort
+          child_node.hasFocus(true);
         }
       }
     }
+    return true;
   };
   
-  Node.prototype.createChildNode = function(data, index, options, label) {
+  // EXTERNALLY ACCESSIBLE METHODS -----------------
+  
+  Node.prototype.createChildNode = function(data, index, label, options) {
+    console.log('createChildNode()', data, index, label);
     var child = new Node(this.treeview, this.parent, data, index, label);
     if (options.filter) {
       // TODO: wrap the following into a reusable method (and use it in fromModel())

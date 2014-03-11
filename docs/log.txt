@@ -10,6 +10,10 @@
 
 - Node class: undescores to lead the names of all private members ?
 
+-------------
+
+- There should be an automatic label observable on array item nodes
+
 2014-03-10
 ==========
 

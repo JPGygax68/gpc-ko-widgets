@@ -226,28 +226,23 @@ function filter(node, item, key) {
     // Adjustments are tabular data that we want to edit
     if (key === 'adjustments') {
       node.open(false);
-      node.onInsertNewChild = function(parent, index) {
+      node.onCreateNewChild = function(parent, index) {
         var _parent = ko.unwrap(parent);
-        var pred = _parent[index], succ = _parent[index+1];
-        var child_item = ko.mapping.fromJS({ 
-          set   : interpolate('set'),
-          actual: interpolate('value')
-        });
-        return node.createChildNode(child_item, index, { filter: filter }, adjustmentLabelFunc);
-        //-------
-        function interpolate(member) {
-          var v1, v2;
-          if (pred) v1 = ko.unwrap(pred[member]);
-          if (succ) v2 = ko.unwrap(succ[member]);
-          if (typeof v1 === 'undefined' && typeof v2 === 'undefined') return 0;
-          if (typeof v2 === 'undefined') return v1;
-          if (typeof v1 === 'undefined') return v2;
-          return v1 + (v2 - v1) / 2;
+        var subitem = { set: 0, actual: 0 };
+        if (index > 0 && index < _parent.length) {
+          subitem.set    = interpolate(ko.unwrap(_parent[index-1].set   ), ko.unwrap(_parent[index].set   ));
+          subitem.actual = interpolate(ko.unwrap(_parent[index-1].actual), ko.unwrap(_parent[index].actual));
         }
+        var subitem = ko.mapping.fromJS(subitem);
+        parent.splice(index, 0, subitem);
+        return node.createChildNode(subitem, index, undefined, { filter: filter });
+        //-------
+        function interpolate(v1, v2) { return v1 + (v2 - v1) / 2; }
       };
     }
     // Labels
     if (node.parent.index === 'adjustments') {
+      console.log('adding to adjustments');
       node.label = ko.computed(adjustmentLabelFunc, node);
       node.open(false);
     }
