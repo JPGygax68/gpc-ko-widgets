@@ -230,10 +230,10 @@ function filter(node, item, key) {
         var _parent = ko.unwrap(parent);
         var pred = _parent[index], succ = _parent[index+1];
         var child_item = ko.mapping.fromJS({ 
-          set  : interpolate('set'),
-          value: interpolate('value')
+          set   : interpolate('set'),
+          actual: interpolate('value')
         });
-        return node.createChildNode(child_item, index, { filter: filter });
+        return node.createChildNode(child_item, index, { filter: filter }, adjustmentLabelFunc);
         //-------
         function interpolate(member) {
           var v1, v2;
@@ -248,13 +248,13 @@ function filter(node, item, key) {
     }
     // Labels
     if (node.parent.index === 'adjustments') {
-      node.label = ko.computed( function() { return item.set().toString() + ': ' + item.actual().toString(); });
+      node.label = ko.computed(adjustmentLabelFunc, node);
       node.open(false);
     }
     else {
       // Capitalize label
       // TODO: make this a feature of TreeView ?
-      if (!ko.isComputed(node.label)) {
+      if (typeof node.label !== 'undefined' && !ko.isComputed(node.label)) {
         node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); //+ '-' + node.label() + node.label() );
       }
     }
@@ -270,6 +270,9 @@ function filter(node, item, key) {
     node.hasValue(true);
   }
   
+  //--------
+  
+  function adjustmentLabelFunc() { return this.data.set().toString() + ': ' + this.data.actual().toString(); }
 }
 
 //----------------------

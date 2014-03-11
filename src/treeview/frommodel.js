@@ -18,7 +18,7 @@ define(['./node', './defs'], function(Node, Defs) {
     function itemToNode(item, key, label, parent) {
       //console.log('itemToNode()', item, parent);
       
-      var node = new Node(treeview, parent, !parent ? 0 : parent.level + 1, item, key, label);
+      var node = new Node(treeview, parent, item, key, label);
       
       node.leaf( !_.isObject(item) );
       var usage = options.filter ? options.filter(node, item, key, parent) : node;

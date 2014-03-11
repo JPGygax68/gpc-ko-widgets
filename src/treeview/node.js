@@ -18,13 +18,13 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       - Allow specifying a function for the label, which would be used to create a computed observable
    */
    
-  function Node(treeview, parent, level, data, index, label) {
+  function Node(treeview, parent, data, index, label) {
   
     // Basic structure
     this.treeview = treeview;
     // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
     this.parent = parent;
-    this.level = level;
+    this.level = !!parent ? parent.level + 1 : 0;
     this.children = ko.observableArray();
     
     // Essential data: data item and index (within parent)
@@ -51,12 +51,12 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     this.cssString = ko.computed( function() {
       var classes = [];
       if (this.open()) classes.push('open'); else classes.push('closed');
-      classes.push( 'level' + level ); // TODO: observable ?
+      classes.push( 'level' + this.level ); // TODO: observable ?
       return classes.join(' ');
     }, this);
     this.indent = ko.computed( function() {
       // TODO: use treeview properties instead of defaults!
-      return level > 0 || this.treeview.showRoot() ? Defs.DEFAULT_HANDLE_WIDTH + Defs.DEFAULT_SPACING_AFTER_HANDLE : 0;
+      return this.level > 0 || this.treeview.showRoot() ? Defs.DEFAULT_HANDLE_WIDTH + Defs.DEFAULT_SPACING_AFTER_HANDLE : 0;
     }, this);
     this.labelWidth = ko.computed( function() {
       var width;
@@ -205,14 +205,22 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       if (!!this.parent.onInsertNewChild) {
         var index = ko.unwrap(this.index); // the index of this node might change after insertion of new one
         var node = this.parent.onInsertNewChild(this.parent.data, index);
-        this.parent.children.splice(index, 0, node);
+        if (!!node) {
+          this.parent.children.splice(index, 0, node);
+        }
       }
     }
   };
   
-  Node.prototype.createChildNode = function(data, index, options) {
-    var child = new Node(this.treeview, this.parent, this.level + 1, data, index);
-    if (options.filter) child = options.filter(child, data, index, this);
+  Node.prototype.createChildNode = function(data, index, options, label) {
+    var child = new Node(this.treeview, this.parent, data, index, label);
+    if (options.filter) {
+      // TODO: wrap the following into a reusable method (and use it in fromModel())
+      var usage = options.filter(child, data, index, this);
+      if (usage === false) return;
+      if (usage instanceof Node) child = usage;
+    }
+    return child;
   };
   
   Node.prototype.getChildItem = function(index) {
