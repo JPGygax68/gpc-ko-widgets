@@ -155,19 +155,20 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   };
   
   Node.prototype.onKeyDown = function(self, event) {
-    console.log('Node.onKeyDown():', self.label(), event, 'key:', event.key);
+    console.log('Node.onKeyDown(); self:', self, ', this:', this, 'event.target:', event.target);
 
     // TODO: use a "shortcut" registry to link keyboard input to actions
     // TODO: formalize "actions"
-    if      (Keyboard.is(event, 'Down'  )) { if (this.goNextNode    ()) return fullStop(); }
-    else if (Keyboard.is(event, 'Up'    )) { if (this.goPreviousNode()) return fullStop(); }
-    //else if (Keyboard.is(event, 'Left' )) { if (this.exitNode      ()) return fullStop(); }
-    //else if (Keyboard.is(event, 'Right')) { if (this.enterNode     ()) return fullStop(); }
+    // TODO: better way to find out whether should be handled here ?
+    if (event.target.className.split(' ').indexOf('header-row') >= 0) {
+      if      (Keyboard.is(event, 'Down'  )) { if (this.goNextNode    ()) return fullStop(); }
+      else if (Keyboard.is(event, 'Up'    )) { if (this.goPreviousNode()) return fullStop(); }
 
-    else if (Keyboard.is(event, 'Left'  )) { if (this.closeNode     ()) return fullStop(); }
-    else if (Keyboard.is(event, 'Right' )) { if (this.openNode      ()) return fullStop(); }
-    
-    else if (Keyboard.is(event, 'Insert')) { if (this.insertBefore  ()) return fullStop(); }
+      else if (Keyboard.is(event, 'Left'  )) { if (this.closeNode     ()) return fullStop(); }
+      else if (Keyboard.is(event, 'Right' )) { if (this.openNode      ()) return fullStop(); }
+      
+      else if (Keyboard.is(event, 'Insert')) { if (this.insertBefore  ()) return fullStop(); }
+    }
     
     return true;
     

@@ -13,10 +13,10 @@ script(type="text/html", id="gktvNodeChildren")
   // /ko   
     
 script(type="text/html", id="gktvNode")
-  div.node(data-bind="css: cssString(), event: { keydown: onKeyDown }")
+  div.node(data-bind="css: cssString()")
     table.header
       tbody
-        tr.main(tabindex="0", data-bind="hasFocus: hasFocus")
+        tr.main.header-row(tabindex="0", data-bind="hasFocus: hasFocus, event: { keydown: onKeyDown }")
           // ko if: !leaf()
           td.handle(data-bind="click: onClick")
           // /ko
