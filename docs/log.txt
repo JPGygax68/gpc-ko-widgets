@@ -8,6 +8,8 @@
      - This implies a change to the constructor signature
      - If index is changeable, it must be an observable
 
+- Node class: undescores to lead the names of all private members ?
+
 2014-03-10
 ==========
 

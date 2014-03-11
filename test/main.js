@@ -211,7 +211,7 @@ var data = {
 
 var myModel = ko.mapping.fromJS( data );
 
-var myViewModel = { treeView: gpc.ko_widgets.treeView.fromModel(myModel, { filter: filter }) };
+var myViewModel = { treeView: new gpc.ko_widgets.TreeView(myModel, { filter: filter }) };
 //myViewModel.treeView.showRoot(true);
 myViewModel.treeView.showValueColumn(true);
 
@@ -227,12 +227,14 @@ function filter(node, item, key, parents) {
     // Adjustments are tabular data that we want to edit
     if (key === 'adjustments') {
       node.open(false);
-      node.onCreateChild = function(parent, index) {
-        var pred = parent.getChildItem(index), succ = parent.getChildItem(index+1);
-        return { 
+      node.onInsertNewChild = function(parent, index) {
+        var _parent = ko.unwrap(parent);
+        var pred = _parent[index], succ = _parent[index+1];
+        var child_item = ko.mapping.fromJS({ 
           set  : interpolate('set'),
           value: interpolate('value')
-        };
+        });
+        //return 
         //-------
         function interpolate(member) {
           var v1, v2;

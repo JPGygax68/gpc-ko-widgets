@@ -18,23 +18,24 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       - Allow specifying a function for the label, which would be used to create a computed observable
    */
    
-  function Node(treeview, parent, level, data, key, label) {
+  function Node(treeview, parent, level, data, index, label) {
   
-    console.assert(typeof label !== 'undefined');
-    
     // Basic structure
     this.treeview = treeview;
     // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
     this.parent = parent;
+    this.level = level;
     this.children = ko.observableArray();
     
-    // Essential data: data item and key (within parent)
+    // Essential data: data item and index (within parent)
     this.data = data;
-    this.key = key;
+    this.index = index;
     
     // The label is mandatory: either a simple value (string) or a function that will be used as a computed
-    if (typeof label === 'function') this.label = ko.computed(label, this);
-    else this.label = ko.observable( label.toString() );
+    if (typeof label !== 'undefined') {
+      if (typeof label === 'function') this.label = ko.computed(label, this);
+      else this.label = ko.observable( label.toString() );
+    }
 
     // Configuration
     this.leaf = ko.observable(false);
@@ -201,8 +202,12 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   
   Node.prototype.insertBefore = function() {
     if (!!this.parent) {
-      // TODO: we assume the index of the node is the same as the index in the underlying array - filtering is not taken in account
-      var index = _.indexOf(this.parent.children(), this);
+      if (!!this.parent.onInsertNewChild) {
+        var index = ko.unwrap(this.index); // the index of this node might change after insertion of new one
+        var item = this.parent.onInsertNewChild(this.parent.data, index);
+        var node = new Node(this.treeview, this.parent, this.level, item, index);
+        this.parent.children.splice(index, 0, node);
+      }
     }
   };
   

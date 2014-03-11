@@ -9,7 +9,7 @@
         // Instead of using a simple global, we are severely namespacing our stuff
         root.gpc = root.gpc || {};
         root.gpc.ko_widgets = root.gpc.ko_widgets || {};
-        root.gpc.ko_widgets.treeView = factory();
+        root.gpc.ko_widgets.TreeView = factory();
     }
 }(this, function () {
   // AMD module will be inserted after this line

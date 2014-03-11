@@ -1,24 +1,14 @@
 "use strict";
 
-define(['./node', './defs', '../util/model'], function(Node, Defs, Model) {
+define(['./node', './defs'], function(Node, Defs) {
 
   // Create a Node for each level
   
-  function fromModel(obj, options) {
+  function fromModel(obj, treeview, options) {
   
     var options = options || {};
   
-    // TODO: create a class for this
-    
-    var treeview = {
-      showRoot: ko.observable(false),
-      showValueColumn: ko.observable(false),
-      labelColumnWidth: ko.observable(Defs.DEFAULT_LABEL_COLUMN_WIDTH)
-    }
-    
-    treeview.rootNode = itemToNode(obj, null, '(ROOT)', [] );
-    
-    return treeview;
+    return itemToNode(obj, null, '(ROOT)', [] );
     
     //-------
   
