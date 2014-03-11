@@ -95,7 +95,12 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
             }
             var node_index = ko.unwrap(succ.index);
             console.log('index of corresponding sibling node:', node_index);
-            var new_node = self._createChildNode(change.value, node_index, undefined, { onNewNode: self.treeview.options.onNewNode } );
+            //var new_node = self._createChildNode(change.value, change.index, undefined, { onNewNode: self.treeview.options.onNewNode } );
+            var new_node = Node.fromModel(change.value, self.treeview, { 
+              onNewNode: self.treeview.options.onNewNode,
+              key: change.index,
+              parent: self
+            } );
             if (!!new_node) self.children.splice(node_index, 0, new_node);
           }
           else if (change.status === 'removed') {
@@ -256,6 +261,89 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     return true;
   };
   
+  // STATIC METHODS ---------------------------
+  
+  Node.fromModel = function(item, treeview, options) {
+  
+    var options = options || {};
+    var label;
+    if (typeof options.label !== 'undefined') label = options.label;
+    else if (typeof options.key !== 'undefined') label = options.key;
+  
+    return itemToNode(item, options.key, label, options.parent);
+    
+    //-------
+  
+    function itemToNode(item, key, label, parent) {
+      //console.log('itemToNode()', item, parent);
+      
+      var node = new Node(treeview, parent, item, key, label);
+      
+      node.leaf( !_.isObject(item) );
+      var usage = options.onNewNode ? options.onNewNode(node, item, key, parent) : node;
+      
+      if (usage !== false) {
+        
+        if (typeof usage !== 'undefined') { 
+          // TODO: special usage options
+        }
+        
+        if (isArray(item)) {
+          if (!node.leaf()) {
+            var subitems = _.filter(ko.unwrap(item), function(subitem) { return isObject(subitem); } );
+            _.each(subitems, function(subitem, index) {
+              //console.log('array child node #'+index+':', item.toString(), parents.length);
+              var child = makeChildNode(subitem, 
+                function() { return _.indexOf(node.children(), child); }, 
+                function() { return '#' + (_.indexOf(node.children(), child) + 1); });
+              if (child) {
+                // TODO: recurse depending on item type
+                node.children.push( child );
+              }
+            });
+          }
+        }
+        else if (isObject(item)) {
+          //console.log('item is object');
+          if (!node.leaf()) {
+            _.each(ko.unwrap(item), function(subitem, subkey) {
+              if (subkey.slice(0, 2) !== '__') {
+                //console.log('  ', subkey, ':', subitem);
+                var child = makeChildNode(subitem, subkey, subkey);
+                if (child) node.children.push( child );
+              }
+            });
+          }
+        }
+        else {
+          // TODO: generating HTML code looses the two-way binding!
+          //if (typeof node.value() === 'undefined' || node.value() === null) node.value( _.escape(ko.unwrap(item).toString()) );
+          //if (typeof node.value() === 'undefined' || node.value() === null) node.value = item;
+          if (ko.isObservable(item)) {
+            node.value = item;
+            // TODO: force update of computed's based on node.value (use dummy observable)
+          }
+          else node.value(item);
+          //if (ko.isObservable(node.value)) console.log('item "'+key+'" is observable');
+          node.leaf(true);
+        }
+        
+        return node;
+      }
+      else {
+        //console.log('skipping content');
+        return null;
+      }
+      
+      //--------
+      
+      function isObject(item) { return _.isObject(ko.unwrap(item)); }
+      function isArray (item) { return _.isArray (ko.unwrap(item)); }
+      
+      function makeChildNode(subitem, subkey, label) { return itemToNode(subitem, subkey, label, node); }
+    }
+  };
+
   // EXTERNALLY ACCESSIBLE METHODS -----------------
   
   Node.prototype.getChildItem = function(index) {

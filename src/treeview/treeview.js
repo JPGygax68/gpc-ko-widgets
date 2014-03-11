@@ -2,7 +2,7 @@
 
 // TODO: find a better way than to have TreeView pull in the importer ?
 
-define(['./frommodel', './defs'], function(fromModel, Defs) {
+define(['./node', './defs'], function(Node, Defs) {
 
   function TreeView(model, options) {
   
@@ -13,7 +13,7 @@ define(['./frommodel', './defs'], function(fromModel, Defs) {
     this.showValueColumn = ko.observable(false);
     this.labelColumnWidth = ko.observable(Defs.DEFAULT_LABEL_COLUMN_WIDTH);
 
-    this.rootNode = fromModel(model, this, options);
+    this.rootNode = Node.fromModel(model, this, options);
   };
   
   // API ------------------------------
