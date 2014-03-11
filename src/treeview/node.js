@@ -18,15 +18,19 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       - Allow specifying a function for the label, which would be used to create a computed observable
    */
    
-  function Node(treeview, parent, level, label) {
+  function Node(treeview, parent, level, data, key, label) {
   
     console.assert(typeof label !== 'undefined');
     
-    // Basic structure: parents and children
+    // Basic structure
     this.treeview = treeview;
     // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
     this.parent = parent;
     this.children = ko.observableArray();
+    
+    // Essential data: data item and key (within parent)
+    this.data = data;
+    this.key = key;
     
     // The label is mandatory: either a simple value (string) or a function that will be used as a computed
     if (typeof label === 'function') this.label = ko.computed(label, this);
@@ -197,8 +201,16 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   
   Node.prototype.insertBefore = function() {
     if (!!this.parent) {
+      // TODO: we assume the index of the node is the same as the index in the underlying array - filtering is not taken in account
       var index = _.indexOf(this.parent.children(), this);
     }
+  };
+  
+  Node.prototype.getChildItem = function(index) {
+    var count = this.children().length;
+    if (index < 0) return;
+    if (index >= count) return;
+    return this.children()[index];
   };
   
   // EXPORT --------------

@@ -26,7 +26,7 @@ define(['./node', './defs', '../util/model'], function(Node, Defs, Model) {
       //console.log('itemToNode()', item, parents);
       
       var parent_node = parents.length > 0 ? _.last(parents).node : null;
-      var node = new Node(treeview, parent_node, parents.length, label);
+      var node = new Node(treeview, parent_node, parents.length, item, key, label);
       
       node.leaf( !_.isObject(item) );
       var usage = options.filter ? options.filter(node, item, key, parents) : node;
@@ -48,6 +48,8 @@ define(['./node', './defs', '../util/model'], function(Node, Defs, Model) {
                 node.children.push( child );
               }
             });
+            
+            
             // TODO: the following code belongs into the Node class
             if (ko.isObservable(item)) item.subscribe( function(changes) { 
               _.each(changes, function(change) {

@@ -1,3 +1,13 @@
+2014-03-11
+==========
+
+- I'm no longer sure whether the idea to support data that is in KO viewmodel form was a good one. The problem is that every piece of code accessing the underlying data must now support both plain values/objects and ko observables.
+
+- I should not assume that the index of a child node within its parent is the same as the index of the data item within its containing array.
+  -> Should I store the index/key of each item in the node representing it ?
+     - This implies a change to the constructor signature
+     - If index is changeable, it must be an observable
+
 2014-03-10
 ==========
 

@@ -221,8 +221,45 @@ ko.applyBindings(myViewModel);
 
 function filter(node, item, key, parents) {
   //console.log('filter():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, item, key, parents);
-  if (key === 'adjustments') node.open(false);
-  // Non-object items
+  
+  if (parents.length !== 0) {
+    var parent = _.last(parents);
+    // Adjustments are tabular data that we want to edit
+    if (key === 'adjustments') {
+      node.open(false);
+      node.onCreateChild = function(parent, index) {
+        var pred = parent.getChildItem(index), succ = parent.getChildItem(index+1);
+        return { 
+          set  : interpolate('set'),
+          value: interpolate('value')
+        };
+        //-------
+        function interpolate(member) {
+          var v1, v2;
+          if (pred) v1 = ko.unwrap(pred[member]);
+          if (succ) v2 = ko.unwrap(succ[member]);
+          if (typeof v1 === 'undefined' && typeof v2 === 'undefined') return 0;
+          if (typeof v2 === 'undefined') return v1;
+          if (typeof v1 === 'undefined') return v2;
+          return v1 + (v2 - v1) / 2;
+        }
+      };
+    }
+    // Labels
+    if (parent.key === 'adjustments') {
+      node.label = ko.computed( function() { return item.set().toString() + ': ' + item.actual().toString(); });
+      node.open(false);
+    }
+    else {
+      // Capitalize label
+      // TODO: make this a feature of TreeView ?
+      if (!ko.isComputed(node.label)) {
+        node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); //+ '-' + node.label() + node.label() );
+      }
+    }
+  }
+
+  // How to display "value" cell
   var unwrapped = ko.unwrap(item);
   if (!_.isObject(unwrapped)) {
     if      (_.isNumber (unwrapped)) node.valueTemplateName('tmplNumericField');
@@ -231,27 +268,7 @@ function filter(node, item, key, parents) {
     else throw new Error('unsupported type for "value" of node');
     node.hasValue(true);
   }
-  if (parents.length === 0) {          
-  }
-  else {
-    // 
-    var parent = _.last(parents);
-    if (parent.key === 'adjustments') {
-      node.label = ko.computed( function() { 
-        return item.set().toString() + ': ' + item.actual().toString(); });
-      if (key === 0) {
-        console.log('item.set:', item.set);
-        item.set.subscribe( function(newValue) { console.log('new value:', newValue); } );
-      }
-      node.open(false);
-    }
-    else {
-      // Capitalize label
-      if (!ko.isComputed(node.label)) {
-        node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); //+ '-' + node.label() + node.label() );
-      }
-    }
-  }
+  
 }
 
 //----------------------
