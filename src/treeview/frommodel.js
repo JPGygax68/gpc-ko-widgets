@@ -4,22 +4,24 @@ define(['./node', './defs'], function(Node, Defs) {
 
   // Create a Node for each level
   
-  function fromModel(obj, treeview, options) {
+  function fromModel(item, treeview, options) {
   
     var options = options || {};
+    var label;
+    if (typeof options.label !== 'undefined') label = options.label;
+    else if (typeof options.key !== 'undefined') label = options.key;
   
-    return itemToNode(obj, null, '(ROOT)', [] );
+    return itemToNode(item, options.key, label, options.parent);
     
     //-------
   
-    function itemToNode(item, key, label, parents) {
-      //console.log('itemToNode()', item, parents);
+    function itemToNode(item, key, label, parent) {
+      //console.log('itemToNode()', item, parent);
       
-      var parent_node = parents.length > 0 ? _.last(parents).node : null;
-      var node = new Node(treeview, parent_node, parents.length, item, key, label);
+      var node = new Node(treeview, parent, !parent ? 0 : parent.level + 1, item, key, label);
       
       node.leaf( !_.isObject(item) );
-      var usage = options.filter ? options.filter(node, item, key, parents) : node;
+      var usage = options.filter ? options.filter(node, item, key, parent) : node;
       
       if (usage !== false) {
         
@@ -92,8 +94,7 @@ define(['./node', './defs'], function(Node, Defs) {
       function isObject(item) { return _.isObject(ko.unwrap(item)); }
       function isArray (item) { return _.isArray (ko.unwrap(item)); }
       
-      function makeChildNode(subitem, subkey, label) { 
-        return itemToNode(subitem, subkey, label, parents.concat([{key: key, obj: obj, node: node}])); }
+      function makeChildNode(subitem, subkey, label) { return itemToNode(subitem, subkey, label, node); }
     }
   }
   

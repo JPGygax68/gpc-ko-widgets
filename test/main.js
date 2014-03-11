@@ -219,11 +219,10 @@ ko.applyBindings(myViewModel);
 
 //----
 
-function filter(node, item, key, parents) {
+function filter(node, item, key) {
   //console.log('filter():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, item, key, parents);
   
-  if (parents.length !== 0) {
-    var parent = _.last(parents);
+  if (!!node.parent) {
     // Adjustments are tabular data that we want to edit
     if (key === 'adjustments') {
       node.open(false);
@@ -234,7 +233,7 @@ function filter(node, item, key, parents) {
           set  : interpolate('set'),
           value: interpolate('value')
         });
-        //return 
+        return node.createChildNode(child_item, index, { filter: filter });
         //-------
         function interpolate(member) {
           var v1, v2;
@@ -248,7 +247,7 @@ function filter(node, item, key, parents) {
       };
     }
     // Labels
-    if (parent.key === 'adjustments') {
+    if (node.parent.index === 'adjustments') {
       node.label = ko.computed( function() { return item.set().toString() + ': ' + item.actual().toString(); });
       node.open(false);
     }

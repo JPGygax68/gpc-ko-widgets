@@ -204,11 +204,15 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     if (!!this.parent) {
       if (!!this.parent.onInsertNewChild) {
         var index = ko.unwrap(this.index); // the index of this node might change after insertion of new one
-        var item = this.parent.onInsertNewChild(this.parent.data, index);
-        var node = new Node(this.treeview, this.parent, this.level, item, index);
+        var node = this.parent.onInsertNewChild(this.parent.data, index);
         this.parent.children.splice(index, 0, node);
       }
     }
+  };
+  
+  Node.prototype.createChildNode = function(data, index, options) {
+    var child = new Node(this.treeview, this.parent, this.level + 1, data, index);
+    if (options.filter) child = options.filter(child, data, index, this);
   };
   
   Node.prototype.getChildItem = function(index) {
