@@ -6,6 +6,9 @@ define(['./frommodel', './defs'], function(fromModel, Defs) {
 
   function TreeView(model, options) {
   
+    // TODO: formally separate run-time options from import options ?
+    this.options = options || {};
+    
     this.showRoot = ko.observable(false);
     this.showValueColumn = ko.observable(false);
     this.labelColumnWidth = ko.observable(Defs.DEFAULT_LABEL_COLUMN_WIDTH);

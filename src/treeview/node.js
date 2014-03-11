@@ -20,6 +20,8 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
    
   function Node(treeview, parent, data, index, label) {
   
+    var self = this;
+    
     // Basic structure
     this.treeview = treeview;
     // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
@@ -79,6 +81,29 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     this.labelColspan = ko.computed( function() {
       return (this.leaf() ? 2 : 1) + (this.treeview.showValueColumn() ? 1 : 0);
     }, this);
+
+    // Subscribe changes to observableArray, so we can add nodes as needed
+    if (ko.isObservable(data) && _.isArray(data())) {
+      data.subscribe( function(changes) { 
+        _.each(changes, function(change) {
+          if (change.status === 'added') {
+            console.log('item added to array:', change.status, change.value, change.index); 
+            // Find the index of the sibling node representing the item before which we are inserting
+            for (var i = 0; i < self.children().length; i++) {
+              var succ = self.children()[i];
+              if (change.index <= ko.unwrap(succ.index)) break;
+            }
+            var node_index = ko.unwrap(succ.index);
+            console.log('index of corresponding sibling node:', node_index);
+            var new_node = self._createChildNode(change.value, node_index, undefined, { onNewNode: self.treeview.options.onNewNode } );
+            if (!!new_node) self.children.splice(node_index, 0, new_node);
+          }
+          else if (change.status === 'removed') {
+            // TODO
+          }
+        });
+      }, null, 'arrayChange');
+    }
   }
 
   // INTERNAL METHODS -------------------------
@@ -94,6 +119,17 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       var sibling = this.parent._getSiblingOf(this, offset);
       if (!!sibling) { sibling.hasFocus(true); return true; }
     }
+  };
+  
+  Node.prototype._createChildNode = function(data, index, label, options) {
+    console.log('_createChildNode()', data, index, label);
+    var child = new Node(this.treeview, this, data, index, label);
+    if (options.onNewNode) {
+      var usage = options.onNewNode(child, data, index, this);
+      if (usage === false) return;
+      if (usage instanceof Node) child = usage;
+    }
+    return child;
   };
   
   // EVENT HANDLERS -----------------------------
@@ -209,33 +245,18 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   Node.prototype.insertBefore = function() {
     console.log('insertBefore()');
     if (!!this.parent) {
+      // We can only insert if the underlying observableArray has onCreateNewChild() attached
       if (!!this.parent.onCreateNewChild) {
         var item_index = ko.unwrap(this.index); // the index of this node might change after insertion of new one
-        var child_node = this.parent.onCreateNewChild(this.parent.data, item_index);
-        if (!!child_node) {
-          var node_index = _.indexOf(this.parent.children(), this);
-          this.parent.children.splice(node_index, 0, child_node);
-          // TODO: sort
-          window.setTimeout( function() { child_node.hasFocus(true); }, 1000 );
-        }
+        // TODO: wrap this in a try..catch
+        var child_item = this.parent.onCreateNewChild(this.parent.data, item_index);
+        this.parent.data.splice(item_index, 0, child_item);
       }
     }
     return true;
   };
   
   // EXTERNALLY ACCESSIBLE METHODS -----------------
-  
-  Node.prototype.createChildNode = function(data, index, label, options) {
-    console.log('createChildNode()', data, index, label);
-    var child = new Node(this.treeview, this.parent, data, index, label);
-    if (options.filter) {
-      // TODO: wrap the following into a reusable method (and use it in fromModel())
-      var usage = options.filter(child, data, index, this);
-      if (usage === false) return;
-      if (usage instanceof Node) child = usage;
-    }
-    return child;
-  };
   
   Node.prototype.getChildItem = function(index) {
     var count = this.children().length;

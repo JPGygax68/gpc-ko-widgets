@@ -21,7 +21,7 @@ define(['./node', './defs'], function(Node, Defs) {
       var node = new Node(treeview, parent, item, key, label);
       
       node.leaf( !_.isObject(item) );
-      var usage = options.filter ? options.filter(node, item, key, parent) : node;
+      var usage = options.onNewNode ? options.onNewNode(node, item, key, parent) : node;
       
       if (usage !== false) {
         
@@ -42,21 +42,6 @@ define(['./node', './defs'], function(Node, Defs) {
                 node.children.push( child );
               }
             });
-            
-            
-            // TODO: the following code belongs into the Node class
-            if (ko.isObservable(item)) item.subscribe( function(changes) { 
-              _.each(changes, function(change) {
-                console.log('array change:', change.status, change.value, change.index); 
-                if (change.status === 'added') {
-                  node.children.splice(change.index, 0, makeChildNode(change.value, change.index, change.index.toString()) );
-                  // TODO: renumber remaining items
-                }
-                else if (change.status === 'removed') {
-                  // TODO
-                }
-              });
-            }, null, 'arrayChange');
           }
         }
         else if (isObject(item)) {

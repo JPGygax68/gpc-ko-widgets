@@ -211,7 +211,7 @@ var data = {
 
 var myModel = ko.mapping.fromJS( data );
 
-var myViewModel = { treeView: new gpc.ko_widgets.TreeView(myModel, { filter: filter }) };
+var myViewModel = { treeView: new gpc.ko_widgets.TreeView(myModel, { onNewNode: onNewNode }) };
 //myViewModel.treeView.showRoot(true);
 myViewModel.treeView.showValueColumn(true);
 
@@ -219,7 +219,7 @@ ko.applyBindings(myViewModel);
 
 //----
 
-function filter(node, item, key) {
+function onNewNode(node, item, key) {
   //console.log('filter():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, item, key, parents);
   
   if (!!node.parent) {
@@ -233,9 +233,7 @@ function filter(node, item, key) {
           subitem.set    = interpolate(ko.unwrap(_parent[index-1].set   ), ko.unwrap(_parent[index].set   ));
           subitem.actual = interpolate(ko.unwrap(_parent[index-1].actual), ko.unwrap(_parent[index].actual));
         }
-        var subitem = ko.mapping.fromJS(subitem);
-        parent.splice(index, 0, subitem);
-        return node.createChildNode(subitem, index, undefined, { filter: filter });
+        return ko.mapping.fromJS(subitem);
         //-------
         function interpolate(v1, v2) { return v1 + (v2 - v1) / 2; }
       };
@@ -250,7 +248,7 @@ function filter(node, item, key) {
     else {
       // Capitalize label
       // TODO: make this a feature of TreeView ?
-      if (typeof node.label !== 'undefined' && !ko.isComputed(node.label)) {
+      if (typeof ko.unwrap(node.label) === 'string' && !ko.isComputed(node.label)) {
         if (typeof node.label() !== 'string') debugger;
         node.label( node.label()[0].toUpperCase() + node.label().slice(1) ); //+ '-' + node.label() + node.label() );
       }
