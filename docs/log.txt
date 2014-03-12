@@ -18,6 +18,15 @@
 
 - Rename "filter" func to "onNewNode" ? DONE
 
+-----------
+
+Things to write down before going to sleep:
+
+- Inserting nodes indirectly by inserting into the underlying observableArray seems to be a good working principle. Left to do: somewhow set focus on new node once it's been generated.
+  - Luxury edition: implement a mechanism that checks whether or not the node actually was added
+  
+- Todo: ability to remove nodes
+
 2014-03-10
 ==========
 
