@@ -86,28 +86,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     if (ko.isObservable(data) && _.isArray(data())) {
       data.subscribe( function(changes) { 
         _.each(changes, function(change) {
-          if (change.status === 'added') {
-            console.log('item added to array:', change.status, change.value, change.index); 
-            // Find the index of the sibling node representing the item preceding the inserted one
-            for (var i = 0; i < self.children().length; i++) if (change.index <= ko.unwrap(self.children()[i].index)) break;
-            var node_index = i;
-            // Create a new node to represent the added item
-            //console.log('index of corresponding sibling node:', node_index);
-            var new_node = Node.fromModel(change.value, self.treeview, { 
-              onNewNode: self.treeview.options.onNewNode,
-              key: change.index,
-              parent: self
-            });
-            // Now insert the new node
-            if (!!new_node) {
-              self.children.splice(node_index, 0, new_node);
-              if (self._addingChildItem && change.value === self._addingChildItem.item && self._addingChildItem.parent === data()) {
-                new_node.hasFocus(true);
-                //console.log('focus set to newly added node');
-                delete self._addingChildItem;
-              }
-            }
-          }
+          if      (change.status === 'added') self._addChildNode(change.value, change.index);
           else if (change.status === 'removed') {
             // TODO
           }
@@ -140,6 +119,32 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       if (usage instanceof Node) child = usage;
     }
     return child;
+  };
+
+  Node.prototype._addChildNode = function(data, index) {
+    console.log('_addChildNode(): data:', data, ', index:', index); 
+    
+    // Find the index of the sibling node representing the item preceding the inserted one
+    for (var i = 0; i < this.children().length; i++) if (index <= ko.unwrap(this.children()[i].index)) break;
+    var node_index = i;
+    
+    // Create a new node to represent the added item
+    //console.log('index of corresponding sibling node:', node_index);
+    var new_node = Node.fromModel(data, this.treeview, { 
+      onNewNode: this.treeview.options.onNewNode,
+      key: index,
+      parent: this
+    });
+    
+    // Now insert the new node
+    if (!!new_node) {
+      this.children.splice(node_index, 0, new_node);
+      if (this._addingChildItem && data === this._addingChildItem.item && this._addingChildItem.parent === this.data) {
+        new_node.hasFocus(true);
+        //console.log('focus set to newly added node');
+        delete this._addingChildItem;
+      }
+    }
   };
   
   // EVENT HANDLERS -----------------------------
@@ -261,7 +266,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
         var item_index = ko.unwrap(this.index); // the index of this node might change after insertion of new one
         // TODO: wrap this in a try..catch
         var child_item = this.parent.onCreateNewChild(this.parent.data, item_index);
-        this.parent._addingChildItem = { item: child_item, parent: ko.unwrap(this.parent.data) };
+        this.parent._addingChildItem = { item: child_item, parent: this.parent.data };
         this.parent.data.splice(item_index, 0, child_item);
         console.assert(typeof this._addingItem === 'undefined');
       }
