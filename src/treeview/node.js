@@ -86,10 +86,9 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     if (ko.isObservable(data) && _.isArray(data())) {
       data.subscribe( function(changes) { 
         _.each(changes, function(change) {
-          if      (change.status === 'added') self._addChildNode(change.value, change.index);
-          else if (change.status === 'removed') {
-            // TODO
-          }
+          if      (change.status === 'added'  ) self._addChildNode   (change.value, change.index);
+          else if (change.status === 'deleted') self._removeChildNode(change.value, change.index);
+          else throw Error('unsupported observableArray change: ' + change.status);
         });
       }, null, 'arrayChange');
     }
@@ -147,6 +146,19 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     }
   };
   
+  Node.prototype._removeChildNode = function(data, index) {
+    console.log('_removeChildNode(): data:', data, ', index:', index);
+    
+    // Find the child node representing the removed item
+    for (var i = 0; i < this.children().length; i++) {
+      if (index == ko.unwrap(this.children()[i].index)) {
+        var had_focus = this.children()[i].hasFocus();
+        this.children.splice(i, 1);
+        if (had_focus && i < this.children().length) this.children()[i].hasFocus(true);
+      }
+    }
+  };
+  
   // EVENT HANDLERS -----------------------------
   
   Node.prototype.onClick = function(self, event) {
@@ -178,6 +190,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       else if (Keyboard.is(event, 'Right' )) { if (this.openNode      ()) return fullStop(); }
       
       else if (Keyboard.is(event, 'Insert')) { if (this.insertBefore  ()) return fullStop(); }
+      else if (Keyboard.is(event, 'Delete')) { if (this.remove        ()) return fullStop(); }
     }
     
     return true;
@@ -270,6 +283,16 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
         this.parent.data.splice(item_index, 0, child_item);
         console.assert(typeof this._addingItem === 'undefined');
       }
+    }
+    return true;
+  };
+  
+  Node.prototype.remove = function() {
+    console.log('remove()');
+    if (!!this.parent) {
+      var item_index = ko.unwrap(this.index);
+      this.parent.data.splice(item_index, 1);
+      this.parent.children.splice(_.indexOf(this.parent.children(), this), 1);
     }
     return true;
   };

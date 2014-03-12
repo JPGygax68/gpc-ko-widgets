@@ -155,10 +155,11 @@ define([], function() {
       // DOM level 3
       if (event.key) return event.key === key;
       // Chrome, at the time of writing
-      else if (event.keyIdentifier) return event.keyIdentifier === key;
+      //else if (event.keyIdentifier) return event.keyIdentifier === key;
+      else if (event.which === Keyboard[key.toUpperCase()]) return true;
       // Fallback 
       else {
-        return this[key.toUppercase()] === event.which;
+        return Keyboard[key.toUpperCase()] === event.which;
       }
     }
     else {
