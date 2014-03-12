@@ -87,13 +87,10 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       data.subscribe( function(changes) { 
         _.each(changes, function(change) {
           if (change.status === 'added') {
-            //console.log('item added to array:', change.status, change.value, change.index); 
+            console.log('item added to array:', change.status, change.value, change.index); 
             // Find the index of the sibling node representing the item preceding the inserted one
-            for (var i = 0; i < self.children().length; i++) {
-              var succ = self.children()[i];
-              if (change.index <= ko.unwrap(succ.index)) break;
-            }
-            var node_index = ko.unwrap(succ.index);
+            for (var i = 0; i < self.children().length; i++) if (change.index <= ko.unwrap(self.children()[i].index)) break;
+            var node_index = i;
             // Create a new node to represent the added item
             //console.log('index of corresponding sibling node:', node_index);
             var new_node = Node.fromModel(change.value, self.treeview, { 
