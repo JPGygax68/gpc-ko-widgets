@@ -86,8 +86,8 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     if (ko.isObservable(data) && _.isArray(data())) {
       data.subscribe( function(changes) { 
         _.each(changes, function(change) {
-          if      (change.status === 'added'  ) self._addChildNode   (change.value, change.index);
-          else if (change.status === 'deleted') self._removeChildNode(change.value, change.index);
+          if      (change.status === 'added'  ) self._onItemAddedToArray    (change.value, change.index);
+          else if (change.status === 'deleted') self._onItemRemovedFromArray(change.value, change.index);
           else throw Error('unsupported observableArray change: ' + change.status);
         });
       }, null, 'arrayChange');
@@ -121,8 +121,8 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     return child;
   };
 
-  Node.prototype._addChildNode = function(data, index) {
-    //console.log('_addChildNode(): data:', data, ', index:', index); 
+  Node.prototype._onItemAddedToArray = function(data, index) {
+    //console.log('_onItemAddedToArray(): data:', data, ', index:', index); 
     
     // Find the index of the sibling node representing the item preceding the inserted one
     for (var i = 0; i < this.children().length; i++) if (index <= ko.unwrap(this.children()[i].index)) break;
@@ -147,8 +147,8 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     }
   };
   
-  Node.prototype._removeChildNode = function(data, index) {
-    //console.log('_removeChildNode(): data:', data, ', index:', index);
+  Node.prototype._onItemRemovedFromArray = function(data, index) {
+    //console.log('_onItemRemovedFromArray(): data:', data, ', index:', index);
     
     // Find the child node representing the removed item
     for (var i = 0; i < this.children().length; i++) {
@@ -167,6 +167,24 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     }
   };
   
+  Node.prototype._addSibling = function(before) {
+    console.log('_addSibling()', before);
+    if (!!this.parent) {
+      // We can only insert if the underlying observableArray has onCreateNewChild() attached
+      if (!!this.parent.onCreateNewChild) {
+        var item_index = ko.unwrap(this.index) + (before ? 0 : 1);
+        // TODO: wrap this in a try..catch
+        var child_item = this.parent.onCreateNewChild(this.parent.data, item_index);
+        this.parent._addingChildItem = { item: child_item, parent: this.parent.data, before: before };
+        // The splice will trigger the "added" notification
+        this.parent.data.splice(item_index, 0, child_item);
+        console.assert(typeof this._addingItem === 'undefined');
+      }
+    }
+    return true;
+  };
+  
+
   // EVENT HANDLERS -----------------------------
   
   Node.prototype.onClick = function(self, event) {
@@ -199,6 +217,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       
       else if (Keyboard.is(event, 'Insert')) { if (this.insertBefore  ()) return fullStop(); }
       else if (Keyboard.is(event, 'Delete')) { if (this.removeNode    ()) return fullStop(); }
+      else if (Keyboard.is(event, 'Enter' )) { if (this.appendAfter   ()) return fullStop(); }
     }
     
     return true;
@@ -288,28 +307,15 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   		else return this.exitNode();
   };
   
-  Node.prototype.insertBefore = function() {
-    //console.log('insertBefore()');
-    if (!!this.parent) {
-      // We can only insert if the underlying observableArray has onCreateNewChild() attached
-      if (!!this.parent.onCreateNewChild) {
-        var item_index = ko.unwrap(this.index); // the index of this node might change after insertion of new one
-        // TODO: wrap this in a try..catch
-        var child_item = this.parent.onCreateNewChild(this.parent.data, item_index);
-        this.parent._addingChildItem = { item: child_item, parent: this.parent.data };
-        this.parent.data.splice(item_index, 0, child_item);
-        console.assert(typeof this._addingItem === 'undefined');
-      }
-    }
-    return true;
-  };
+  Node.prototype.insertBefore = function() { return this._addSibling(true ); };
+  
+  Node.prototype.appendAfter  = function() { return this._addSibling(false); };
   
   Node.prototype.removeNode = function() {
-    //console.log('removeNode()');
-    
+    //console.log('removeNode()');    
     if (!!this.parent) {
       var item_index = ko.unwrap(this.index);
-      // This will trigger the "deleted" notification and call _removeChildNode()
+      // This will trigger the "deleted" notification and call _onItemRemovedFromArray()
       this.parent.data.splice(item_index, 1);
     }
     return true;

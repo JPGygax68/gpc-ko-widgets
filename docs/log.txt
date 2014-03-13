@@ -1,13 +1,21 @@
 2014-03-13
 ==========
 
-- 
+On top of the question "how to add child nodes to an as yet childless parent", I have to answer the related question "how to append a child node" ?
+
+To create a first child for a childless parent, one could use the "Right" arrow key when the node has already been opened.
+
+As for the second question, that is trickier. The "Down" arrow should simply move to the next visible node, while the "return" key is normally understood to mean "activate". Yet, as the key that is used to append a new paragraph when typing text, return would be the most intuitive choice. (Actually, that's not quite true - what the return key does is actually *end* the current paragraph and *begin* a new one.)
+
+One thing to keep in mind: only nodes of "array" (or "collection") type can have children.
+
+There is not much choice but to reserve the return key for appending, and to assign the "activate" action to another key. And actually, "activate" probably won't even be needed for an unmodified tree view.
 
 
 2014-03-12
 ==========
 
-- After deleting last child, focus should go to parent node
+- After deleting last child, focus should go to parent node [DONE 2014-03-13]
 
 - How to add child nodes to an empty array ?
 
