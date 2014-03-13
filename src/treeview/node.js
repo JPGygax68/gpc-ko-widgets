@@ -110,7 +110,8 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   };
   
   Node.prototype._createChildNode = function(data, index, label, options) {
-    console.log('_createChildNode()', data, index, label);
+    //console.log('_createChildNode()', data, index, label);
+    
     var child = new Node(this.treeview, this, data, index, label);
     if (options.onNewNode) {
       var usage = options.onNewNode(child, data, index, this);
@@ -121,7 +122,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   };
 
   Node.prototype._addChildNode = function(data, index) {
-    console.log('_addChildNode(): data:', data, ', index:', index); 
+    //console.log('_addChildNode(): data:', data, ', index:', index); 
     
     // Find the index of the sibling node representing the item preceding the inserted one
     for (var i = 0; i < this.children().length; i++) if (index <= ko.unwrap(this.children()[i].index)) break;
@@ -147,7 +148,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   };
   
   Node.prototype._removeChildNode = function(data, index) {
-    console.log('_removeChildNode(): data:', data, ', index:', index);
+    //console.log('_removeChildNode(): data:', data, ', index:', index);
     
     // Find the child node representing the removed item
     for (var i = 0; i < this.children().length; i++) {
@@ -162,7 +163,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   // EVENT HANDLERS -----------------------------
   
   Node.prototype.onClick = function(self, event) {
-    console.log('Node.onClick():', self, event);
+    //console.log('Node.onClick():', self, event);
     self.open( !self.open() );
     event.preventDefault();
     event.stopPropagation();
@@ -177,7 +178,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   };
   
   Node.prototype.onKeyDown = function(self, event) {
-    console.log('Node.onKeyDown(); self:', self, ', this:', this, 'event.target:', event.target);
+    //console.log('Node.onKeyDown(); self:', self, ', this:', this, 'event.target:', event.target);
 
     // TODO: use a "shortcut" registry to link keyboard input to actions
     // TODO: formalize "actions"
@@ -186,7 +187,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       if      (Keyboard.is(event, 'Down'  )) { if (this.goNextNode    ()) return fullStop(); }
       else if (Keyboard.is(event, 'Up'    )) { if (this.goPreviousNode()) return fullStop(); }
 
-      else if (Keyboard.is(event, 'Left'  )) { if (this.closeNode     ()) return fullStop(); }
+      else if (Keyboard.is(event, 'Left'  )) { if (this.closeOrClimb  ()) return fullStop(); }
       else if (Keyboard.is(event, 'Right' )) { if (this.openNode      ()) return fullStop(); }
       
       else if (Keyboard.is(event, 'Insert')) { if (this.insertBefore  ()) return fullStop(); }
@@ -255,6 +256,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   
   Node.prototype.exitNode = function() {
   
+  	// TODO: only climb to root if root is shown
     if (!!this.parent) {
       this.parent.hasFocus(true);
       return true;
@@ -271,8 +273,16 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     return true;
   };
   
+  /* This is the default action for the "Left" key. If the node is open, close it;
+  	if it's already closed, climb to the parent node.
+   */
+  Node.prototype.closeOrClimb = function() {
+  		if (this.open()) return this.closeNode();
+  		else return this.exitNode();
+  };
+  
   Node.prototype.insertBefore = function() {
-    console.log('insertBefore()');
+    //console.log('insertBefore()');
     if (!!this.parent) {
       // We can only insert if the underlying observableArray has onCreateNewChild() attached
       if (!!this.parent.onCreateNewChild) {
@@ -288,7 +298,8 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   };
   
   Node.prototype.remove = function() {
-    console.log('remove()');
+    //console.log('remove()');
+    
     if (!!this.parent) {
       var item_index = ko.unwrap(this.index);
       this.parent.data.splice(item_index, 1);
