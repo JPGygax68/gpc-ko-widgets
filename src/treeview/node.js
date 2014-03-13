@@ -168,9 +168,9 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   };
   
   Node.prototype._addSibling = function(before) {
-    console.log('_addSibling()', before);
+    //console.log('_addSibling()', before);
     if (!!this.parent) {
-      // We can only insert if the underlying observableArray has onCreateNewChild() attached
+      // We can only insert if we know how to create a child data item
       if (!!this.parent.onCreateNewChild) {
         var item_index = ko.unwrap(this.index) + (before ? 0 : 1);
         // TODO: wrap this in a try..catch
@@ -184,7 +184,6 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     return true;
   };
   
-
   // EVENT HANDLERS -----------------------------
   
   Node.prototype.onClick = function(self, event) {
@@ -213,7 +212,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       else if (Keyboard.is(event, 'Up'    )) { if (this.goPreviousNode()) return fullStop(); }
 
       else if (Keyboard.is(event, 'Left'  )) { if (this.closeOrClimb  ()) return fullStop(); }
-      else if (Keyboard.is(event, 'Right' )) { if (this.openNode      ()) return fullStop(); }
+      else if (Keyboard.is(event, 'Right' )) { if (this.openOrDescend ()) return fullStop(); }
       
       else if (Keyboard.is(event, 'Insert')) { if (this.insertBefore  ()) return fullStop(); }
       else if (Keyboard.is(event, 'Delete')) { if (this.removeNode    ()) return fullStop(); }
@@ -271,17 +270,27 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     }
   };
   
-  Node.prototype.enterNode = function() {
-  
+  Node.prototype.enterNode = function() {  
+  	console.assert(this.open());
+  	// If node already
     if (this.children().length > 0) {
-      if (!this.open()) this.open(true);
       this.children()[0].hasFocus(true);
       return true;
+    }
+    else {
+      if (!!this.onCreateNewChild) {
+        // TODO: wrap this in a try..catch
+        var child_item = this.onCreateNewChild(this.data, 0);
+        this._addingChildItem = { item: child_item, parent: this.data };
+        // Pushing onto the observableArray will trigger the "added" notification
+        this.data.push(child_item);
+        console.assert(typeof this._addingItem === 'undefined');
+        return true;
+      }
     }
   };
   
   Node.prototype.exitNode = function() {
-  
   	// TODO: only climb to root if root is shown
     if (!!this.parent) {
       this.parent.hasFocus(true);
@@ -305,6 +314,15 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   Node.prototype.closeOrClimb = function() {
   		if (this.open()) return this.closeNode();
   		else return this.exitNode();
+  };
+  
+  /* This is the default action for the "Right" key. If the node is not open, open it;
+  	if it's already open, "enter" it, which means either focus on its first child if it
+  	has any, or create the first child if not.
+   */
+  Node.prototype.openOrDescend = function() {
+  	if (!this.open()) return this.openNode();
+  	else return this.enterNode();
   };
   
   Node.prototype.insertBefore = function() { return this._addSibling(true ); };

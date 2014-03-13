@@ -11,6 +11,9 @@ One thing to keep in mind: only nodes of "array" (or "collection") type can have
 
 There is not much choice but to reserve the return key for appending, and to assign the "activate" action to another key. And actually, "activate" probably won't even be needed for an unmodified tree view.
 
+--------------
+
+- Instead of having "combined" actions like closeOrClimb() that do different actions depending on the node's state, it might be better to implement this via predicates (talking about the future "action" registry system).
 
 2014-03-12
 ==========
