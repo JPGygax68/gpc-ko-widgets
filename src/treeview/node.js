@@ -155,7 +155,14 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       if (index == ko.unwrap(this.children()[i].index)) {
         var had_focus = this.children()[i].hasFocus();
         this.children.splice(i, 1);
-        if (had_focus && i < this.children().length) this.children()[i].hasFocus(true);
+        if (had_focus) {
+        	if (i >= this.children().length) {
+        		if (i === 0) this.hasFocus(true); // TODO: check if root and root visible
+        		else this.children()[i-1].hasFocus(true);
+        	}
+        	else this.children()[i].hasFocus(true);
+       	}
+        break; // we're done
       }
     }
   };
@@ -191,7 +198,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       else if (Keyboard.is(event, 'Right' )) { if (this.openNode      ()) return fullStop(); }
       
       else if (Keyboard.is(event, 'Insert')) { if (this.insertBefore  ()) return fullStop(); }
-      else if (Keyboard.is(event, 'Delete')) { if (this.remove        ()) return fullStop(); }
+      else if (Keyboard.is(event, 'Delete')) { if (this.removeNode    ()) return fullStop(); }
     }
     
     return true;
@@ -297,13 +304,13 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     return true;
   };
   
-  Node.prototype.remove = function() {
-    //console.log('remove()');
+  Node.prototype.removeNode = function() {
+    //console.log('removeNode()');
     
     if (!!this.parent) {
       var item_index = ko.unwrap(this.index);
+      // This will trigger the "deleted" notification and call _removeChildNode()
       this.parent.data.splice(item_index, 1);
-      this.parent.children.splice(_.indexOf(this.parent.children(), this), 1);
     }
     return true;
   };
