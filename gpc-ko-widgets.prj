@@ -9,5 +9,6 @@ Project Wordfile=
 Project TpFile=
 Filter=
 Create Tagfile=0
+Filter Dot Files=1
 [Files]
 0=.\

@@ -29,15 +29,18 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     this.level = !!parent ? parent.level + 1 : 0;
     this.children = ko.observableArray();
     
+    // We need a disposal mechanism because of computed observables
+    this._disposed = ko.observable(false);
+    
     // Essential data: data item and index/key within parent (=container)
     this.data = data;
-    if (_.isFunction(index)) this.index = ko.computed(index);
+    if (_.isFunction(index)) this.index = ko.computed(index, this, { disposeWhen: self._disposed });
     else if ( _.isNumber(index)) this.index = ko.observable(index);
     else this.index = index;
     
     // The label is mandatory: either a simple value (string) or a function that will be used as a computed
     if (typeof label !== 'undefined') {
-      if (typeof label === 'function') this.label = ko.computed(label, this);
+      if (typeof label === 'function') this.label = ko.computed(label, this, { disposeWhen: self._disposed });
       else this.label = ko.observable( label.toString() );
     }
     else if (this.parent && _.isArray(ko.unwrap(this.parent.data))) {
@@ -61,11 +64,11 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       if (this.open()) classes.push('open'); else classes.push('closed');
       classes.push( 'level' + this.level ); // TODO: observable ?
       return classes.join(' ');
-    }, this);
+    }, this, { disposeWhen: self._disposed } );
     this.indent = ko.computed( function() {
       // TODO: use treeview properties instead of defaults!
       return this.level > 0 || this.treeview.showRoot() ? Defs.DEFAULT_HANDLE_WIDTH + Defs.DEFAULT_SPACING_AFTER_HANDLE : 0;
-    }, this);
+    }, this, { disposeWhen: self._disposed } );
     this.labelWidth = ko.computed( function() {
       var width;
       if (!this.parent) {
@@ -77,14 +80,14 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
         if (!this.leaf()) width -= this.indent();
       }
       return width;
-    }, this);
+    }, this, { disposeWhen: self._disposed } );
     this.labelColspan = ko.computed( function() {
       return (this.leaf() ? 2 : 1) + (this.treeview.showValueColumn() ? 1 : 0);
-    }, this);
+    }, this, { disposeWhen: self._disposed } );
 
     // Subscribe changes to observableArray, so we can add nodes as needed
     if (ko.isObservable(data) && _.isArray(data())) {
-      data.subscribe( function(changes) { 
+      this._array_change_subscription = data.subscribe( function(changes) { 
         _.each(changes, function(change) {
           if      (change.status === 'added'  ) self._onItemAddedToArray    (change.value, change.index);
           else if (change.status === 'deleted') self._onItemRemovedFromArray(change.value, change.index);
@@ -94,6 +97,13 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     }
   }
 
+	Node.prototype.dispose = function() {
+		console.log('Node::dispose()');
+		if (!!this._array_change_subscription) this._array_change_subscription.dispose();
+		this._disposed(true);
+		delete this;
+	};
+	
   // INTERNAL METHODS -------------------------
   
   Node.prototype._getSiblingOf = function(child, offset) {
@@ -108,21 +118,16 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       if (!!sibling) { sibling.hasFocus(true); return true; }
     }
   };
-  
-  Node.prototype._createChildNode = function(data, index, label, options) {
-    //console.log('_createChildNode()', data, index, label);
-    
-    var child = new Node(this.treeview, this, data, index, label);
-    if (options.onNewNode) {
-      var usage = options.onNewNode(child, data, index, this);
-      if (usage === false) return;
-      if (usage instanceof Node) child = usage;
-    }
-    return child;
-  };
 
+	Node.prototype._createNewItem = function(options) {  
+		// TODO: use the Collection concept
+		options = options || {};
+    var item = this.onCreateNewChild(this.data, options);
+    return item;
+  };
+  
   Node.prototype._onItemAddedToArray = function(data, index) {
-    //console.log('_onItemAddedToArray(): data:', data, ', index:', index); 
+    console.log('_onItemAddedToArray(): data:', data, ', index:', index); 
     
     // Find the index of the sibling node representing the item preceding the inserted one
     for (var i = 0; i < this.children().length; i++) if (index <= ko.unwrap(this.children()[i].index)) break;
@@ -148,13 +153,15 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   };
   
   Node.prototype._onItemRemovedFromArray = function(data, index) {
-    //console.log('_onItemRemovedFromArray(): data:', data, ', index:', index);
+    console.log('_onItemRemovedFromArray(): data:', data, ', index:', index);
     
     // Find the child node representing the removed item
     for (var i = 0; i < this.children().length; i++) {
       if (index == ko.unwrap(this.children()[i].index)) {
-        var had_focus = this.children()[i].hasFocus();
+      	var node = this.children()[i];
+        var had_focus = node.hasFocus();
         this.children.splice(i, 1);
+        node.dispose();
         if (had_focus) {
         	if (i >= this.children().length) {
         		if (i === 0) this.hasFocus(true); // TODO: check if root and root visible
@@ -167,21 +174,23 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     }
   };
   
+  /* Common implementation for insertBefore() and insertAfter().
+   */
   Node.prototype._addSibling = function(before) {
     //console.log('_addSibling()', before);
     if (!!this.parent) {
       // We can only insert if we know how to create a child data item
-      if (!!this.parent.onCreateNewChild) {
+      if (this.parent.canCreateNewItems()) {
         var item_index = ko.unwrap(this.index) + (before ? 0 : 1);
-        // TODO: wrap this in a try..catch
-        var child_item = this.parent.onCreateNewChild(this.parent.data, item_index);
-        this.parent._addingChildItem = { item: child_item, parent: this.parent.data, before: before };
+    		// TODO: wrap this in a try..catch
+       	var child_item = this.parent._createNewItem({index: item_index});
+        this.parent._addingChildItem = { item: child_item, parent: this.parent.data };
         // The splice will trigger the "added" notification
         this.parent.data.splice(item_index, 0, child_item);
         console.assert(typeof this._addingItem === 'undefined');
       }
+    	return true;
     }
-    return true;
   };
   
   // EVENT HANDLERS -----------------------------
@@ -226,6 +235,13 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     function fullStop() { event.stopPropagation(); return false; }
   };
 
+	// PREDICATES ------------------
+	
+	Node.prototype.canCreateNewItems = function() {
+		// TODO: use Collection concept
+		return !!this.onCreateNewChild;
+	};
+	
   // ACTIONS ---------------------
   
   // Note: Actions return true when successful
@@ -272,15 +288,16 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   
   Node.prototype.enterNode = function() {  
   	console.assert(this.open());
-  	// If node already
+  	// If node already has at least one child, set focus on first child
     if (this.children().length > 0) {
       this.children()[0].hasFocus(true);
       return true;
     }
+    // If node doesn't have children (yet)
     else {
-      if (!!this.onCreateNewChild) {
+      if (this.canCreateNewItems()) {
         // TODO: wrap this in a try..catch
-        var child_item = this.onCreateNewChild(this.data, 0);
+        var child_item = this._createNewItem({index: 0});
         this._addingChildItem = { item: child_item, parent: this.data };
         // Pushing onto the observableArray will trigger the "added" notification
         this.data.push(child_item);
@@ -371,8 +388,9 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
             var subitems = _.filter(ko.unwrap(item), function(subitem) { return isObject(subitem); } );
             _.each(subitems, function(subitem, index) {
               //console.log('array child node #'+index+':', item.toString(), parents.length);
+              // TODO: Supplying a function as the index should make this into a computed, but that doesn't work (yet?)
               var child = makeChildNode(subitem, 
-                function() { return _.indexOf(node.children(), child); }, 
+                function() { var index = _.indexOf(ko.unwrap(this.parent.data), this.data); console.log('calculating item index:', index); return index; }, 
                 function() { return '#' + (_.indexOf(node.children(), child) + 1); });
               if (child) {
                 // TODO: recurse depending on item type

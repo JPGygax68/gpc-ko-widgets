@@ -226,7 +226,8 @@ function onNewNode(node, item, key) {
     // Adjustments are tabular data that we want to edit
     if (key === 'adjustments') {
       node.open(false);
-      node.onCreateNewChild = function(parent, index) {
+      node.onCreateNewChild = function(parent, options) {
+      	var index = options.index || 0;
         var _parent = ko.unwrap(parent);
         var subitem = { set: 0, actual: 0 };
         if (index > 0 && index < _parent.length) {

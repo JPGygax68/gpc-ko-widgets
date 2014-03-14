@@ -9,11 +9,22 @@ As for the second question, that is trickier. The "Down" arrow should simply mov
 
 One thing to keep in mind: only nodes of "array" (or "collection") type can have children.
 
-There is not much choice but to reserve the return key for appending, and to assign the "activate" action to another key. And actually, "activate" probably won't even be needed for an unmodified tree view.
+There is not much choice but to reserve the return key for appending, and to assign the "activate" action to another key. And actually, "activate" probably won't even be needed for an unmodified tree view. [DONE. return/enter now appends nodes]
 
 --------------
 
 - Instead of having "combined" actions like closeOrClimb() that do different actions depending on the node's state, it might be better to implement this via predicates (talking about the future "action" registry system).
+
+--------------
+
+- Wouldn't it be cool to be able to visually assign keyboard shortcuts to actions during development, possibly using predicates to have the same key (combination) trigger different actions depending on current state ?
+
+--------------
+
+Problem: the closures I'm using to determine array item indexes automatically seem to be generating memory leaks by keeping the items around indefinitely.
+ - Tried alternate way, same results 
+ => Must implement as a method of Node
+ 
 
 2014-03-12
 ==========
