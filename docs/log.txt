@@ -1,3 +1,9 @@
+2014-03-14
+==========
+
+- Create a base class "Element" (ancestor for node, usable from all widgets) to help with computed observables (disposeWhen), and possibly other things ?
+
+
 2014-03-13
 ==========
 

@@ -220,7 +220,7 @@ ko.applyBindings(myViewModel);
 //----
 
 function onNewNode(node, item, key) {
-  //console.log('filter():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, item, key, parents);
+  //console.log('onNewNode():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, item, key, parents);
   
   if (!!node.parent) {
     // Adjustments are tabular data that we want to edit

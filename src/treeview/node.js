@@ -32,11 +32,28 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     // We need a disposal mechanism because of computed observables
     this._disposed = ko.observable(false);
     
-    // Essential data: data item and index/key within parent (=container)
+    // Assign data item
     this.data = data;
-    if (_.isFunction(index)) this.index = ko.computed(index, this, { disposeWhen: self._disposed });
-    else if ( _.isNumber(index)) this.index = ko.observable(index);
-    else this.index = index;
+    
+    // Does the data item have a defined index/key by which to access it from its parent ?
+    if (typeof index !== 'undefined' && index !== null) {
+	    if      (_.isFunction(index)) this.index = ko.computed(index, this, { disposeWhen: self._disposed });
+	    else if (_.isNumber  (index)) this.index = ko.observable(index);
+	    else                          this.index = index; // TODO: observable too ?
+	  }
+	  // No index/key was supplied
+    else {
+    	// If the data item is a member of an array, we provide the index as a computed observable
+    	if (!!this.parent && _.isArray(ko.unwrap(this.parent.data))) {
+    		//console.log('parent is array:', ko.unwrap(this.parent.index));
+	    	this.index = ko.computed(function() { 
+	    		var index = _.indexOf(ko.unwrap(this.parent.data), this.data); 
+	    		//console.log('calculating item index:', index); 
+	    		return index;
+	    	}, this, { disposeWhen: self._disposed });
+    	}
+    	// Otherwise, the data does not have (or need) an index/key
+    }
     
     // The label is mandatory: either a simple value (string) or a function that will be used as a computed
     if (typeof label !== 'undefined') {
@@ -44,7 +61,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       else this.label = ko.observable( label.toString() );
     }
     else if (this.parent && _.isArray(ko.unwrap(this.parent.data))) {
-      this.label = ko.observable( function() { return '#' + ko.unwrap(this.index); }, this );
+      this.label = ko.computed( function() { return '#' + (ko.unwrap(this.index) + 1); }, this, { disposeWhen: self._disposed });
     }
     else this.label = ko.observable(); // To be given a value externally!
 
@@ -137,7 +154,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     //console.log('index of corresponding sibling node:', node_index);
     var new_node = Node.fromModel(data, this.treeview, { 
       onNewNode: this.treeview.options.onNewNode,
-      key: index,
+      key: null, // leaving this null will assign the default index
       parent: this
     });
     
@@ -362,8 +379,8 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
   
     var options = options || {};
     var label;
-    if (typeof options.label !== 'undefined') label = options.label;
-    else if (typeof options.key !== 'undefined') label = options.key;
+    if      (typeof options.label !== 'undefined' && label !== null    ) label = options.label;
+    else if (typeof options.key !== 'undefined' && options.key !== null) label = options.key;
   
     return itemToNode(item, options.key, label, options.parent);
     
@@ -387,11 +404,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
           if (!node.leaf()) {
             var subitems = _.filter(ko.unwrap(item), function(subitem) { return isObject(subitem); } );
             _.each(subitems, function(subitem, index) {
-              //console.log('array child node #'+index+':', item.toString(), parents.length);
-              // TODO: Supplying a function as the index should make this into a computed, but that doesn't work (yet?)
-              var child = makeChildNode(subitem, 
-                function() { var index = _.indexOf(ko.unwrap(this.parent.data), this.data); console.log('calculating item index:', index); return index; }, 
-                function() { return '#' + (_.indexOf(node.children(), child) + 1); });
+              var child = makeChildNode(subitem);
               if (child) {
                 // TODO: recurse depending on item type
                 node.children.push( child );
@@ -436,7 +449,7 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       function isObject(item) { return _.isObject(ko.unwrap(item)); }
       function isArray (item) { return _.isArray (ko.unwrap(item)); }
       
-      function makeChildNode(subitem, subkey, label) { return itemToNode(subitem, subkey, label, node); }
+      function makeChildNode(child_item, child_key, label) { return itemToNode(child_item, child_key, label, node); }
     }
   };
 
