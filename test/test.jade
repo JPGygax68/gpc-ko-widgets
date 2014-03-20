@@ -3,7 +3,7 @@ html
   head
     meta(charset="utf-8")
     title GPC Knockout Widgets Test Page
-    include ../dist/treeview/templates.include.jade
+    //include ../dist/treeview/templates.include.jade
     script(src="scripts/knockout/knockout-3.0.0.debug.js")
     script(src="scripts/knockout/knockout.mapping-latest.debug.js")
     script(src="scripts/underscore/underscore.js")
@@ -16,7 +16,7 @@ html
     script(type="text/html", id="tmplStringField").
       <input type="text", data-bind="value: value"></input>
   body
-    div(style="float:left", data-bind="template: {name: 'gktvTree', data: treeView }")
+    div(style="float:left", data-bind="template: {name: 'gktvTreeView', data: treeView }")
     script(src="main.js")
     div(style="float: right")
       input(type="button" onclick="test()" value="Click me!")

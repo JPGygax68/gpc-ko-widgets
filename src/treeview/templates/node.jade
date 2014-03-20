@@ -1,0 +1,14 @@
+﻿div.node(data-bind="css: cssString()")
+  table.header
+    tbody
+      tr.main.header-row(tabindex="0", data-bind="hasFocus: hasFocus, event: { keydown: onKeyDown }")
+        // ko if: !leaf()
+        td.handle(data-bind="click: onClick")
+        // /ko
+        td.label(data-bind="attr: { colspan: labelColspan() }, style: { minWidth: labelWidth()+'px', width: hasValue() ? labelWidth()+'px' : '' }, text: label, event: { mouseover: onMouseOverLabel, mouseout: onMouseLeaveLabel }")
+        // ko if: treeview.showValueColumn()
+        td.value(data-bind="template: { name: valueTemplateName(), data: { value: value } }")
+        // /ko
+  // ko template: { name: 'gktvNodeChildren' }
+  // /ko
+    

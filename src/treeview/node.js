@@ -25,8 +25,8 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
     // Basic structure
     this.treeview = treeview;
     // TODO: should parent and level be observables too ? (in case nodes are being moved around?)
-    this.parent = parent;
-    this.level = !!parent ? parent.level + 1 : 0;
+    this.parent   = parent;
+    this.level    = !!parent ? parent.level + 1 : 0;
     this.children = ko.observableArray();
     
     // We need a disposal mechanism because of computed observables
@@ -60,10 +60,10 @@ define(['./node', './defs', '../util/keyboard', ], function(Node, Defs, Keyboard
       if (typeof label === 'function') this.label = ko.computed(label, this, { disposeWhen: self._disposed });
       else this.label = ko.observable( label.toString() );
     }
-    else if (this.parent && _.isArray(ko.unwrap(this.parent.data))) {
+    else if (this.parent && _.isArray(ko.unwrap(this.parent.data)))
       this.label = ko.computed( function() { return '#' + (ko.unwrap(this.index) + 1); }, this, { disposeWhen: self._disposed });
-    }
-    else this.label = ko.observable(); // To be given a value externally!
+    else
+    	this.label = ko.observable(); // To be given a value externally!
 
     // Configuration
     this.leaf = ko.observable(false);

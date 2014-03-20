@@ -1,3 +1,46 @@
+2014-03-19
+==========
+
+It just occurred to me that the "treeview.js" bundle contains stuff that is global to the widget library and thus does not directly belong to the treeview widget. In the future, this might lead to multiple inclusions.
+
+=> QUESTION: is this ok ? Probably not. I must be prepared to do one or more of the following:
+
+  1) Make the code available as CommonJS modules
+  2) Make the code available as AMD modules
+  3) Make the code available as UMD modules
+  4) Provide a bundle that includes the complete widget collection
+  5) Provide bundles for certain widget combinations
+  6) Provide custom bundles through a web site / service (à la jQuery-UI)
+  
+------------
+
+Next step: provide Knockout templates without requiring users to import them using Jade, i.e. pass them into Knockout via Javascript.
+  
+  
+2014-03-16
+==========
+
+Nothing done for two days... But I don't want this project to stall, so I'll lay out the next steps here.
+
+My vision for this is to get me an unfailing toolkit from which to build lots of future applications. I feel that I'm running into the usual trap here, which is a form of overwhelm, combined with a longing for perfection, both of which are conspiring to make me quit, as they VERY often have in the past. I hereby acknowledge and accept that as fact. I HEREBY ACKNOWLEDGE AND ACCEPT THAT AS FACT.
+
+Ok. When faced with overwhelm, a good thing to do is to come up with a clear path forward. The goal: I want a toolbox. I want a quick, easy and robust way to put together a node-webkit application using Jade, Knockout and whathever else it takes.
+
+Let's list the obstacles:
+
+1) Boilerplate code and build system setup. 
+
+Short of a full, Delphi-inspired IDE (which is a dream of mine), one may choose between using (and maintaining a template) or just copying the last comparable project. This is where my sense of perfection gets in my way - I profoundly dislike both these options. I don't really require an IDE, but I absolutely want something that doesn't make me think. This is what I want to provide as a product. THIS IS WHAT I WANT TO PROVIDE AS A PRODUCT. 
+
+To build towards that goal, I have already obtained some experience with build systems, and I'm currently favoring Gulp. I am routinely using Jade not just because it is faster to type and easier to read than HTML, but also because I can use include statements to bring in Knockout templates that are needed by the Knockout-based widget collection I am trying to create [note: this is probably not a good idea though - I definitely want to inject Knockout templates via Javascript in the very near future].
+
+A particularly annoying part of boilerplate, and as yet unsolved, is (script) package management. I have learned quite a bit about that too, but it's still murky. I do have a standard approach for obtaining the packages and getting them into the build (preferring manual Gulpfile work), but I still don't have a clear procedure for actually using the scripts in my code: whether or not to use AMD, CommonJS, or to just really on script tags. Perhaps I should do some more research there; UMD seems to be getting traction. One thought that came to my mind is to maintain a JSON list of packages to include, tagging each with the package manager to use (NPM, bower, etc; or "manual") and the packaging standard it uses (CommonJS, AMD, UMD, none); or perhaps it's sufficient to just add that info to package.json. The idea is to derive the configuration for the build tasks without the need for endless trial and error as was so often the case before now.
+
+Another dream tries to get into the way of progress here, and that's the ability to create both a web page/site and a node-webkit application from the same codebase.
+
+... to be continued ...
+
+                                                                                                                        
 2014-03-14
 ==========
 

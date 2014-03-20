@@ -1,0 +1,4 @@
+﻿// ko if: !!$data.children
+ul.children(data-bind="style: { marginLeft: indent()+'px' }, foreach: children")
+  li(data-bind="template: { name: 'gktvNode' }")
+// /ko   

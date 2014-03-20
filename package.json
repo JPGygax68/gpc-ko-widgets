@@ -22,7 +22,10 @@
     "gulp-jade": "^0.4.2",
     "requirejs": "^2.1.11",
     "gulp-stylus": "0.0.13",
-    "gulp-autoprefixer": "0.0.6"
+    "gulp-autoprefixer": "0.0.6",
+    "urequire": "^0.6.13-1",
+    "through2": "^0.4.1",
+    "underscore": "^1.6.0"
   },
   "dependencies": {
     "almond": "^0.2.9"

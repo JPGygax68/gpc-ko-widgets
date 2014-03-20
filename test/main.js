@@ -202,7 +202,7 @@ var data = {
     }
   ],
   "click_areas": []
-}      
+};
 
 //console.log('KeyEvent.DOM_VK_DOWN', KeyEvent.DOM_VK_DOWN);
 

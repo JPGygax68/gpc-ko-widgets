@@ -8,21 +8,108 @@ var stylus = require('gulp-stylus');
 //var browserify = require('gulp-browserify');
 var rjs = require('requirejs');
 var prefix = require('gulp-autoprefixer');
+var urequire = require('urequire');
+var path = require('path');
+var stream = require('stream');
+var browserify = require('browserify');
+var through = require('through2');
+var _ = require('underscore');
 
-var browserify_shims = {
-	// jQuery attaches itself to the window as '$' so we assign the exports accordingly
-	jquery: { path: './bower_components/jquery/dist/jquery.min.js', exports: '$' },
-	'jquery-ui': { path: './bower_components/jquery-ui/ui/jquery-ui.js', depends: { jquery: '$' }, exports: null },
-  //'jade'      : { path: './bower_components/jade/bin/jade.js', exports: 'jade' },
-  'knockout': { path: './components/knockout-3.0.0.js', exports: 'ko' },
-  'knockout-mapping'  : { path: './components/knockout.mapping-latest.js', exports: 'ko.mapping' },
+// Adapted from Coffeescript code by Kevin Malakoff
+
+function GulpURequire(options) {
+  this.options = options || {};
+  stream.Transform.call(this, {objectMode: true});
+  this.files = [];
+}
+
+GulpURequire.prototype = new stream.Transform();
+
+GulpURequire.prototype._transform = function(file, encoding, callback) {
+  this.files.push(file);
+  callback();
 };
+
+GulpURequire.prototype._flush = function(callback) {
+  var self = this;
+  urequire.compile(this.files, this.options, function(err, result) {
+    if (err) return callback(err);
+    
+    self.push( new gutil.File({
+      base: options.project_name, 
+      path: process.cwd(),
+      contents: new Buffer(result)
+    }) );
+    
+    callback();
+  });
+};
+
+var urequire = function(options) { return new GulpURequire(options); };
 
 // BUILD TASKS ----------------------------------
 
+/* Take the Jade Knockout templates contained in src/templates and make them into a 
+  require'able module returning a hash index by the template filenames (without extension).
+ */
+gulp.task('jade-templates', [], function() {
+
+  return gulp.src( ['./src/treeview/templates/*.jade'] )
+    .pipe( jade({ pretty: true }) )
+    .pipe( assembler('templates.js', {prefix: 'gktv'}) )
+    .pipe( gulp.dest('./temp/treeview/') );    
+    
+  function assembler(filename, options) {
+    
+    var stream = through.obj( function(file, enc, callback) {
+      this.last_file = file;
+      console.assert(file.isBuffer());
+      var name = this.options.prefix + camelify(path.basename(file.path, '.html'));
+      this.templates[name] = file.contents.toString();
+      callback();
+    }, function(callback) {
+      // We put our templates into a new stream, which we assign to a new file
+      var file = new gutil.File({
+        base: this.last_file.base, 
+        cwd: this.last_file.cwd, 
+        path: path.join(this.last_file.base, filename),
+        contents: new Buffer(JSON.stringify(this.templates, null, '  '))
+      });
+      // On to the next stage!
+      this.push(file);
+      callback();
+    });
+    
+    stream.options = options || {};
+    stream.options.prefix = stream.options.prefix || '';
+    
+    stream.templates = {};
+        
+    return stream;
+  }
+  
+  function camelify(name) {
+    return _.reduce(name.split('-'), function(result, part) { return result + part[0].toUpperCase()+part.slice(1); }, '');
+  }
+  
+  function debugTap() {
+    var stream = through.obj( function(file, enc, callback) {
+      //console.log('file.path:', file.path);
+      //console.log('file.base:', file.base);
+      //console.log('file.cwd :', file.cwd );
+      //console.log('file.contents:', file.contents);
+      console.log( 'Name:', camelify(path.basename(file.path, '.html')) );
+      this.push(file);
+      callback();
+    });
+    return stream;
+  }
+  
+});
+
 gulp.task('copy', [], function() {
 
-  return gulp.src( ['./src/treeview/templates.include.jade', './src/treeview/**/*.png'] )
+  return gulp.src( ['./src/treeview/**/*.png'] )
     .pipe( gulp.dest('./dist/treeview/') );
 });
 
@@ -35,12 +122,35 @@ gulp.task('css', [], function() {
     
 });
 
+gulp.task('browserify', [], function() {
+
+  gulp.src( 'src/main.js' )
+    .pipe( browserify({
+      shim: browserify_shims,
+      //transform: ['browserify-shim'],
+      insertGlobals: false,
+      detectGlobals: false,
+      debug: !gutil.env.production
+    }) )
+    //.pipe( concat('client.js') )
+    .pipe( gulp.dest('./build/') );
+    
+});
+
 gulp.task('requirejs', function(cb) {
   
   rjs.optimize({
     //appDir: 'src',
     // All paths are relative to this
     baseUrl: './src/treeview',
+    paths: {
+      'text': '../../node_modules/text/text',
+      'knockout': '../../modules/knockout/knockout-3.0.0',
+      'stringTemplateEngine': '../../modules/knockout/stringTemplateEngine'
+    },
+    shim: {
+      'knockout': { exports: 'ko' }
+    },
     // We wrap the bundled AMD modules in a sandwich that supports AMD, CommonJS and global namespace
     // TODO: have this generated by a helper function (using underscore templates ?) instead of using files ?
     wrap: { startFile: 'build/wrap_start.js', endFile: 'build/wrap_end.js' },
@@ -50,6 +160,7 @@ gulp.task('requirejs', function(cb) {
     name: '../../node_modules/almond/almond',
     // Then come our modules
     include: ['treeview'],
+    exclude: ['knockout'],
     // Now to specify the output file
     out: './dist/treeview/treeview.js' // TODO: use main.js instead ?
   }, function(buildResponse) {
@@ -59,7 +170,7 @@ gulp.task('requirejs', function(cb) {
 
 });
 
-gulp.task('build', ['copy', 'requirejs', 'css'] );
+gulp.task('build', ['jade-templates', 'copy', 'requirejs', 'css'] );
 
 // TEST HARNESS -------------------------------
 

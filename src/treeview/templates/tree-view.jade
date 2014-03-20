@@ -1,0 +1,6 @@
+﻿// ko if: showRoot
+div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNode', data: rootNode }")
+// /ko
+// ko ifnot: showRoot
+div.gpc-ko-widget.treeview(data-bind="template: { name: 'gktvNodeChildren', data: rootNode }")
+// /ko
