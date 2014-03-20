@@ -25,9 +25,28 @@
     "gulp-autoprefixer": "0.0.6",
     "urequire": "^0.6.13-1",
     "through2": "^0.4.1",
-    "underscore": "^1.6.0"
+    "underscore": "^1.6.0",
+    "vinyl-source-stream": "^0.1.1",
+    "browserify-shim": "^3.3.1",
+    "browserify": "^3.32.0",
+    "through": "^2.3.4"
   },
   "dependencies": {
     "almond": "^0.2.9"
+  },
+  "browser": {
+    "knockout": "./modules/knockout/knockout-3.1.0.js",
+    "knockout-mapping": "./modules/knockout/knockout.mapping-latest.js",
+    "knockout-strings": "./modules/knockout/stringTemplateEngine.js"
+  },
+  "browserify": {
+    "transform": [
+      "browserify-shim"
+    ]
+  },
+  "browserify-shim": {
+    "./modules/knockout/knockout-3.1.0.js": "ko",
+    "./modules/knockout/knockout.mapping-latest.js": {},
+    "./modules/knockout/stringTemplateEngine.js": {}
   }
 }

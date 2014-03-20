@@ -1,3 +1,17 @@
+2014-03-20
+==========
+
+- Create a package.json in dist
+- UMD-ify the treeview bundle
+- Try browserify "standalone" ?
+
+-----------
+
+OMG. What at frustrating day, ending in nothing more than a consolation prize.
+
+- Why can't I browserify-require a bundle that I created in a separate run of browserify?
+
+
 2014-03-19
 ==========
 

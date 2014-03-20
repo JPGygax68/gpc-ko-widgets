@@ -1,25 +1,17 @@
 "use strict";
 
-// define('knockout', function() { return ko; });
-
-// TODO: find a better way than to have TreeView pull in the importer ?
-
-var ko = require('knockout');
+var ko            = require('knockout');
+var _             = require('underscore');
+var ko_templates  = require('knockout-strings');
 
 var Node = require('./node');
 var Defs = require('./defs');
-var templates = {
-  // TODO: make sure those will be read in as text
-  // TODO: it would be nice to read Jade directly
-  // TODO: even better: find a way to automatically read in all templates in a subdir
-  treeview     : require('./treeview.html'),
-  node_children: require('./node_children.html'),
-  node         : require('./node.html')
-};
 
-ko.templates['gktvNode'        ] = node;
-ko.templates['gktvTreeView'    ] = treeview;
-ko.templates['gktvNodeChildren'] = node_children;
+var templates = require('./templates/output/templates')
+
+var ko_tmpls = ko_templates(ko); // inject string template engine into Knockout
+_.extend(ko.templates, templates);
+//console.log('ko_tmpls:', ko_tmpls, 'ko.templates:', ko.templates, ko_tmpls === ko.templates ? 'EQUAL' : 'not equal');
 
 function TreeView(model, options) {
 
@@ -31,6 +23,6 @@ function TreeView(model, options) {
   this.labelColumnWidth = ko.observable(Defs.DEFAULT_LABEL_COLUMN_WIDTH);
 
   this.rootNode = Node.fromModel(model, this, options);
-};
+}
 
 module.exports = TreeView;

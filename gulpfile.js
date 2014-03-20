@@ -5,16 +5,22 @@ var gutil = require('gulp-util');
 //var concat = require('gulp-concat');
 var jade = require('gulp-jade');
 var stylus = require('gulp-stylus');
-//var browserify = require('gulp-browserify');
+var browserify = require('browserify');
+var shim = require('browserify-shim');
 var rjs = require('requirejs');
 var prefix = require('gulp-autoprefixer');
 var urequire = require('urequire');
 var path = require('path');
 var stream = require('stream');
-var browserify = require('browserify');
 var through = require('through2');
+var source = require('vinyl-source-stream');
 var _ = require('underscore');
 
+var browserify_shim = {
+  'knockout'        : { path: './modules/knockout/knockout-3.1.0.js', exports: 'ko' },
+  'knockout-mapping': { path: './modules/knockout/knockout.mapping-latest.js', depends: { 'knockout': 'ko' }, exports: null },
+}
+      
 // Adapted from Coffeescript code by Kevin Malakoff
 
 function GulpURequire(options) {
@@ -57,7 +63,7 @@ gulp.task('jade-templates', [], function() {
   return gulp.src( ['./src/treeview/templates/*.jade'] )
     .pipe( jade({ pretty: true }) )
     .pipe( assembler('templates.js', {prefix: 'gktv'}) )
-    .pipe( gulp.dest('./temp/treeview/') );    
+    .pipe( gulp.dest('./src/treeview/templates/output/') );    
     
   function assembler(filename, options) {
     
@@ -73,7 +79,7 @@ gulp.task('jade-templates', [], function() {
         base: this.last_file.base, 
         cwd: this.last_file.cwd, 
         path: path.join(this.last_file.base, filename),
-        contents: new Buffer(JSON.stringify(this.templates, null, '  '))
+        contents: new Buffer('module.exports = ' + JSON.stringify(this.templates, null, '  ')+';')
       });
       // On to the next stage!
       this.push(file);
@@ -109,8 +115,8 @@ gulp.task('jade-templates', [], function() {
 
 gulp.task('copy', [], function() {
 
-  return gulp.src( ['./src/treeview/**/*.png'] )
-    .pipe( gulp.dest('./dist/treeview/') );
+  return gulp.src( ['./src/**/*.png'] )
+    .pipe( gulp.dest('./dist/') );
 });
 
 gulp.task('css', [], function() {
@@ -124,17 +130,27 @@ gulp.task('css', [], function() {
 
 gulp.task('browserify', [], function() {
 
-  gulp.src( 'src/main.js' )
+  return browserify({
+      entries: ['./src/treeview/treeview.js'] //, './src/treeview/node.js', './src/treeview/defs.js', './src/treeview/templates/output/templates.js', './src/util/keyboard.js']
+    })
+    .bundle()
+    .pipe( source('treeview.js') )
+    .pipe( gulp.dest('./dist/treeview/') );
+    
+  /*
+  return gulp.src( 'src/treeview/treeview.js' )
     .pipe( browserify({
-      shim: browserify_shims,
+      shim: browserify_shim,
       //transform: ['browserify-shim'],
       insertGlobals: false,
       detectGlobals: false,
-      debug: !gutil.env.production
+      debug: !gutil.env.production,
+      standalone: true
     }) )
     //.pipe( concat('client.js') )
-    .pipe( gulp.dest('./build/') );
-    
+    .pipe( gulp.dest('./dist/treeview/') );
+  */
+        
 });
 
 gulp.task('requirejs', function(cb) {
@@ -170,7 +186,7 @@ gulp.task('requirejs', function(cb) {
 
 });
 
-gulp.task('build', ['jade-templates', 'copy', 'requirejs', 'css'] );
+gulp.task('build', ['jade-templates', 'copy', 'browserify', 'css'] );
 
 // TEST HARNESS -------------------------------
 
@@ -179,6 +195,34 @@ gulp.task('jade-test', ['build'], function() {
   return gulp.src('test/test.jade')
     .pipe( jade({ pretty: false }) )
     .pipe( gulp.dest('./testbed/') );    
+});
+
+gulp.task('browserify-test', [], function() {
+
+  return browserify({
+      entries: ['./test/main.js'],
+      debug: true
+    })
+    .bundle()
+    //.external('knockout')
+    //.external('knockout-mapping')
+    .pipe( source('main.js') )
+    .pipe( gulp.dest('./testbed/') );
+    
+  /*
+  return gulp.src( 'test/main.js' )
+    .pipe( browserify({
+      shim: browserify_shim,
+      //transform: ['browserify-shim'],
+      //exclude: ['./modules/knockout/knockout-3.1.0.js', './modules/knockout/knockout-mapping.latest.js'],
+      insertGlobals: false,
+      detectGlobals: false,
+      debug: !gutil.env.production
+    }) )
+    //.pipe( concat('client.js') )
+    .pipe( gulp.dest('./testbed/') );
+  */
+    
 });
 
 gulp.task('copy-test', function() {
@@ -206,7 +250,7 @@ gulp.task('copy-dist-test', ['build'], function() {
 });
 
 gulp.task('build-test', ['build'], function() {
-  return gulp.start( 'jade-test', 'copy-test', 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
+  return gulp.start( 'jade-test', 'browserify-test', 'copy-test', 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
 });
 
 gulp.task('test', ['build-test']);
@@ -218,7 +262,7 @@ gulp.task('watch-test', function() {
 // DEFAULT TASK / WATCHES -----------------------
 
 gulp.task('watch-all', function() {
-  gulp.watch(['src/**/*', 'test/**/*'], ['build-test']);
+  gulp.watch(['src/**/*', 'test/**/*', '!src/**/output/**/*'], ['build-test']);
 });
 
 gulp.task('default', ['build-test', 'watch-all']);
