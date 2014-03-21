@@ -131,9 +131,14 @@ gulp.task('css', [], function() {
 gulp.task('browserify', [], function() {
 
   return browserify({
-      entries: ['./src/treeview/treeview.js'] //, './src/treeview/node.js', './src/treeview/defs.js', './src/treeview/templates/output/templates.js', './src/util/keyboard.js']
+      entries: ['./src/treeview/treeview.js'],
+      //fullPaths: true,
+      //builtins: [],
     })
-    .bundle()
+    .require('./src/treeview/treeview')
+    .bundle({
+      standalone: 'gpc.kowidgets.treeview'
+    })
     .pipe( source('treeview.js') )
     .pipe( gulp.dest('./dist/treeview/') );
     
@@ -203,25 +208,10 @@ gulp.task('browserify-test', [], function() {
       entries: ['./test/main.js'],
       debug: true
     })
+    .external('treeview')
     .bundle()
-    //.external('knockout')
-    //.external('knockout-mapping')
     .pipe( source('main.js') )
     .pipe( gulp.dest('./testbed/') );
-    
-  /*
-  return gulp.src( 'test/main.js' )
-    .pipe( browserify({
-      shim: browserify_shim,
-      //transform: ['browserify-shim'],
-      //exclude: ['./modules/knockout/knockout-3.1.0.js', './modules/knockout/knockout-mapping.latest.js'],
-      insertGlobals: false,
-      detectGlobals: false,
-      debug: !gutil.env.production
-    }) )
-    //.pipe( concat('client.js') )
-    .pipe( gulp.dest('./testbed/') );
-  */
     
 });
 
@@ -250,7 +240,7 @@ gulp.task('copy-dist-test', ['build'], function() {
 });
 
 gulp.task('build-test', ['build'], function() {
-  return gulp.start( 'jade-test', 'browserify-test', 'copy-test', 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
+  return gulp.start( 'jade-test', 'browserify-test' /*, 'copy-test'*/, 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
 });
 
 gulp.task('test', ['build-test']);

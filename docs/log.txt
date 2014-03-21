@@ -1,3 +1,9 @@
+2014-03-21
+==========
+
+- Browserify "standalone" option name components cannot contain underscores!
+
+
 2014-03-20
 ==========
 
@@ -9,7 +15,13 @@
 
 OMG. What at frustrating day, ending in nothing more than a consolation prize.
 
-- Why can't I browserify-require a bundle that I created in a separate run of browserify?
+- Why can't I browserify-require a bundle that I created in a separate run of browserify? require() keeps returning an empty object, as if there was an unresolved dependency. Shouldn't this be the standard way to use a bundle ?
+
+- How do I create a bundle that satisfies certain dependencies from globals ?
+
+- Namespacing the global export with the browserify standalone option is possible! (Just use dot-separated names.)
+
+- Good starting point: http://blakeembrey.com/articles/introduction-to-browserify/
 
 
 2014-03-19

@@ -37,7 +37,8 @@
   "browser": {
     "knockout": "./modules/knockout/knockout-3.1.0.js",
     "knockout-mapping": "./modules/knockout/knockout.mapping-latest.js",
-    "knockout-strings": "./modules/knockout/stringTemplateEngine.js"
+    "knockout-strings": "./modules/knockout/stringTemplateEngine.js",
+    "treeview": "./dist/treeview/treeview.js"
   },
   "browserify": {
     "transform": [
@@ -45,8 +46,8 @@
     ]
   },
   "browserify-shim": {
-    "./modules/knockout/knockout-3.1.0.js": "ko",
-    "./modules/knockout/knockout.mapping-latest.js": {},
+    "knockout": "ko",
+    "knockout.mapping": { "depends": [ "knockout:ko" ] },
     "./modules/knockout/stringTemplateEngine.js": {}
   }
 }

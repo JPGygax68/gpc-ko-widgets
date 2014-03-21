@@ -1,12 +1,6 @@
 "use strict";
 
-var ko = require('knockout');
-require('knockout-mapping');
-
-var TreeView = require('../src/treeview/treeview');
-
-console.log('ko.templates:', ko.templates);
-console.log('TreeView:', TreeView);
+var TreeView = gpc.kowidgets.treeview(ko);
 
 /*
 var myViewModel = {
@@ -220,7 +214,7 @@ var data = {
 
 var myModel = ko.mapping.fromJS( data );
 
-var myViewModel = { treeView: new /*gpc.ko_widgets.*/ TreeView(myModel, { onNewNode: onNewNode }) };
+var myViewModel = { treeView: new TreeView(myModel, { onNewNode: onNewNode }) };
 //myViewModel.treeView.showRoot(true);
 myViewModel.treeView.showValueColumn(true);
 
