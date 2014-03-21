@@ -3,6 +3,14 @@
 
 - Browserify "standalone" option name components cannot contain underscores!
 
+- http://aeflash.com/2014-03/a-year-with-browserify.html
+
+- Read: https://github.com/thlorenz/browserify-shim (global:)
+
+--------------
+
+- The "global:" shim type was the answer all along... gawds the time spent because of not knowing that - or was it the unwillingness to lean back for a moment?
+
 
 2014-03-20
 ==========

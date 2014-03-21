@@ -136,8 +136,10 @@ gulp.task('browserify', [], function() {
       //builtins: [],
     })
     .require('./src/treeview/treeview')
+    .exclude('knockout')
+    .exclude('knockout-mapping')
     .bundle({
-      standalone: 'gpc.kowidgets.treeview'
+      standalone: 'gpc.kowidgets.TreeView'
     })
     .pipe( source('treeview.js') )
     .pipe( gulp.dest('./dist/treeview/') );
@@ -240,7 +242,7 @@ gulp.task('copy-dist-test', ['build'], function() {
 });
 
 gulp.task('build-test', ['build'], function() {
-  return gulp.start( 'jade-test', 'browserify-test' /*, 'copy-test'*/, 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
+  return gulp.start( 'jade-test', /*'browserify-test'*/ 'copy-test', 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
 });
 
 gulp.task('test', ['build-test']);

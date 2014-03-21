@@ -9,33 +9,26 @@
 //  work ok even if it would be more economical to choose a bundle containing all
 //  required widgets.
 
+var ko = require('knockout');
 var tmpl_eng = require('knockout-string-templates');
 
 var Defs = require('./defs');
+var Node = require('./node');
 var templates = require('./templates/output/templates')
   
-function injector(ko) {
+// Store our templates in the string template engine
+ko.utils.extend(ko.templates, templates);
 
-  // We inject our dependency on Knockout into the modules we need
-  tmpl_eng(ko); // TODO: this should go to the widget collection initialization code
-  var Node = require('./node')(ko);
+function TreeView(model, options) {
 
-  // Store our templates in the string template engine
-  ko.utils.extend(ko.templates, templates);
+  // TODO: formally separate run-time options from import options ?
+  this.options = options || {};
   
-  function TreeView(model, options) {
-  
-    // TODO: formally separate run-time options from import options ?
-    this.options = options || {};
-    
-    this.showRoot = ko.observable(false);
-    this.showValueColumn = ko.observable(false);
-    this.labelColumnWidth = ko.observable(Defs.DEFAULT_LABEL_COLUMN_WIDTH);
-  
-    this.rootNode = Node.fromModel(model, this, options);
-  }
-  
-  return TreeView;
+  this.showRoot = ko.observable(false);
+  this.showValueColumn = ko.observable(false);
+  this.labelColumnWidth = ko.observable(Defs.DEFAULT_LABEL_COLUMN_WIDTH);
+
+  this.rootNode = Node.fromModel(model, this, options);
 }
 
-module.exports = injector;
+module.exports = TreeView;

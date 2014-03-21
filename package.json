@@ -46,7 +46,7 @@
     ]
   },
   "browserify-shim": {
-    "knockout": "ko",
+    "knockout": "global:ko",
     "knockout.mapping": { "depends": [ "knockout:ko" ] },
     "knockout-string-templates": {}
   }

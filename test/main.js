@@ -1,7 +1,5 @@
 "use strict";
 
-var TreeView = gpc.kowidgets.treeview(ko);
-
 /*
 var myViewModel = {
   treeView: {
@@ -209,7 +207,7 @@ var data = {
 
 var myModel = ko.mapping.fromJS( data );
 
-var myViewModel = { treeView: new TreeView(myModel, { onNewNode: onNewNode }) };
+var myViewModel = { treeView: new gpc.kowidgets.TreeView(myModel, { onNewNode: onNewNode }) };
 //myViewModel.treeView.showRoot(true);
 myViewModel.treeView.showValueColumn(true);
 
