@@ -5,7 +5,7 @@ var _  = require('underscore');
 var Defs = require('./defs');
 var Keyboard = require('../util/keyboard');
 
-function wrapper(ko) {
+function injector(ko) {
   
   /*  TODO: assigning the label at construction time is not really satisfactory, because the label can
       later be replaced (e.g. by a computed observable). This wastes cycles. More importantly, it is 
@@ -469,4 +469,4 @@ function wrapper(ko) {
   
 } // wrapper func
 
-module.exports = wrapper;
+module.exports = injector;

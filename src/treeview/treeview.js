@@ -1,21 +1,27 @@
 "use strict";
 
-//var ko           = require('knockout');
-var _            = require('underscore');
-var ko_templates = require('knockout-strings');
+// TODO: this module contains both the TreeView class, with its init code, and init code
+//  that applies to the widget collection. These components need to be separated out.
+
+// TODO: all bundles generated from the GPC-KO-Widgets sources should follow a common 
+//  pattern, and, when using global exports, export to a common namespace object
+//  without causing clashes. In other words, importing all widgets separately should
+//  work ok even if it would be more economical to choose a bundle containing all
+//  required widgets.
+
+var tmpl_eng = require('knockout-string-templates');
 
 var Defs = require('./defs');
 var templates = require('./templates/output/templates')
   
-function wrapper(ko) {
+function injector(ko) {
 
-  // We inject our dependency on Knockout
-  var Node     = require('./node')(ko);
-  var ko_tmpls = require('knockout-strings')(ko);
+  // We inject our dependency on Knockout into the modules we need
+  tmpl_eng(ko); // TODO: this should go to the widget collection initialization code
+  var Node = require('./node')(ko);
 
   // Store our templates in the string template engine
-  _.extend(ko.templates, templates);
-  console.log('ko_tmpls:', ko_tmpls, 'ko.templates:', ko.templates, ko_tmpls === ko.templates ? 'EQUAL' : 'not equal');  
+  ko.utils.extend(ko.templates, templates);
   
   function TreeView(model, options) {
   
@@ -32,4 +38,4 @@ function wrapper(ko) {
   return TreeView;
 }
 
-module.exports = wrapper;
+module.exports = injector;

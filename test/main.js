@@ -207,11 +207,6 @@ var data = {
   "click_areas": []
 };
 
-//console.log('KeyEvent.DOM_VK_DOWN', KeyEvent.DOM_VK_DOWN);
-
-//var arr = ko.observableArray();
-//console.log('arr isArray ?', _.isArray(arr()), 'isObservable ?', ko.isObservable(arr));
-
 var myModel = ko.mapping.fromJS( data );
 
 var myViewModel = { treeView: new TreeView(myModel, { onNewNode: onNewNode }) };

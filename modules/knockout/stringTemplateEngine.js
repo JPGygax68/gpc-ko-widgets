@@ -1,8 +1,16 @@
-// by Ryan Niemeyer
+"use strict";
+
+/*  
+  Adapted from MIT-licensed code by Ryan Niemeyer. Thanks!
+
+  MIT license: http://www.opensource.org/licenses/mit-license.php
+  
+ */
 
 module.exports = function(ko) {
 
   //define a template source that tries to key into an object first to find a template string
+  
   var templates = {},
       data = {},
       engine = new ko.nativeTemplateEngine();

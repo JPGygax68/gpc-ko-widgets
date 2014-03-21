@@ -4,3 +4,4 @@ testbed/*
 *.bak
 *.pui
 temp/*
+src/**/output/*
