@@ -5,6 +5,7 @@ var ko = require('knockout');
 require('../util/stringTemplateEngine');
 var Defs = require('./defs');
 var Node = require('./node');
+
 var templates = require('../../temp/treeview/templates')
   
 // Store our templates in the string template engine (guarded)

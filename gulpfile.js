@@ -16,6 +16,7 @@ var through = require('through2');
 var source = require('vinyl-source-stream');
 var _ = require('underscore');
 
+// CURRENTLY NOT IN USE, using shim settings in package.json instead:
 var browserify_shim = {
   'knockout'        : { path: './modules/knockout/knockout-3.1.0.js', exports: 'ko' },
   'knockout-mapping': { path: './modules/knockout/knockout.mapping-latest.js', depends: { 'knockout': 'ko' }, exports: null },
@@ -56,7 +57,8 @@ var urequire = function(options) { return new GulpURequire(options); };
 // BUILD TASKS ----------------------------------
 
 /* Take the Jade Knockout templates contained in src/templates and make them into a 
-  require'able module returning a hash index by the template filenames (without extension).
+  require'able module returning a hash indexed by the template filenames 
+  (without extension and "camelified").
  */
 gulp.task('jade-templates', [], function() {
 
@@ -128,13 +130,17 @@ gulp.task('css', [], function() {
     
 });
 
+/** Create a standalone Javascript bundle, not including Knockout (or knockout-mapping).
+    (package.json contains browserify-shim settings that make the bundle expect these
+    libraries to be provided via script tags.)
+ */
 gulp.task('browserify', [], function() {
 
   return browserify({ entries: ['./src/treeview/treeview.js'] })
-    .require('./src/treeview/treeview')
+    .require('./src/treeview/treeview', {expose: 'treeview'})
     .exclude('knockout')
     .exclude('knockout-mapping')
-    .bundle({ standalone: 'gpc.kowidgets.TreeView' })
+    .bundle() // Use: { standalone: 'gpc.kowidgets.TreeView' } to use globals
     .pipe( source('treeview.js') )
     .pipe( gulp.dest('./dist/treeview/') );
     
@@ -218,7 +224,7 @@ gulp.task('copy-node_modules-test', function() {
 gulp.task('copy-dist-test', ['build'], function() {
 
   return gulp.src( ['./dist/**/*.js', './dist/**/*.css', './dist/**/*.png'], { base: './dist/' } )
-    .pipe( gulp.dest('./testbed/scripts/gpc/ko_widgets/') );
+    .pipe( gulp.dest('./testbed/scripts/gpc/kowidgets/') );
 });
 
 gulp.task('build-test', ['build'], function() {
