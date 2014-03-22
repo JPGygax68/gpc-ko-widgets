@@ -6,20 +6,6 @@ var _  = require('underscore');
 var Defs = require('./defs');
 var Keyboard = require('../util/keyboard');
 
-/*  TODO: assigning the label at construction time is not really satisfactory, because the label can
-    later be replaced (e.g. by a computed observable). This wastes cycles. More importantly, it is 
-    not possible to supply a computed observable, as those as per the KO rules will be evaluated 
-    immediately (to determine dependency chains), before the node even exists, so "this" will not
-    be available.
-    
-    Possibilities:
-    - Introduce a init() method, to be called when the node has been fully defined. init() would 
-      "fill in the blanks", i.e. provide a default label if none has been defined at that point.
-    - Remove/replace observables depending on the label (labelWidth), so that the label
-      can be set at any time.
-    - Allow specifying a function for the label, which would be used to create a computed observable
- */
- 
 function Node(treeview, parent, data, index, label) {
 
   var self = this;
@@ -57,7 +43,7 @@ function Node(treeview, parent, data, index, label) {
   	// Otherwise, the data does not have (or need) an index/key
   }
   
-  // The label is mandatory: either a simple value (string) or a function that will be used as a computed
+  // The label is mandatory: either a simple value (string) or a function that will be made into a computed
   if (typeof label !== 'undefined') {
     if (typeof label === 'function') this.label = ko.computed(label, this, { disposeWhen: self._disposed });
     else this.label = ko.observable( label.toString() );

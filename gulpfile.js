@@ -144,20 +144,6 @@ gulp.task('browserify', [], function() {
     .pipe( source('treeview.js') )
     .pipe( gulp.dest('./dist/treeview/') );
     
-  /*
-  return gulp.src( 'src/treeview/treeview.js' )
-    .pipe( browserify({
-      shim: browserify_shim,
-      //transform: ['browserify-shim'],
-      insertGlobals: false,
-      detectGlobals: false,
-      debug: !gutil.env.production,
-      standalone: true
-    }) )
-    //.pipe( concat('client.js') )
-    .pipe( gulp.dest('./dist/treeview/') );
-  */
-        
 });
 
 gulp.task('requirejs', function(cb) {
@@ -254,7 +240,7 @@ gulp.task('watch-test', function() {
 // DEFAULT TASK / WATCHES -----------------------
 
 gulp.task('watch-all', function() {
-  gulp.watch(['src/**/*', 'test/**/*', '!src/**/output/**/*'], ['build-test']);
+  gulp.watch(['package.json', 'src/**/*', 'test/**/*', '!src/**/output/**/*'], ['build-test']);
 });
 
 gulp.task('default', ['build-test', 'watch-all']);

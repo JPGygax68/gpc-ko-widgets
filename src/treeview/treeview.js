@@ -1,23 +1,17 @@
 "use strict";
 
-// TODO: this module contains both the TreeView class, with its init code, and init code
-//  that applies to the widget collection. These components need to be separated out.
-
-// TODO: all bundles generated from the GPC-KO-Widgets sources should follow a common 
-//  pattern, and, when using global exports, export to a common namespace object
-//  without causing clashes. In other words, importing all widgets separately should
-//  work ok even if it would be more economical to choose a bundle containing all
-//  required widgets.
-
 var ko = require('knockout');
-var tmpl_eng = require('knockout-string-templates');
 
+require('../util/stringTemplateEngine');
 var Defs = require('./defs');
 var Node = require('./node');
 var templates = require('./templates/output/templates')
   
-// Store our templates in the string template engine
-ko.utils.extend(ko.templates, templates);
+// Store our templates in the string template engine (guarded)
+if (typeof ko.templates['__HAS_TREEVIEW_TEMPLATES__'] === 'undefined') {
+  ko.utils.extend(ko.templates, templates);
+  ko.templates['HAS_TREEVIEW_TEMPLATES'] = 'YES';
+}
 
 function TreeView(model, options) {
 

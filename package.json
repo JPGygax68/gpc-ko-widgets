@@ -2,7 +2,7 @@
   "name": "gpc-ko-widgets",
   "version": "0.0.1",
   "description": "GPC Knockout-based widget library",
-  "main": "index.js",
+  "main": "dist/treeview/treeview.js",
   "directories": {
     "doc": "docs"
   },
@@ -36,9 +36,7 @@
   },
   "browser": {
     "knockout": "./modules/knockout/knockout-3.1.0.js",
-    "knockout-mapping": "./modules/knockout/knockout.mapping-latest.js",
-    "knockout-string-templates": "./modules/knockout/stringTemplateEngine.js",
-    "treeview": "./dist/treeview/treeview.js"
+    "knockout-mapping": "./modules/knockout/knockout.mapping-latest.js"
   },
   "browserify": {
     "transform": [
@@ -47,7 +45,6 @@
   },
   "browserify-shim": {
     "knockout": "global:ko",
-    "knockout.mapping": { "depends": [ "knockout:ko" ] },
-    "knockout-string-templates": {}
+    "knockout.mapping": { "depends": [ "knockout:ko" ] }
   }
 }
