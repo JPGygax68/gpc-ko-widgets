@@ -63,7 +63,7 @@ gulp.task('jade-templates', [], function() {
   return gulp.src( ['./src/treeview/templates/*.jade'] )
     .pipe( jade({ pretty: true }) )
     .pipe( assembler('templates.js', {prefix: 'gktv'}) )
-    .pipe( gulp.dest('./src/treeview/templates/output/') );    
+    .pipe( gulp.dest('./temp/treeview/') );    
     
   function assembler(filename, options) {
     
@@ -130,17 +130,11 @@ gulp.task('css', [], function() {
 
 gulp.task('browserify', [], function() {
 
-  return browserify({
-      entries: ['./src/treeview/treeview.js'],
-      //fullPaths: true,
-      //builtins: [],
-    })
+  return browserify({ entries: ['./src/treeview/treeview.js'] })
     .require('./src/treeview/treeview')
     .exclude('knockout')
     .exclude('knockout-mapping')
-    .bundle({
-      standalone: 'gpc.kowidgets.TreeView'
-    })
+    .bundle({ standalone: 'gpc.kowidgets.TreeView' })
     .pipe( source('treeview.js') )
     .pipe( gulp.dest('./dist/treeview/') );
     
