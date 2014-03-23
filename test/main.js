@@ -3,7 +3,6 @@
 //var TreeView = gpc.kowidgets.TreeView;  // from global
 var TreeView = require('treeview');   // CommonJS style
   
-console.log('TreeView:', TreeView);
 /*
 var myViewModel = {
   treeView: {
@@ -222,9 +221,17 @@ ko.applyBindings(myViewModel);
 function onNewNode(node, item, key) {
   //console.log('onNewNode():', node.label() ); // parents.length > 0 ? _.last(parents).key : ''); //node, item, key, parents);
   
-  if (!!node.parent) {
+  if (!node.parent) {
+    console.log('root node');
+    node.addChildNode('Size', [item.width, 'x', item.height], { valueTemplateName: 'tmplRow', leaf: true });
+  }
+  else {
+    // Immediate child of root node ?
+    if (!node.parent.parent) { 
+      if (!_.isObject(ko.unwrap(item))) { console.log(key+':', item); return false; }
+    }
     // Adjustments are tabular data that we want to edit
-    if (key === 'adjustments') {
+    else if (key === 'adjustments') {
       node.open(false);
       node.onCreateNewChild = function(parent, options) {
       	var index = options.index || 0;
@@ -242,7 +249,7 @@ function onNewNode(node, item, key) {
     // Labels
     // TODO: is it wise to have string indices (=keys) wrapped as observables ?
     if (ko.unwrap(node.parent.index) === 'adjustments') {
-      console.log('adding to adjustments');
+      //console.log('adding to adjustments');
       node.label = ko.computed(adjustmentLabelFunc, node);
       node.open(false);
     }

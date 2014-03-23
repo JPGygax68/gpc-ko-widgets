@@ -6,9 +6,11 @@ var _  = require('underscore');
 var Defs = require('./defs');
 var Keyboard = require('../util/keyboard');
 
-function Node(treeview, parent, data, index, label) {
-
+function Node(treeview, parent, data, index, label, options) {
+  
   var self = this;
+  
+  var options = options || {};  
   
   // Basic structure
   this.treeview = treeview;
@@ -54,10 +56,10 @@ function Node(treeview, parent, data, index, label) {
   	this.label = ko.observable(); // To be given a value externally!
 
   // Configuration
-  this.leaf = ko.observable(false);
-  this.hasValue = ko.observable(false);
-  this.valueTemplateName = ko.observable();
-  this.value = ko.observable();
+  this.leaf = ko.observable(!!options.leaf);
+  this.hasValue = ko.observable( ! (_.isUndefined(this.data) && _.isNull(this.data)) );
+  this.valueTemplateName = ko.observable(options.valueTemplateName);
+  this.value = this.hasValue() ? data : ko.observable();
   
   // Interaction
   this.open = ko.observable(true);
@@ -359,6 +361,14 @@ Node.prototype.removeNode = function() {
     this.parent.data.splice(item_index, 1);
   }
   return true;
+};
+
+// PUBLIC METHODS ---------------------------
+
+Node.prototype.addChildNode = function(label, data, options) {
+  var node = new Node(this.treeview, this, data, options.key, label, options);
+  // TODO: support inserting at a specific position
+  this.children.push(node);
 };
 
 // STATIC METHODS ---------------------------

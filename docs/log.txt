@@ -1,3 +1,24 @@
+2014-03-23
+==========
+
+The next step - what shall it be ? There is a need for a "panel" widget, or perhaps more accurately a "property" panel: displaying labels to the left and values to the right.
+
+In its simplest form though, that wouldn't help much - the TreeView widget can do something very similar on its own. A row must be more flexible than that, able to display multiple cells.
+
+I'm thinking that there is actually no real need for a "widget" to support this. Using Knockout, creating customized DOM for any given row of data and /or input fields is a breeze. All that is needed for now are:
+
+1) a way to insert arbitrary nodes (on top of the filtering that is already implemented), and
+
+2) a way to have an arbitrary named template render the rest of a row (at the aligned position after the label)
+
+I'll get to work on that immediately.
+
+
+2014-03-22
+==========
+
+Okay, so I've finally figured out how to use browserify properly. The current Gulpfile produces a Javascript bundle that exports a synchronous require() function returning the TreeView constructor. It would be very easy to use the standalone option to produce instead a bundle that exposes a global such as gpc.kowidgets.TreeView - yes namespacing is supported.
+
 2014-03-21
 ==========
 

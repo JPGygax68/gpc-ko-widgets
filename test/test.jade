@@ -14,6 +14,10 @@ html
       <input type="checkbox", data-bind="checked: value"></input>
     script(type="text/html", id="tmplStringField").
       <input type="text", data-bind="value: value"></input>
+    script(type="text/html", id="tmplRow").
+      <div data-bind="foreach: ko.unwrap(value)">
+        <span data-bind="text: $data">...</span>
+      </div>
   body
     div(style="float:left", data-bind="template: {name: 'gktvTreeView', data: treeView }")
     script(src="main.js")
