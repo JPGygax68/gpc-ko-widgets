@@ -3,6 +3,19 @@
 
 - Provide a "widget" that does nothing more than do the "centered layout trick"
 
+-----------
+
+Ok, I've successfully added the embryo for a new widget "SketchPad" (code and Gulpfile). I wonder whether I should now proceed to create a test page for it as well ?
+
+Another question is how to make it interactive. The project I'm actually intending it for right now doesn't really *need* it to have controls (though it could probably benefit if they were there).
+
+This underscores the need for an "action" subsystem. I wonder whether I should get that off the ground right now? What should be in it right off the bat?
+
+- Action bars / panels ?
+
+  - How to position such things ? Or is that outside the scope of the action subsystem? -> probably
+  - Custom actions (and their buttons) must be easy to do (shouldn't be a problem)
+  - Enable/disable (by assigning an observable?)
 
 2014-03-23
 ==========

@@ -210,11 +210,19 @@ var data = {
 
 var myModel = ko.mapping.fromJS( data );
 
-var myViewModel = { treeView: new TreeView(myModel, { onNewNode: onNewNode }) };
+var myViewModel = { 
+  page: ko.observable('TreeView'),
+  treeView: new TreeView(myModel, { onNewNode: onNewNode }),
+  
+  goTreeView : function() { this.page('TreeView' ); },
+  goSketchPad: function() { this.page('SketchPad'); },
+};
 //myViewModel.treeView.showRoot(true);
 myViewModel.treeView.showValueColumn(true);
 
-ko.applyBindings(myViewModel);
+function start() {
+  ko.applyBindings(myViewModel);
+}
 
 //----
 

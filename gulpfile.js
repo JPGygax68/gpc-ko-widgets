@@ -213,8 +213,17 @@ gulp.task('build', ['templates', 'copy', 'browserify', 'css'] );
 gulp.task('jade-test', ['build'], function() {
 
   return gulp.src('test/test.jade')
-    .pipe( jade({ pretty: false }) )
+    .pipe( jade({ pretty: true }) )
     .pipe( gulp.dest('./testbed/') );    
+});
+
+gulp.task('css-test', [], function() {
+
+  return gulp.src('./test/**/*.styl')
+    .pipe( stylus({}) )
+    .pipe( prefix('last 20 versions', 'ie 8', 'ie 9') )
+    .pipe( gulp.dest('./testbed/') );
+    
 });
 
 gulp.task('browserify-test', [], function() {
@@ -255,7 +264,7 @@ gulp.task('copy-dist-test', ['build'], function() {
 });
 
 gulp.task('build-test', ['build'], function() {
-  return gulp.start( 'jade-test', /*'browserify-test'*/ 'copy-test', 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
+  return gulp.start( 'jade-test', 'css-test', /*'browserify-test'*/ 'copy-test', 'copy-modules-test', 'copy-node_modules-test', 'copy-dist-test' );
 });
 
 gulp.task('test', ['build-test']);

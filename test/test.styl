@@ -1,0 +1,46 @@
+html {
+  background-color: #ccc;
+}
+
+body {
+  background-color: #fff;
+  margin: 0.5em 15%;
+  padding: 0.5em;
+}
+
+.navigation {
+  position: fixed;
+  
+  font-family: Arial, Sans-Serif;
+  background-color: #FFA;
+  border: outset 1px;
+  
+  top: 0.5em;
+  left: 0.5em;
+  width: 15em;
+  padding: 0.5em;
+  
+  > ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    > li {
+      cursor: pointer;
+      margin: 0;
+      padding: 0.15em;
+      &:not(:first-child) { border-top: solid 1px #aaa; }
+      &:hover {
+        background-color: #0A6;
+        color: white;
+      }
+      &.selected {
+        background-color: #03C;
+        color: white;
+      }
+    }    
+  }
+}
+
+.gpc-ko-widget.treeview {
+  float: left;
+}

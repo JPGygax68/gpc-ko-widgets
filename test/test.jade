@@ -18,8 +18,23 @@ html
       <div data-bind="foreach: ko.unwrap(value)">
         <span data-bind="text: $data">...</span>
       </div>
-  body
-    div(style="float:left", data-bind="template: {name: 'gktvTreeView', data: treeView }")
+    link(rel="stylesheet",href="test.css")
+
+  body(onload="start()")
+    div.navigation
+      ul
+        li(data-bind="css: { selected: page() === 'TreeView' }")
+          a(data-bind="click: goTreeView" ) TreeView
+        li(data-bind="css: { selected: page() === 'SketchPad' }")
+          a(data-bind="click: goSketchPad") SketchPad
+          
+    div(data-bind="if: page() === 'SketchPad'")
+      h1 Viva El SketchPad!
+
+    div(data-bind="if: page() === 'TreeView'")
+      div(data-bind="template: {name: 'gktvTreeView', data: treeView }")
+      div(style="float: right")
+        input(type="button" onclick="test()" value="Click me!")
+      div(style="clear: both")
+      
     script(src="main.js")
-    div(style="float: right")
-      input(type="button" onclick="test()" value="Click me!")
