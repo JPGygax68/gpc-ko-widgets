@@ -1,3 +1,9 @@
+2014-04-01
+==========
+
+- Provide a "widget" that does nothing more than do the "centered layout trick"
+
+
 2014-03-23
 ==========
 

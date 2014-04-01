@@ -1,0 +1,44 @@
+
+.gpc-ko-widget.designer {
+
+  background: yellow;
+  
+  div.zoom_factor {
+    position: relative;
+    top: -0.5em;
+  }
+
+  img.texture {
+  	/* max-width: 48em; */
+  	position: absolute;
+  }    
+  
+  img.indicator {
+  	position: absolute;
+  	top: 0;
+  	left: 0;
+  }
+
+  div.container {
+  	position: relative;
+
+  	background: url(background.png) repeat;
+
+    canvas.display {
+    	position: absolute;
+    	z-index: 0;
+    	pointer-events: none;
+    }
+    
+    canvas.overlay {
+    	position: absolute;
+    	top: 0;
+    	left: 0;
+    	bottom: 0;
+    	right: 0;
+    	z-index: 100;
+    	pointer-events: none;
+    }
+  }
+  
+}

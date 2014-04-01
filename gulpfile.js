@@ -54,52 +54,40 @@ GulpURequire.prototype._flush = function(callback) {
 
 var urequire = function(options) { return new GulpURequire(options); };
 
-// BUILD TASKS ----------------------------------
+// "Assemble" HTML template files (produces a JSON stream)
 
-/* Take the Jade Knockout templates contained in src/templates and make them into a 
-  require'able module returning a hash indexed by the template filenames 
-  (without extension and "camelified").
- */
-gulp.task('jade-templates', [], function() {
-
-  return gulp.src( ['./src/treeview/templates/*.jade'] )
-    .pipe( jade({ pretty: true }) )
-    .pipe( assembler('templates.js', {prefix: 'gktv'}) )
-    .pipe( gulp.dest('./temp/treeview/') );    
-    
-  function assembler(filename, options) {
-    
-    var stream = through.obj( function(file, enc, callback) {
-      this.last_file = file;
-      console.assert(file.isBuffer());
-      var name = this.options.prefix + camelify(path.basename(file.path, '.html'));
-      this.templates[name] = file.contents.toString();
-      callback();
-    }, function(callback) {
-      // We put our templates into a new stream, which we assign to a new file
-      var file = new gutil.File({
-        base: this.last_file.base, 
-        cwd: this.last_file.cwd, 
-        path: path.join(this.last_file.base, filename),
-        contents: new Buffer('module.exports = ' + JSON.stringify(this.templates, null, '  ')+';')
-      });
-      // On to the next stage!
-      this.push(file);
-      callback();
-    });
-    
-    stream.options = options || {};
-    stream.options.prefix = stream.options.prefix || '';
-    
-    stream.templates = {};
-        
-    return stream;
-  }
+function assembler(filename, options) {
   
+  var stream = through.obj( function(file, enc, callback) {
+    this.last_file = file;
+    console.assert(file.isBuffer());
+    var name = this.options.prefix + camelify(path.basename(file.path, '.html'));
+    this.templates[name] = file.contents.toString();
+    callback();
+  }, function(callback) {
+    // We put our templates into a new stream, which we assign to a new file
+    var file = new gutil.File({
+      base: this.last_file.base, 
+      cwd: this.last_file.cwd, 
+      path: path.join(this.last_file.base, filename),
+      contents: new Buffer('module.exports = ' + JSON.stringify(this.templates, null, '  ')+';')
+    });
+    // On to the next stage!
+    this.push(file);
+    callback();
+  });
+  
+  stream.options = options || {};
+  stream.options.prefix = stream.options.prefix || '';
+  
+  stream.templates = {};
+      
+  return stream;
+
   function camelify(name) {
     return _.reduce(name.split('-'), function(result, part) { return result + part[0].toUpperCase()+part.slice(1); }, '');
   }
-  
+
   function debugTap() {
     var stream = through.obj( function(file, enc, callback) {
       //console.log('file.path:', file.path);
@@ -112,8 +100,33 @@ gulp.task('jade-templates', [], function() {
     });
     return stream;
   }
-  
+}
+
+// BUILD TASKS -----------------------------------------------
+
+/* Take the Jade Knockout templates contained in src/treeview/templates and make them into a 
+  require'able module returning a hash indexed by the template filenames 
+  (without extension and "camelified").
+ */
+gulp.task('treeview-jade', [], function() {
+
+  return gulp.src( ['./src/treeview/templates/*.jade'] )
+    .pipe( jade({ pretty: true }) )
+    .pipe( assembler('templates.js', {prefix: 'gktv'}) )
+    .pipe( gulp.dest('./temp/treeview/') );    
+      
 });
+
+gulp.task('sketchpad-jade', [], function() {
+
+  return gulp.src( ['./src/sketchpad/templates/*.jade'] )
+    .pipe( jade({ pretty: true }) )
+    .pipe( assembler('templates.js', {prefix: 'gksp'}) )
+    .pipe( gulp.dest('./temp/sketchpad/') );    
+      
+});
+
+gulp.task('templates', ['treeview-jade', 'sketchpad-jade']);
 
 gulp.task('copy', [], function() {
 
@@ -123,10 +136,10 @@ gulp.task('copy', [], function() {
 
 gulp.task('css', [], function() {
 
-  return gulp.src('./src/treeview/treeview.styl')
+  return gulp.src('./src/**/*.styl')
     .pipe( stylus({}) )
     .pipe( prefix('last 20 versions', 'ie 8', 'ie 9') )
-    .pipe( gulp.dest('./dist/treeview/') );
+    .pipe( gulp.dest('./dist/') );
     
 });
 
@@ -134,7 +147,7 @@ gulp.task('css', [], function() {
     (package.json contains browserify-shim settings that make the bundle expect these
     libraries to be provided via script tags.)
  */
-gulp.task('browserify', [], function() {
+gulp.task('browserify-treeview', [], function() {
 
   return browserify({ entries: ['./src/treeview/treeview.js'] })
     .require('./src/treeview/treeview', {expose: 'treeview'})
@@ -145,6 +158,20 @@ gulp.task('browserify', [], function() {
     .pipe( gulp.dest('./dist/treeview/') );
     
 });
+
+gulp.task('browserify-sketchpad', [], function() {
+
+  return browserify({ entries: ['./src/sketchpad/sketchpad.js'] })
+    .require('./src/sketchpad/sketchpad', {expose: 'sketchpad'})
+    .exclude('knockout')
+    .exclude('knockout-mapping')
+    .bundle()
+    .pipe( source('sketchpad.js') )
+    .pipe( gulp.dest('./dist/sketchpad/') );
+    
+});
+
+gulp.task('browserify', ['browserify-treeview', 'browserify-sketchpad']);
 
 gulp.task('requirejs', function(cb) {
   
@@ -179,7 +206,7 @@ gulp.task('requirejs', function(cb) {
 
 });
 
-gulp.task('build', ['jade-templates', 'copy', 'browserify', 'css'] );
+gulp.task('build', ['templates', 'copy', 'browserify', 'css'] );
 
 // TEST HARNESS -------------------------------
 
