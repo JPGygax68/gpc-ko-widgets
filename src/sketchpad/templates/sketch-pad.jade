@@ -1,6 +1,6 @@
 //- TODO: this needs to be converted into a proper, named template (i.e. a widget)
 
-div.gpc-ko-widget.designer(data-bind="gpc_kowidget_designer: $data")
+div.gpc-ko-widget.designer(data-bind="gpc_kowidgets_designer: $data")
   div.zoom_factor
   div.container(data-bind="style: { width: (width()+2*margin())+'px', height: (height()+2*margin())+'px' }")
     canvas.display(data-bind="attr: { width: width, height: height }, style: { left: margin()+'px', top: margin()+'px' }")

@@ -23,7 +23,7 @@ if (typeof ko.templates['__HAS_SKETCHPAD_TEMPLATES__'] === 'undefined') {
 
 // View Model used by the "designer" widget ------------------------
 
-function Designer(width, height, options) {
+function SketchPad(width, height, options) {
   
   this.options = options || {};
   
@@ -37,7 +37,7 @@ function Designer(width, height, options) {
 
 // Custom binding --------------------------------------------------
 
-ko.bindingHandlers.gpc_kowidget_designer = {
+ko.bindingHandlers.gpc_kowidgets_designer = {
   
   init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
     // This will be called when the binding is first applied to an element
@@ -53,4 +53,4 @@ ko.bindingHandlers.gpc_kowidget_designer = {
   }
 };
 
-module.exports = Designer;
+module.exports = SketchPad;
