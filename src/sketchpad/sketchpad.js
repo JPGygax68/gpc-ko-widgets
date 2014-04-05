@@ -34,21 +34,29 @@ function GObject(options) {
   this._owner = null; // this must be set when adding the object to the SketchPad's "objects" array
 }
 
+GObject.prototype._notifyChange = function() {
+  
+  // TODO: system based on observables ? or use Knockout events ?
+  if (this._owner) this._owner._objectChanged(this);
+};
+
+/* Image represents pictures (using DOM IMG elements).
+ */
 function Image(options) {
 
   GObject.call(this, options);
   
   this.img = document.createElement('img');
-  //document.body.appendChild(this.img);
-  this.img.src = options.url;  
-  this.img.addEventListener('load', function() { 
-    console.log('image loaded:', arguments); });
+  //window.setTimeout( function() { this.img.src = options.url; }.bind(this), 1000 );
+  this.img.src = options.url;
+  this.img.addEventListener('load', this._notifyChange.bind(this));
 }
 
 Image.prototype = new GObject();
 Image.prototype.constructor = Image;
 
 Image.prototype.draw = function(context) { 
+  if (!context) debugger;
   context.drawImage(this.img, this.x, this.y); };
 
 // View Model used by the "designer" widget ------------------------
@@ -95,11 +103,24 @@ SketchPad.prototype._drawObject = function(obj) {
   obj.draw(ctx);
 };
 
+SketchPad.prototype._objectChanged = function(obj) {
+  
+  // TODO: optimize ?
+  this.refresh();
+};
+
+SketchPad.prototype.refresh = function() {
+  
+  if (this.display_context) {
+    this.redraw();
+  }
+  else this._redraw_required(true);
+};
+
 SketchPad.prototype.redraw = function() {
+  console.log('SketchPad::redraw()');
   
   this.objects().forEach( function(obj) { this._drawObject(obj); }, this );
-  
-  this._redraw_required(false);
 };
  
 // Custom binding --------------------------------------------------

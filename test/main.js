@@ -220,7 +220,7 @@ var sketchpad = new SketchPad(640, 480);
 sketchpad.objects.push( new SketchPad.Image({url: 'data/SampleVial-Full.png'}) );
 
 var myViewModel = { 
-  page: ko.observable('TreeView'),
+  page: ko.observable('SketchPad'),
   treeview : treeview,
   sketchpad: sketchpad,
   
