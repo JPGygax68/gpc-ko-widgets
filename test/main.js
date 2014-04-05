@@ -1,7 +1,8 @@
 "use strict";
 
 //var TreeView = gpc.kowidgets.TreeView;  // from global
-var TreeView = require('treeview');   // CommonJS style
+var TreeView  = require('treeview');   // CommonJS style
+var SketchPad = require('sketchpad');
   
 /*
 var myViewModel = {
@@ -210,15 +211,22 @@ var data = {
 
 var myModel = ko.mapping.fromJS( data );
 
+var treeview = new TreeView(myModel, { onNewNode: onNewNode });
+//treeview.showRoot(true);
+treeview.showValueColumn(true);
+
+var sketchpad = new SketchPad(640, 480);
+
+sketchpad.objects.push( new SketchPad.Image({url: 'data/SampleVial-Full.png'}) );
+
 var myViewModel = { 
   page: ko.observable('TreeView'),
-  treeView: new TreeView(myModel, { onNewNode: onNewNode }),
+  treeview : treeview,
+  sketchpad: sketchpad,
   
   goTreeView : function() { this.page('TreeView' ); },
   goSketchPad: function() { this.page('SketchPad'); },
 };
-//myViewModel.treeView.showRoot(true);
-myViewModel.treeView.showValueColumn(true);
 
 function start() {
   ko.applyBindings(myViewModel);

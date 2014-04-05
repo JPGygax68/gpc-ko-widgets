@@ -233,6 +233,7 @@ gulp.task('browserify-test', [], function() {
       debug: true
     })
     .external('treeview')
+    .external('sketchpad')
     .bundle()
     .pipe( source('main.js') )
     .pipe( gulp.dest('./testbed/') );
@@ -241,7 +242,7 @@ gulp.task('browserify-test', [], function() {
 
 gulp.task('copy-test', function() {
 
-  return gulp.src( './test/*.js', { base: './test/' } )
+  return gulp.src( ['./test/*.js', './test/data/**/*'], { base: './test/' } )
     .pipe( gulp.dest('./testbed/') );
 });
 

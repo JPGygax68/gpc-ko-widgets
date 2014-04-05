@@ -8,6 +8,8 @@ html
     script(src="scripts/knockout/knockout.mapping-latest.js")
     script(src="scripts/gpc/kowidgets/treeview/treeview.js")
     link(rel="stylesheet",href="scripts/gpc/kowidgets/treeview/treeview.css")
+    script(src="scripts/gpc/kowidgets/sketchpad/sketchpad.js")
+    link(rel="stylesheet",href="scripts/gpc/kowidgets/sketchpad/sketchpad.css")
     script(type="text/html", id="tmplNumericField").
       <input type="number", data-bind="value: value, valueUpdate: 'input'"></input>
     script(type="text/html", id="tmplBooleanField").
@@ -23,18 +25,17 @@ html
   body(onload="start()")
     div.navigation
       ul
-        li(data-bind="css: { selected: page() === 'TreeView' }")
-          a(data-bind="click: goTreeView" ) TreeView
-        li(data-bind="css: { selected: page() === 'SketchPad' }")
-          a(data-bind="click: goSketchPad") SketchPad
+        li(data-bind="css: { selected: page() === 'TreeView'  }, click: goTreeView" ) TreeView
+        li(data-bind="css: { selected: page() === 'SketchPad' }, click: goSketchPad") SketchPad
           
-    div(data-bind="if: page() === 'SketchPad'")
-      h1 Viva El SketchPad!
-
     div(data-bind="if: page() === 'TreeView'")
-      div(data-bind="template: {name: 'gktvTreeView', data: treeView }")
+      div(data-bind="template: { name: 'gktvTreeView', data: treeview }")
       div(style="float: right")
         input(type="button" onclick="test()" value="Click me!")
       div(style="clear: both")
       
+    div(data-bind="if: page() === 'SketchPad'")
+      h1 Hello SketchPad
+      div(data-bind="template: { name: 'gkspSketchPad', data: sketchpad }")
+
     script(src="main.js")
