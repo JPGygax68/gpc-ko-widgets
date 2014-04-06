@@ -25,6 +25,7 @@ if (typeof ko.templates['__HAS_SKETCHPAD_TEMPLATES__'] === 'undefined') {
 
 /* This is the abstract base class.
  */
+ 
 function GObject(options) {
 
   this.options = options || {};
@@ -42,6 +43,7 @@ GObject.prototype._notifyChange = function() {
 
 /* Image represents pictures (using DOM IMG elements).
  */
+ 
 function Image(options) {
 
   GObject.call(this, options);
@@ -59,16 +61,64 @@ Image.prototype.draw = function(context) {
   if (!context) debugger;
   context.drawImage(this.img, this.x, this.y); };
 
+/* For simple shapes.
+ */
+ 
+function Polygon(options) {
+  
+  GObject.call(this, options);
+  
+  this.points      = this.options.points || [ {x: 0, y: 0}, {x: 100, y: 0}, {x: 100, y: 100}, {x:0, y: 100}];
+  this.fillColor   = this.options.fillColor || 'rgba(255, 100, 100, 0.5)'; 
+  this.strokeColor = this.options.strokeColor || 'rgb(0, 0, 0';
+}
+
+Polygon.prototype = new GObject();
+Polygon.prototype.constructor = Polygon;
+
+Polygon.prototype.draw = function(ctx) {
+  
+  ctx.fillStyle   = this.fillColor;
+  ctx.strokeStyle = this.strokeColor;
+  ctx.translate( this.x,  this.y);
+  ctx.beginPath();
+  ctx.moveTo(this.points[0].x, this.points[0].y);
+  for (var i = 1; i < this.points.length; i++) ctx.lineTo(this.points[i].x, this.points[i].y);
+  ctx.closePath();
+  ctx.fill();
+  ctx.stroke();
+  ctx.translate(-this.x, -this.y);  
+};
+
+Polygon.prototype.drawOutline = function(ctx, options) {
+
+  ctx.fillStyle   = 'rgba(255, 100, 100, 0.5)'; // TODO: depends on whether select or not
+  ctx.strokeStyle = '#000000';
+  
+  ctx.translate( this.x,  this.y);
+  
+  for (var i = 0; i < this.points.length; i++) {
+    var point = this.points[i];
+    ctx.beginPath();
+    ctx.rect(point.x - 3, point.y - 3, 6, 6);
+    ctx.closePath();
+    ctx.fill();
+    ctx.stroke();
+  }
+  
+  ctx.translate(-this.x, -this.y);
+}
+
 // View Model used by the "designer" widget ------------------------
 
 function SketchPad(width, height, options) {
   
   this.options = options || {};
   
-  this.width  = ko.observable(width);
-  this.height = ko.observable(height);
+  this.width   = ko.observable(width);
+  this.height  = ko.observable(height);
   
-  this.margin = ko.observable(DEFAULT_MARGIN);
+  this.margin  = ko.observable(DEFAULT_MARGIN);
 
   this.objects = ko.observableArray();
 
@@ -91,16 +141,16 @@ function SketchPad(width, height, options) {
   }, this, 'arrayChange');
 }
 
-// Attach graphical objects to constructor
-
-SketchPad.Object = GObject; // no point in keeping the "G" prefix
-SketchPad.Image  = Image;
-
 SketchPad.prototype._drawObject = function(obj) {
   console.log('SketchPad::_drawObject()');
   
-  var ctx = this.display_context;
-  obj.draw(ctx);
+  obj.draw(this.display_context);
+};
+
+SketchPad.prototype._drawOutline = function(obj) {
+  console.log('SketchPad::_drawOutline()');
+  
+  if (obj.drawOutline) obj.drawOutline(this.overlay_context);
 };
 
 SketchPad.prototype._objectChanged = function(obj) {
@@ -108,6 +158,8 @@ SketchPad.prototype._objectChanged = function(obj) {
   // TODO: optimize ?
   this.refresh();
 };
+
+// Public methods ----------------------------------------------------
 
 SketchPad.prototype.refresh = function() {
   
@@ -120,9 +172,29 @@ SketchPad.prototype.refresh = function() {
 SketchPad.prototype.redraw = function() {
   console.log('SketchPad::redraw()');
   
-  this.objects().forEach( function(obj) { this._drawObject(obj); }, this );
+  // We translate on the overlay context so that the origins of both are identical
+  //this.display_context.translate( 0.5, 0.5 );
+  this.display_context.save();
+  this.overlay_context.translate( 0.5 + this.margin(), 0.5 + this.margin() );
+  this.overlay_context.save();
+  
+  this.objects().forEach( function(obj) { 
+    this._drawObject(obj);
+    this._drawOutline(obj);
+  }, this );
+
+  this.display_context.restore();
+  this.overlay_context.restore();
 };
  
+// Other initialization --------------------------------------------
+
+// Attach object classes to SketchPad constructor
+
+SketchPad.Object  = GObject; // no point in keeping the "G" prefix
+SketchPad.Image   = Image;
+SketchPad.Polygon = Polygon;
+
 // Custom binding --------------------------------------------------
 
 ko.bindingHandlers.gpc_kowidgets_designer = {
