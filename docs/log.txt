@@ -1,3 +1,14 @@
+2014-04-06
+==========
+
+I've done a small amount of additional work on the SketchPad widget.
+
+- The Area outlining is inclusive on top and to the left, but exclusive at the bottom and on the right (if the area is a rectangle). I'm not sure how to remedy this; it is simple for rectangles only. Perhaps the previous approach with the Polygon class was better after all.
+
+- Idea: use observables to initialize Polygon properties like fillColor ? However, do not provide them directly as they could not access the not-yet-created Polygon object; instead, support functions that will be turned into computeds (actually though, it would be easy to support both [!create a utility function])
+
+- The "overlay" canvas probably should *not* be offset by (0.5, 0.5) (though it should be offset by (margin, margin)). The idea of getting automatic grid-fitting so easily was naive; better leave that to the code handling the individual elements.
+
 2014-04-01
 ==========
 

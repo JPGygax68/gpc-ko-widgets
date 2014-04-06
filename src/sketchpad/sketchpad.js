@@ -41,6 +41,8 @@ GObject.prototype._notifyChange = function() {
   if (this._owner) this._owner._objectChanged(this);
 };
 
+GObject.prototype.mouseDown = function() {} // override in descendants
+
 /* Image represents pictures (using DOM IMG elements).
  */
  
@@ -61,11 +63,10 @@ Image.prototype.draw = function(context) {
   if (!context) debugger;
   context.drawImage(this.img, this.x, this.y); };
 
-/* An "area" is a graphical object without a direct visual representation; it is shown
-  on screen by its outline only.
+/* Polygon - very simple shape, basically just a path plus a fill and stroke style.
  */
  
-function Area(options) {
+function Polygon(options) {
   
   GObject.call(this, options);
   
@@ -74,39 +75,41 @@ function Area(options) {
   this.strokeColor = this.options.strokeColor || 'rgb(0, 0, 0';
 }
 
-Area.prototype = new GObject();
-Area.prototype.constructor = Area;
+Polygon.prototype = new GObject();
+Polygon.prototype.constructor = Polygon;
 
-Area.prototype.draw = function(ctx) {
-  // No-op  
-};
-
-Area.prototype.drawOutline = function(ctx, options) {
-
-  // Draw polygon
+Polygon.prototype._drawPath = function(ctx) {
   
-  ctx.fillStyle   = this.fillColor;
-  ctx.strokeStyle = this.strokeColor;
-  ctx.translate( this.x,  this.y);
   ctx.beginPath();
   ctx.moveTo(this.points[0].x, this.points[0].y);
   for (var i = 1; i < this.points.length; i++) ctx.lineTo(this.points[i].x, this.points[i].y);
   ctx.closePath();
+};
+
+Polygon.prototype.draw = function(ctx) {
+
+  ctx.translate( this.x,  this.y);
+  
+  ctx.fillStyle   = this.fillColor;
+  ctx.strokeStyle = this.strokeColor;
+  this._drawPath(ctx);
   ctx.fill();
   ctx.stroke();
-  ctx.translate(-this.x, -this.y);  
 
-  // Draw handles 
-  
-  ctx.fillStyle   = 'rgba(255, 100, 100, 0.5)'; // TODO: depends on whether select or not
-  ctx.strokeStyle = '#000000';
-  
+  ctx.translate(-this.x, -this.y);
+};
+
+Polygon.prototype.drawOutline = function(ctx, options) {
+
   ctx.translate( this.x,  this.y);
+  
+  ctx.fillStyle   = 'rgba(255, 100, 100, 0.5)';
+  ctx.strokeStyle = 'rgb(0, 0, 0)';
   
   for (var i = 0; i < this.points.length; i++) {
     var point = this.points[i];
     ctx.beginPath();
-    ctx.rect(point.x - 3, point.y - 3, 6, 6);
+    ctx.rect(point.x - 3.5, point.y - 3.5, 7, 7);
     ctx.closePath();
     ctx.fill();
     ctx.stroke();
@@ -114,6 +117,17 @@ Area.prototype.drawOutline = function(ctx, options) {
   
   ctx.translate(-this.x, -this.y);
 }
+
+Polygon.prototype.mouseDown = function(x, y) {
+  console.log('Polygon::mouseDown()', x, y);
+  
+  var ctx = this._owner._prepareOverlayContext();
+  
+  this._drawPath(ctx);
+  if (ctx.isPointInPath(x, y)) { console.log('HIT'); }
+  
+  this._owner._doneWithOverlayContext();
+};
 
 // View Model used by the "designer" widget ------------------------
 
@@ -165,6 +179,33 @@ SketchPad.prototype._objectChanged = function(obj) {
   this.refresh();
 };
 
+SketchPad.prototype._prepareOverlayContext = function() {
+  
+  this.overlay_context.translate( this.margin(), this.margin() );
+  this.overlay_context.save();  
+  
+  return this.overlay_context; // just a convenience
+};
+
+SketchPad.prototype._doneWithOverlayContext = function() {
+  
+  this.overlay_context.restore();
+};
+
+// Event handlers ----------------------------------------------------
+
+SketchPad.prototype.mouseDown = function(target, e) {
+  console.log('SketchPad::mouseDown()', e);
+  
+  var x = e.pageX - e.target.offsetLeft - this.margin(), 
+      y = e.pageY - e.target.offsetTop  - this.margin();
+  
+  for (var i = 0; i < this.objects().length; i ++) {
+    var obj = this.objects()[i];
+    if (obj.mouseDown(x, y)) break;
+  }
+};
+
 // Public methods ----------------------------------------------------
 
 SketchPad.prototype.refresh = function() {
@@ -181,8 +222,7 @@ SketchPad.prototype.redraw = function() {
   // We translate on the overlay context so that the origins of both are identical
   //this.display_context.translate( 0.5, 0.5 );
   this.display_context.save();
-  this.overlay_context.translate( 0.5 + this.margin(), 0.5 + this.margin() );
-  this.overlay_context.save();
+  this._prepareOverlayContext();
   
   this.objects().forEach( function(obj) { 
     this._drawObject(obj);
@@ -190,16 +230,17 @@ SketchPad.prototype.redraw = function() {
   }, this );
 
   this.display_context.restore();
-  this.overlay_context.restore();
+  //this.overlay_context.restore();
+  this._doneWithOverlayContext();
 };
- 
+
 // Other initialization --------------------------------------------
 
 // Attach object classes to SketchPad constructor
 
 SketchPad.Object  = GObject; // no point in keeping the "G" prefix
 SketchPad.Image   = Image;
-SketchPad.Area = Area;
+SketchPad.Polygon = Polygon;
 
 // Custom binding --------------------------------------------------
 
