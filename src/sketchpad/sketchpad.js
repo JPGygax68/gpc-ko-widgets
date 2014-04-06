@@ -80,23 +80,23 @@ Polygon.prototype.constructor = Polygon;
 
 Polygon.prototype._drawPath = function(ctx) {
   
+  ctx.translate( this.x,  this.y);
+  
   ctx.beginPath();
   ctx.moveTo(this.points[0].x, this.points[0].y);
   for (var i = 1; i < this.points.length; i++) ctx.lineTo(this.points[i].x, this.points[i].y);
   ctx.closePath();
+
+  ctx.translate(-this.x, -this.y);
 };
 
 Polygon.prototype.draw = function(ctx) {
 
-  ctx.translate( this.x,  this.y);
-  
   ctx.fillStyle   = this.fillColor;
   ctx.strokeStyle = this.strokeColor;
   this._drawPath(ctx);
   ctx.fill();
   ctx.stroke();
-
-  ctx.translate(-this.x, -this.y);
 };
 
 Polygon.prototype.drawOutline = function(ctx, options) {
@@ -121,12 +121,10 @@ Polygon.prototype.drawOutline = function(ctx, options) {
 Polygon.prototype.mouseDown = function(x, y) {
   console.log('Polygon::mouseDown()', x, y);
   
-  var ctx = this._owner._prepareOverlayContext();
+  var ctx = this._owner.display_context;
   
   this._drawPath(ctx);
   if (ctx.isPointInPath(x, y)) { console.log('HIT'); }
-  
-  this._owner._doneWithOverlayContext();
 };
 
 // View Model used by the "designer" widget ------------------------
@@ -181,8 +179,8 @@ SketchPad.prototype._objectChanged = function(obj) {
 
 SketchPad.prototype._prepareOverlayContext = function() {
   
-  this.overlay_context.translate( this.margin(), this.margin() );
   this.overlay_context.save();  
+  this.overlay_context.translate( this.margin(), this.margin() );
   
   return this.overlay_context; // just a convenience
 };
@@ -192,17 +190,22 @@ SketchPad.prototype._doneWithOverlayContext = function() {
   this.overlay_context.restore();
 };
 
+SketchPad.prototype._getRelativeMouseCoords = function(e) {
+  
+  return { x: e.pageX - e.target.offsetLeft - this.margin(), 
+           y: e.pageY - e.target.offsetTop  - this.margin() };
+};
+
 // Event handlers ----------------------------------------------------
 
 SketchPad.prototype.mouseDown = function(target, e) {
   console.log('SketchPad::mouseDown()', e);
   
-  var x = e.pageX - e.target.offsetLeft - this.margin(), 
-      y = e.pageY - e.target.offsetTop  - this.margin();
+  var pos = this._getRelativeMouseCoords(e);
   
   for (var i = 0; i < this.objects().length; i ++) {
     var obj = this.objects()[i];
-    if (obj.mouseDown(x, y)) break;
+    if (obj.mouseDown(pos.x, pos.y)) break;
   }
 };
 
