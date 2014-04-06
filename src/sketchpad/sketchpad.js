@@ -61,10 +61,11 @@ Image.prototype.draw = function(context) {
   if (!context) debugger;
   context.drawImage(this.img, this.x, this.y); };
 
-/* For simple shapes.
+/* An "area" is a graphical object without a direct visual representation; it is shown
+  on screen by its outline only.
  */
  
-function Polygon(options) {
+function Area(options) {
   
   GObject.call(this, options);
   
@@ -73,10 +74,16 @@ function Polygon(options) {
   this.strokeColor = this.options.strokeColor || 'rgb(0, 0, 0';
 }
 
-Polygon.prototype = new GObject();
-Polygon.prototype.constructor = Polygon;
+Area.prototype = new GObject();
+Area.prototype.constructor = Area;
 
-Polygon.prototype.draw = function(ctx) {
+Area.prototype.draw = function(ctx) {
+  // No-op  
+};
+
+Area.prototype.drawOutline = function(ctx, options) {
+
+  // Draw polygon
   
   ctx.fillStyle   = this.fillColor;
   ctx.strokeStyle = this.strokeColor;
@@ -88,10 +95,9 @@ Polygon.prototype.draw = function(ctx) {
   ctx.fill();
   ctx.stroke();
   ctx.translate(-this.x, -this.y);  
-};
 
-Polygon.prototype.drawOutline = function(ctx, options) {
-
+  // Draw handles 
+  
   ctx.fillStyle   = 'rgba(255, 100, 100, 0.5)'; // TODO: depends on whether select or not
   ctx.strokeStyle = '#000000';
   
@@ -193,7 +199,7 @@ SketchPad.prototype.redraw = function() {
 
 SketchPad.Object  = GObject; // no point in keeping the "G" prefix
 SketchPad.Image   = Image;
-SketchPad.Polygon = Polygon;
+SketchPad.Area = Area;
 
 // Custom binding --------------------------------------------------
 

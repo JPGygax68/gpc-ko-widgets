@@ -218,7 +218,7 @@ treeview.showValueColumn(true);
 var sketchpad = new SketchPad(640, 480);
 
 sketchpad.objects.push( new SketchPad.Image({url: 'data/SampleVial-Full.png'}) );
-sketchpad.objects.push( new SketchPad.Polygon({x: 50, y: 50}) );
+sketchpad.objects.push( new SketchPad.Area({x: 50, y: 50}) );
 
 var myViewModel = { 
   page: ko.observable('SketchPad'),
