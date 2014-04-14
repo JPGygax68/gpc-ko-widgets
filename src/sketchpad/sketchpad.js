@@ -155,6 +155,14 @@ Polygon.prototype.mouseDown = function(x, y) {
 
 Polygon.prototype.mouseMove = function(x, y) {
   console.log('Polygon::mouseMove()', x, y);
+  
+  if (this._dragging_handle >= 0) {
+    var i = this._dragging_handle;
+    var point = this.points[i];
+    point.x = x - this.x;
+    point.y = y - this.y;
+    this._owner.redraw();
+  }
 };
 
 Polygon.prototype.mouseUp = function(x, y) {
@@ -216,12 +224,30 @@ SketchPad.prototype._objectChanged = function(obj) {
   this.refresh();
 };
 
+SketchPad.prototype._prepareDisplayContext = function() {
+
+  var ctx = this.display_context;
+  
+  ctx.clearRect(0, 0, this.width(), this.height());
+  
+  return ctx;
+};
+
+SketchPad.prototype._doneWithDisplayContext = function() {
+  
+  // NO-OP, exists for symmetry
+};
+
 SketchPad.prototype._prepareOverlayContext = function() {
   
-  this.overlay_context.save();  
-  this.overlay_context.translate( this.margin(), this.margin() );
+  var ctx = this.overlay_context;
   
-  return this.overlay_context; // just a convenience
+  ctx.clearRect(0, 0, this.width() + 2 * this.margin(), this.height() + 2 * this.margin() );
+  
+  ctx.save();  
+  ctx.translate( this.margin(), this.margin() );
+  
+  return ctx; // just a convenience
 };
 
 SketchPad.prototype._doneWithOverlayContext = function() {
@@ -294,9 +320,8 @@ SketchPad.prototype.refresh = function() {
 SketchPad.prototype.redraw = function() {
   console.log('SketchPad::redraw()');
   
-  // We translate on the overlay context so that the origins of both are identical
+  this._prepareDisplayContext();
   //this.display_context.translate( 0.5, 0.5 );
-  this.display_context.save();
   this._prepareOverlayContext();
   
   this.objects().forEach( function(obj) { 
@@ -304,8 +329,7 @@ SketchPad.prototype.redraw = function() {
     this._drawOutline(obj);
   }, this );
 
-  this.display_context.restore();
-  //this.overlay_context.restore();
+  this._doneWithDisplayContext();
   this._doneWithOverlayContext();
 };
 
