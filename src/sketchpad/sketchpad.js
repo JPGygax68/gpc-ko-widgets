@@ -142,6 +142,16 @@ SketchPad.prototype.mouseMove = function(target, e) {
   }
 };
 
+SketchPad.prototype.mouseOut = function(target, e) {
+  console.log('SketchPad::mouseOut()', e);
+
+  if (this._mouse_owner) {
+    var pos = this._getRelativeMouseCoords(e);  
+    this._mouse_owner.mouseUp(pos.x, pos.y);
+    this._mouse_owner = null;
+  }
+};
+
 // Interface towards graphical objects -------------------------------
 
 SketchPad.prototype.captureMouse = function(obj) {
@@ -201,6 +211,9 @@ ko.bindingHandlers.gpc_kowidgets_designer = {
     
     console.log('instrumentViewer.init()', 'element:', element, 'value:', valueAccessor(), 'instance:', instance);
 
+    // Obtain container element
+    instance.container = element.getElementsByClassName('container')[0];
+    
     // Obtain contexts for both canvases ("display" and "overlay")
     instance.display_context = element.getElementsByClassName('display')[0].getContext('2d');
     instance.overlay_context = element.getElementsByClassName('overlay')[0].getContext('2d');
