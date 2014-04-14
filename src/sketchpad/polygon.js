@@ -57,7 +57,7 @@ Polygon.prototype.drawOutline = function(ctx, options) {
   for (var i = 0; i < this.points.length; i++) {
     var point = this.points[i];
     this._drawHandlePath(ctx, point);
-    ctx.fillStyle = point._selected ? 'rgba(255, 100, 100, 0.5)' : 'rgba(128, 128, 128, 0.5';
+    ctx.fillStyle = i === this._selected_handle ? 'rgba(255, 100, 100, 0.5)' : 'rgba(128, 128, 128, 0.5';
     ctx.fill();
     ctx.stroke();
   }
@@ -71,6 +71,7 @@ Polygon.prototype.mouseDown = function(x, y) {
   var ctx = this._owner.display_context;
   
   // Hit on one of the handles ?
+  var hit = false;
   ctx.translate( this.x,  this.y);
   for (var i = 0; i < this.points.length; i++) {
     var point = this.points[i];
@@ -79,10 +80,17 @@ Polygon.prototype.mouseDown = function(x, y) {
       console.log('HIT on handle #'+i); 
       this._owner.captureMouse(this);
       this._dragging_handle = i;
+      this._selected_handle = i;
+      hit = true;
       break;
     }
   }
   ctx.translate(-this.x, -this.y);
+  
+  if (hit) {
+    this._owner.redraw();
+    return;
+  }
   
   // Hit inside the polygon ?
   this._drawPath(ctx);
