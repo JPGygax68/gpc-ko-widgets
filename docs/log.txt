@@ -9,6 +9,8 @@ I've done a small amount of additional work on the SketchPad widget.
 
 - The "overlay" canvas probably should *not* be offset by (0.5, 0.5) (though it should be offset by (margin, margin)). The idea of getting automatic grid-fitting so easily was naive; better leave that to the code handling the individual elements.
 
+- canvas.style.cursor = ... can be used to easily changed the mouse cursor
+
 2014-04-01
 ==========
 

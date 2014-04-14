@@ -73,6 +73,9 @@ function Polygon(options) {
   this.points      = this.options.points || [ {x: 0, y: 0}, {x: 100, y: 0}, {x: 100, y: 100}, {x:0, y: 100}];
   this.fillColor   = this.options.fillColor || 'rgba(255, 100, 100, 0.5)'; 
   this.strokeColor = this.options.strokeColor || 'rgb(0, 0, 0';
+  
+  // State
+  this.selected = false;
 }
 
 Polygon.prototype = new GObject();
@@ -90,6 +93,12 @@ Polygon.prototype._drawPath = function(ctx) {
   ctx.translate(-this.x, -this.y);
 };
 
+Polygon.prototype._drawHandlePath = function(ctx, point) {
+  ctx.beginPath();
+  ctx.rect(point.x - 3.5, point.y - 3.5, 7, 7);
+  ctx.closePath();
+};
+
 Polygon.prototype.draw = function(ctx) {
 
   ctx.fillStyle   = this.fillColor;
@@ -103,14 +112,12 @@ Polygon.prototype.drawOutline = function(ctx, options) {
 
   ctx.translate( this.x,  this.y);
   
-  ctx.fillStyle   = 'rgba(255, 100, 100, 0.5)';
   ctx.strokeStyle = 'rgb(0, 0, 0)';
   
   for (var i = 0; i < this.points.length; i++) {
     var point = this.points[i];
-    ctx.beginPath();
-    ctx.rect(point.x - 3.5, point.y - 3.5, 7, 7);
-    ctx.closePath();
+    this._drawHandlePath(ctx, point);
+    ctx.fillStyle = point.selected ? 'rgba(255, 100, 100, 0.5)' : 'rgba(128, 128, 128, 0.5';
     ctx.fill();
     ctx.stroke();
   }
@@ -123,6 +130,16 @@ Polygon.prototype.mouseDown = function(x, y) {
   
   var ctx = this._owner.display_context;
   
+  // Hit on one of the handles ?
+  ctx.translate( this.x,  this.y);
+  for (var i = 0; i < this.points.length; i++) {
+    var point = this.points[i];
+    this._drawHandlePath(ctx, point);
+    if (ctx.isPointInPath(x, y)) { console.log('HIT on handle #'+i); }
+  }
+  ctx.translate(-this.x, -this.y);
+  
+  // Hit inside the polygon ?
   this._drawPath(ctx);
   if (ctx.isPointInPath(x, y)) { console.log('HIT'); }
 };
