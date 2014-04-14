@@ -2,6 +2,6 @@
 
 div.gpc-ko-widget.sketchpad(data-bind="gpc_kowidgets_designer: $data")
   div.zoom_factor
-  div.container(data-bind="event: { mousedown: mouseDown }, style: { width: (width()+2*margin())+'px', height: (height()+2*margin())+'px' }")
+  div.container(data-bind="event: { mousedown: mouseDown, mouseup: mouseUp, mousemove: mouseMove }, style: { width: (width()+2*margin())+'px', height: (height()+2*margin())+'px' }")
     canvas.display(data-bind="attr: { width: width, height: height }, style: { left: margin()+'px', top: margin()+'px' }")
     canvas.overlay(data-bind="attr: { width: width()+2*margin(), height: height()+2*margin() }")

@@ -41,7 +41,10 @@ GObject.prototype._notifyChange = function() {
   if (this._owner) this._owner._objectChanged(this);
 };
 
-GObject.prototype.mouseDown = function() {} // override in descendants
+// Override in descendants
+GObject.prototype.mouseDown = function() {};
+GObject.prototype.mouseMove = function() {};
+GObject.prototype.mouseUp   = function() {};
 
 /* Image represents pictures (using DOM IMG elements).
  */
@@ -75,7 +78,8 @@ function Polygon(options) {
   this.strokeColor = this.options.strokeColor || 'rgb(0, 0, 0';
   
   // State
-  this.selected = false;
+  this._selected = false;
+  this._dragging_handle = -1;
 }
 
 Polygon.prototype = new GObject();
@@ -117,7 +121,7 @@ Polygon.prototype.drawOutline = function(ctx, options) {
   for (var i = 0; i < this.points.length; i++) {
     var point = this.points[i];
     this._drawHandlePath(ctx, point);
-    ctx.fillStyle = point.selected ? 'rgba(255, 100, 100, 0.5)' : 'rgba(128, 128, 128, 0.5';
+    ctx.fillStyle = point._selected ? 'rgba(255, 100, 100, 0.5)' : 'rgba(128, 128, 128, 0.5';
     ctx.fill();
     ctx.stroke();
   }
@@ -135,13 +139,31 @@ Polygon.prototype.mouseDown = function(x, y) {
   for (var i = 0; i < this.points.length; i++) {
     var point = this.points[i];
     this._drawHandlePath(ctx, point);
-    if (ctx.isPointInPath(x, y)) { console.log('HIT on handle #'+i); }
+    if (ctx.isPointInPath(x, y)) { 
+      console.log('HIT on handle #'+i); 
+      this._owner.captureMouse(this);
+      this._dragging_handle = i;
+      break;
+    }
   }
   ctx.translate(-this.x, -this.y);
   
   // Hit inside the polygon ?
   this._drawPath(ctx);
   if (ctx.isPointInPath(x, y)) { console.log('HIT'); }
+};
+
+Polygon.prototype.mouseMove = function(x, y) {
+  console.log('Polygon::mouseMove()', x, y);
+};
+
+Polygon.prototype.mouseUp = function(x, y) {
+  console.log('Polygon::mouseUp()', x, y);
+  
+  if (this._dragging_handle >= 0) {
+    this._owner.releaseMouse();
+    this._dragging_handle = -1;
+  }
 };
 
 // View Model used by the "designer" widget ------------------------
@@ -224,6 +246,39 @@ SketchPad.prototype.mouseDown = function(target, e) {
     var obj = this.objects()[i];
     if (obj.mouseDown(pos.x, pos.y)) break;
   }
+};
+
+SketchPad.prototype.mouseUp = function(target, e) {
+  console.log('SketchPad::mouseUp()', e);
+  
+  if (this._mouse_owner) {
+    var pos = this._getRelativeMouseCoords(e);
+    this._mouse_owner.mouseUp(pos.x, pos.y);
+  }
+};
+
+SketchPad.prototype.mouseMove = function(target, e) {
+  //console.log('SketchPad::mouseMove()', e);
+
+  if (this._mouse_owner) {
+    var pos = this._getRelativeMouseCoords(e);  
+    this._mouse_owner.mouseMove(pos.x, pos.y);
+  }
+};
+
+// Interface towards graphical objects -------------------------------
+
+SketchPad.prototype.captureMouse = function(obj) {
+  console.log('SketchPad::captureMouse()');
+  
+  // You caught it, you own it
+  this._mouse_owner = obj;
+};
+
+SketchPad.prototype.releaseMouse = function() {
+  console.log('SketchPad::releaseMouse()');
+  
+  this._mouse_owner = null;
 };
 
 // Public methods ----------------------------------------------------
