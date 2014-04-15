@@ -18,8 +18,15 @@ function Image(options) {
 Image.prototype = new GObject();
 Image.prototype.constructor = Image;
 
-Image.prototype.draw = function(context, options) { 
-  if (!context) debugger;
-  context.drawImage(this.img, this.x, this.y); };
+Image.prototype.draw = function(ctx, options) { 
+  ctx.drawImage(this.img, this.x, this.y); };
+
+Image.prototype.drawOutline = function(ctx, options) { 
+  ctx.beginPath();
+  ctx.rect(this.x, this.y, this.img.width, this.img.height);
+  ctx.closePath();
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+  ctx.stroke();
+};
 
 module.exports = Image;
