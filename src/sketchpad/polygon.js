@@ -82,7 +82,8 @@ Polygon.prototype.mouseDown = function(x, y) {
     var point = this.points[i];
     this._drawHandlePath(ctx, point);
     if (ctx.isPointInPath(x, y)) { 
-      console.log('HIT on handle #'+i); 
+      console.log('HIT on handle #'+i);
+      this.select(); // TODO: good idea ? make it optional ?
       this._owner.captureMouse(this);
       this._dragging_handle = i;
       this._selected_handle = i;

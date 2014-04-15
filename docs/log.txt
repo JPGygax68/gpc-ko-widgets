@@ -51,8 +51,21 @@ Ok, now on to my own thoughts and ideas:
   - Callback finds data model object - how ? -> mapping stores ref to data model object into view model object
   
 - And so, it appears I'll be re-using the TreeView pattern after all. I shall try to isolate it into a separate module, and take a more or less iterative approach from here.
+
+-------------
+
+Ok, no big steps today. A few things to note:
+
+- GObject implements dragging now; however it relies on the existence of _drawPath() for this. It might be better to define a hitTest(x, y) method so that the hit test doesn't depend on _drawPath(), which may not be needed in some cases.
+  - OR... create a default implementation that depends on the existence of width and height properties, which so far are not part of GObject.
   
+- It may be useful to implement a way to select objects obscured by others.
+  - Cycle through objects in reverse Z order when mouse button is depressed for more than 1 second ?
+  - Adjoin a tree view representing the objects (and their properties) ?
   
+- Should polygon edges stay selected when the polygon itself is de-selected ?
+
+
 2014-04-14
 ==========
 

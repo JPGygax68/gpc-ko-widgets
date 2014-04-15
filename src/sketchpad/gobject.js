@@ -66,9 +66,5 @@ GObject.prototype.mouseUp = function(x, y) {
   }
 };
 
-// options: selected
-GObject.prototype.drawOverlay = function(context, options) {
-};
-  
 // We export the class
 module.exports = GObject;

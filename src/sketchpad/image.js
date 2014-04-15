@@ -33,7 +33,7 @@ Image.prototype.drawOutline = function(ctx, options) {
   
   if (options.selected) {
     this._drawPath(ctx);
-    ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.strokeStyle = 'rgba(255, 50, 50, 0.5)';
     ctx.stroke();
   }
 };

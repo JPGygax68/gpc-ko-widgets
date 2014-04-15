@@ -37,7 +37,7 @@ function SketchPad(width, height, options) {
 
   this.objects = ko.observableArray();
 
-  this.selectedObject = ko.observableArray(null);
+  this.selectedObject = ko.observable(null);
   
   this._redraw_required = ko.observable();
     
@@ -125,10 +125,13 @@ SketchPad.prototype.mouseDown = function(target, e) {
   
   var pos = this._getRelativeMouseCoords(e);
   
+  // Selected object first
+  if (this.selectedObject() && this.selectedObject().mouseDown(pos.x, pos.y)) return;
+  
   // Inverse Z order
   for (var i = this.objects().length; -- i >= 0; ) {
     var obj = this.objects()[i];
-    if (obj.mouseDown(pos.x, pos.y)) break;
+    if (obj !== this.selectedObject() && obj.mouseDown(pos.x, pos.y)) break;
   }
 };
 
