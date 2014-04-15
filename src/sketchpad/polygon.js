@@ -97,18 +97,7 @@ Polygon.prototype.mouseDown = function(x, y) {
     return true;
   }
   
-  // Hit inside the polygon ?
-  this._drawPath(ctx);
-  if (ctx.isPointInPath(x, y)) { 
-    console.log('HIT');
-    this.select(); // should trigger redraw()
-    // Begin dragging
-    this._owner.captureMouse(this, 'grab');
-    this._dragging = {
-      offset: { x: x - this.x, y: y - this.y }
-    };
-    return true;
-  }
+  return GObject.prototype.mouseDown.apply(this, arguments);
 };
 
 Polygon.prototype.mouseMove = function(x, y) {
@@ -121,10 +110,8 @@ Polygon.prototype.mouseMove = function(x, y) {
     point.y = y - this.y;
     this._owner.redraw();
   }
-  else if (this._dragging) {
-    this.x = x - this._dragging.offset.x;
-    this.y = y - this._dragging.offset.y;
-    this._owner.redraw();
+  else {
+    return GObject.prototype.mouseMove.apply(this, arguments);
   }
 };
 
@@ -135,9 +122,8 @@ Polygon.prototype.mouseUp = function(x, y) {
     this._owner.releaseMouse();
     this._dragging_handle = -1;
   }
-  else if (this._dragging) {
-    this._owner.releaseMouse();
-    this._dragging = false;
+  else {
+    return GObject.prototype.mouseUp.apply(this, arguments);
   }
 };
 

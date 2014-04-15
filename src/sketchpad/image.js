@@ -18,15 +18,24 @@ function Image(options) {
 Image.prototype = new GObject();
 Image.prototype.constructor = Image;
 
+Image.prototype._drawPath = function(ctx) {
+  ctx.beginPath();
+  ctx.rect(this.x, this.y, this.img.width, this.img.height);
+  ctx.closePath();
+};
+
 Image.prototype.draw = function(ctx, options) { 
   ctx.drawImage(this.img, this.x, this.y); };
 
 Image.prototype.drawOutline = function(ctx, options) { 
-  ctx.beginPath();
-  ctx.rect(this.x, this.y, this.img.width, this.img.height);
-  ctx.closePath();
-  ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
-  ctx.stroke();
+  
+  options = options || {};
+  
+  if (options.selected) {
+    this._drawPath(ctx);
+    ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
+    ctx.stroke();
+  }
 };
 
 module.exports = Image;

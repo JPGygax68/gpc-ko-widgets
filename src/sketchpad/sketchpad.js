@@ -69,10 +69,10 @@ SketchPad.prototype._drawObject = function(obj, options) {
   obj.draw(this.display_context, options);
 };
 
-SketchPad.prototype._drawOutline = function(obj) {
+SketchPad.prototype._drawOutline = function(obj, options) {
   console.log('SketchPad::_drawOutline()');
   
-  if (obj.drawOutline) obj.drawOutline(this.overlay_context);
+  if (obj.drawOutline) obj.drawOutline(this.overlay_context, options);
 };
 
 SketchPad.prototype._objectChanged = function(obj) {
