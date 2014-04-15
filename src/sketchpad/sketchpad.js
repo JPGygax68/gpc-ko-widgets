@@ -148,23 +148,30 @@ SketchPad.prototype.mouseOut = function(target, e) {
   if (this._mouse_owner) {
     var pos = this._getRelativeMouseCoords(e);  
     this._mouse_owner.mouseUp(pos.x, pos.y);
-    this._mouse_owner = null;
+    this.releaseMouse();
   }
 };
 
 // Interface towards graphical objects -------------------------------
 
-SketchPad.prototype.captureMouse = function(obj) {
+SketchPad.prototype.captureMouse = function(obj, cursor) {
   console.log('SketchPad::captureMouse()');
   
   // You caught it, you own it
   this._mouse_owner = obj;
+  
+  // Change cursor style (if asked for)
+  this.container.style.cursor = '-webkit-'+cursor;
+  this.container.style.cursor = '-moz-'+cursor;
+  this.container.style.cursor = '-ms-'+cursor;
+  this.container.style.cursor = cursor;
 };
 
 SketchPad.prototype.releaseMouse = function() {
   console.log('SketchPad::releaseMouse()');
   
   this._mouse_owner = null;
+  this.container.style.cursor = 'auto';
 };
 
 // Public methods ----------------------------------------------------

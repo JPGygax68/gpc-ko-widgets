@@ -4,6 +4,7 @@
 Implemented polygon vertex dragging, noted two problems:
 
 - When dragging beyond the margin (i.e. the extended region of the overlay canvas) and letting go of the mouse button there, the mouse up is not detected. Is there a way to implement real mouse capturing?
+  -> NO. This is not sufficiently standardized. I worked around it (for now?) by sending a mouseUp() to the current object from the mouseout event.
 
 - No matter where exactly you click inside a vertex handle, when dragging it, the vertex will be moved to the exact location of the mouse pointer (i.e., the initial offset is discarded). Not sure that's really a problem though.
 
