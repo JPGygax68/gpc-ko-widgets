@@ -373,6 +373,8 @@ Node.prototype.addChildNode = function(label, data, options) {
 
 // STATIC METHODS ---------------------------
 
+/* This is a factory function that creates a node representing an "item".
+ */
 Node.fromModel = function(item, treeview, options) {
 
   var options = options || {};

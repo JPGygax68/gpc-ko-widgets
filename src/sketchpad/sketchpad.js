@@ -37,6 +37,8 @@ function SketchPad(width, height, options) {
 
   this.objects = ko.observableArray();
 
+  this.selectedObject = ko.observableArray(null);
+  
   this._redraw_required = ko.observable();
     
   this.objects.subscribe( function(changes) {
@@ -45,7 +47,7 @@ function SketchPad(width, height, options) {
       //change.index
       //change.status
       //change.value
-      if (change.status === 'added') change.value._owner = this;
+      if (change.status === 'added') change.value._owner = this; // so we don't have to pass owner when constructing objects
       redraw_flag = true;
     }, this);
     if (redraw_flag) {
@@ -54,12 +56,17 @@ function SketchPad(width, height, options) {
       else this._redraw_required(true);
     }
   }, this, 'arrayChange');
+  
+  this.selectedObject.subscribe( function(obj) {
+    console.log('SketchPad: selectedObject value has changed');
+    this.redraw();
+  }, this);
 }
 
-SketchPad.prototype._drawObject = function(obj) {
+SketchPad.prototype._drawObject = function(obj, options) {
   console.log('SketchPad::_drawObject()');
   
-  obj.draw(this.display_context);
+  obj.draw(this.display_context, options);
 };
 
 SketchPad.prototype._drawOutline = function(obj) {
@@ -118,7 +125,8 @@ SketchPad.prototype.mouseDown = function(target, e) {
   
   var pos = this._getRelativeMouseCoords(e);
   
-  for (var i = 0; i < this.objects().length; i ++) {
+  // Inverse Z order
+  for (var i = this.objects().length; -- i >= 0; ) {
     var obj = this.objects()[i];
     if (obj.mouseDown(pos.x, pos.y)) break;
   }
@@ -192,8 +200,9 @@ SketchPad.prototype.redraw = function() {
   this._prepareOverlayContext();
   
   this.objects().forEach( function(obj) { 
-    this._drawObject(obj);
-    this._drawOutline(obj);
+    var selected = obj === this.selectedObject();
+    this._drawObject (obj, { selected: selected });
+    this._drawOutline(obj, { selected: selected });
   }, this );
 
   this._doneWithDisplayContext();

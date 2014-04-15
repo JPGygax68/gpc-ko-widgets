@@ -10,8 +10,8 @@ function Polygon(options) {
   GObject.call(this, options);
   
   this.points      = this.options.points || [ {x: 0, y: 0}, {x: 100, y: 0}, {x: 100, y: 100}, {x:0, y: 100}];
-  this.fillColor   = this.options.fillColor || 'rgba(255, 100, 100, 0.5)'; 
-  this.strokeColor = this.options.strokeColor || 'rgb(0, 0, 0';
+  //this.fillColor   = this.options.fillColor || 'rgba(255, 100, 100, 0.5)'; 
+  //this.strokeColor = this.options.strokeColor || 'rgb(0, 0, 0';
   
   // State
   this._selected = false;
@@ -40,10 +40,14 @@ Polygon.prototype._drawHandlePath = function(ctx, point) {
   ctx.closePath();
 };
 
-Polygon.prototype.draw = function(ctx) {
-
-  ctx.fillStyle   = this.fillColor;
-  ctx.strokeStyle = this.strokeColor;
+Polygon.prototype.draw = function(ctx, options) {
+  
+  options = options || {};
+  
+  console.log('Polygon::draw(), selected:', options.selected);
+  
+  ctx.fillStyle   = options.selected ? 'rgba(255, 100, 100, 0.5)' : 'rgba(128, 128, 128, 0.5)';
+  ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
   this._drawPath(ctx);
   ctx.fill();
   ctx.stroke();
@@ -90,18 +94,20 @@ Polygon.prototype.mouseDown = function(x, y) {
   
   if (hit) {
     this._owner.redraw();
-    return;
+    return true;
   }
   
   // Hit inside the polygon ?
   this._drawPath(ctx);
   if (ctx.isPointInPath(x, y)) { 
     console.log('HIT');
+    this.select(); // should trigger redraw()
     // Begin dragging
     this._owner.captureMouse(this, 'grab');
     this._dragging = {
       offset: { x: x - this.x, y: y - this.y }
     };
+    return true;
   }
 };
 

@@ -18,7 +18,7 @@ function Image(options) {
 Image.prototype = new GObject();
 Image.prototype.constructor = Image;
 
-Image.prototype.draw = function(context) { 
+Image.prototype.draw = function(context, options) { 
   if (!context) debugger;
   context.drawImage(this.img, this.x, this.y); };
 

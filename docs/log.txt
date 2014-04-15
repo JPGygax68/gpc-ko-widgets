@@ -1,3 +1,58 @@
+2014-04-15
+==========
+
+Ok, next steps.
+
+It appears clear at this point that I do need a mechanism for synchronization between data models. I kind of improvised something for the Tree View, but that's just too cumbersome to become a pattern. [Or rather, that pattern is no longer sufficient for SketchPad, as SketchPad cannot pass data model parts "down" to custom Knockout templates).
+
+What are the requirements ?
+
+- Initialize view model with a tailored image of the data model.
+
+- Synchronize changes made on the view model back to the data model.
+
+- Synchronize changes made on the data model to the live view model.
+
+What does "tailored image" mean ? We want to:
+
+- Drop properties and sub-objects that do not have to, or cannot, be represented in the view model
+- Move properties and sub-objects up or down the view model hierarchy (should be more rare)
+- Generally freely adapt between the data and the view model
+
+What does syncing view model back to data model imply ?
+
+- Filtering view model parts that have no representation in the data model
+- Adapting the view model's representation to the one used in the data model
+- It implies that the view model is notifying the "mapper" of any and all changes
+
+What do live updates to the view model imply ?
+
+- It actually means repeating parts of the initial mapping process, BUT:
+  - Care must be taken not to duplicate already existing mapped view model data
+
+I'm now going to do some research into possible existing approaches:
+
+- JSONPath: interesting
+
+---
+
+Ok, now on to my own thoughts and ideas:
+
+- I was thinking about a selector syntax like maybe JSONPath. Maybe however it would be better to create my own, specially made for this particular taks; or maybe it can be avoided after all, by providing a clean, callback-driven API.
+
+- [I should keep in mind that at some point, I will create an interactive tool to help create mappings.]
+
+- Mapping is orchestrated by a "mapping controller".
+
+- Behavior is default-driven; i.e., no code should be needed to obtain a fully functional mapping when every property needed by the view model is already contained in the data model.
+
+- Maybe a full-fledged mapping is not needed (yet) after all? How about:
+  - SketchPad notifies about all changes via callback that specifies full path
+  - Callback finds data model object - how ? -> mapping stores ref to data model object into view model object
+  
+- And so, it appears I'll be re-using the TreeView pattern after all. I shall try to isolate it into a separate module, and take a more or less iterative approach from here.
+  
+  
 2014-04-14
 ==========
 
