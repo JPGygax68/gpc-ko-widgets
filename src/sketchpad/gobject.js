@@ -28,7 +28,7 @@ GObject.prototype.draw      = function(context, options) { throw new Error(this.
 /* The default implementation of mouseDown() requires a method _drawPath(ctx) to be implemented.
  */
 GObject.prototype.mouseDown = function(x, y) {
-
+  
   if (!this._drawPath) { console.log('no _drawPath() method'); return false; }
   
   var ctx = this._owner.display_context;

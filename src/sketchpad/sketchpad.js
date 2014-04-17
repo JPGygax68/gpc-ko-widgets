@@ -30,8 +30,13 @@ function SketchPad(width, height, options) {
   
   this.options = options || {};
   
-  this.width   = ko.observable(width);
-  this.height  = ko.observable(height);
+  console.log('SketchPad() width:', ko.unwrap(width), ' height:', ko.unwrap(height));
+  
+  this.width   = ko.isObservable(width ) ? width  : ko.observable(width );
+  this.height  = ko.isObservable(height) ? height : ko.observable(height);
+  
+  this.width .subscribe( function() { window.setTimeout(this.refresh.bind(this), 1); }, this );
+  this.height.subscribe( function() { window.setTimeout(this.refresh.bind(this), 1); }, this );
   
   this.margin  = ko.observable(DEFAULT_MARGIN);
 
@@ -112,10 +117,21 @@ SketchPad.prototype._doneWithOverlayContext = function() {
   this.overlay_context.restore();
 };
 
-SketchPad.prototype._getRelativeMouseCoords = function(e) {
+SketchPad.prototype._getRelativeMouseCoords = function(e) {  
+  //console.log('_getRelativeMouseCoords:', e);
   
-  return { x: e.pageX - e.target.offsetLeft - this.margin(), 
-           y: e.pageY - e.target.offsetTop  - this.margin() };
+  var elt_pos = getPosition(e.target);
+  
+  return { x: e.pageX - elt_pos.x - this.margin(), 
+           y: e.pageY - elt_pos.y - this.margin() };
+
+  //------------
+  
+  function getPosition(elt) {
+    var pos = elt.offsetParent ? getPosition(elt.offsetParent) : { x: 0, y: 0 };
+    pos.x += elt.offsetLeft, pos.y += elt.offsetTop;
+    return pos;
+  }
 };
 
 // Event handlers ----------------------------------------------------
@@ -244,6 +260,8 @@ ko.bindingHandlers.gpc_kowidgets_designer = {
     // This will be called once when the binding is first applied to an element,
     // and again whenever the associated observable changes value.
     // Update the DOM element based on the supplied values here.
+    //var instance = bindingContext.$rawData;
+    //instance.refresh();
   }
 };
 

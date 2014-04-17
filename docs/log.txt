@@ -65,6 +65,8 @@ Ok, no big steps today. A few things to note:
   
 - Should polygon edges stay selected when the polygon itself is de-selected ?
 
+- No way to de-select by mouse click so far
+
 
 2014-04-14
 ==========
