@@ -1,3 +1,9 @@
+2014-04-17
+==========
+
+- Support using functions where values or observables are usually expected, by default everywhere. Create a utility function/method makeValue() or something.
+
+
 2014-04-15
 ==========
 

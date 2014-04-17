@@ -11,6 +11,7 @@ function ViewModel(data) {
 
 // TODO: make it inherit the entirety of underscore ?
 
-ViewModel.prototype.valueType = util.valueType;
+ViewModel.prototype.valueType      = util.valueType;
+ViewModel.prototype.makeObservable = util.makeObservable;
 
 module.exports = ViewModel;

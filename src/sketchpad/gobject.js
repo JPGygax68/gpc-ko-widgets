@@ -1,15 +1,27 @@
 "use strict";
 
+var _    = require('underscore');
+
+var util = require('../util/util');
+
 /* This is the abstract base class.
- */
- 
-function GObject(options) {
+  - The first argument contains the properties to attach to the graphical object.
+    IMPORTANT: because these properties can be computed observables (or functions
+      that will be made into computeds), their order can be very important!
+ */ 
+function GObject(props, options) {
 
   this.options = options || {};
-  var x = this.options.x || 0, y = this.options.y || 0;
-  this.x = ko.isObservable(x) ? x : ko.observable(x);
-  this.y = ko.isObservable(y) ? y : ko.observable(y);
+  
+  if (props) {
+    _.each(props, function(prop, name) { if (typeof prop !== 'undefined') this[name] = this.makeObservable(prop); }, this);
+  }
+  
+  if (!this.x) this.x = this.makeObservable(0);
+  if (!this.y) this.y = this.makeObservable(0);
 }
+
+GObject.prototype.makeObservable = util.makeObservable;
 
 GObject.prototype.select = function() {
 

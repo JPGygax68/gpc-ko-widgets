@@ -5,11 +5,11 @@ var GObject = require('./gobject');
 /* Polygon - very simple shape, basically just a path plus a fill and stroke style.
  */
  
-function Polygon(options) {
+function Polygon(position, options) {
   
-  GObject.call(this, options);
+  GObject.call(this, position, options);
   
-  this.points      = this.options.points || [ {x: 0, y: 0}, {x: 100, y: 0}, {x: 100, y: 100}, {x:0, y: 100}];
+  this.points = this.options.points || [ {x: 0, y: 0}, {x: 100, y: 0}, {x: 100, y: 100}, {x:0, y: 100}];
   //this.fillColor   = this.options.fillColor || 'rgba(255, 100, 100, 0.5)'; 
   //this.strokeColor = this.options.strokeColor || 'rgb(0, 0, 0';
   
@@ -77,7 +77,7 @@ Polygon.prototype.mouseDown = function(x, y) {
   
   // Hit on one of the handles ?
   var hit = false;
-  ctx.translate( this.x,  this.y);
+  ctx.translate( this.x(),  this.y());
   for (var i = 0; i < this.points.length; i++) {
     var point = this.points[i];
     this._drawHandlePath(ctx, point);
@@ -91,7 +91,7 @@ Polygon.prototype.mouseDown = function(x, y) {
       break;
     }
   }
-  ctx.translate(-this.x, -this.y);
+  ctx.translate(-this.x(), -this.y());
   
   if (hit) {
     this._owner.redraw();
@@ -107,8 +107,8 @@ Polygon.prototype.mouseMove = function(x, y) {
   if (this._dragging_handle >= 0) {
     var i = this._dragging_handle;
     var point = this.points[i];
-    point.x = x - this.x;
-    point.y = y - this.y;
+    point.x = x - this.x();
+    point.y = y - this.y();
     this._owner.redraw();
   }
   else {

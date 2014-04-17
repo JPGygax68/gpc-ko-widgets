@@ -1,5 +1,7 @@
 "use strict";
 
+var _ = require('underscore');
+
 var GObject = require('./gobject');
 
 /* Image represents pictures (using DOM IMG elements).
@@ -7,21 +9,22 @@ var GObject = require('./gobject');
  
 function Image(options) {
 
-  GObject.call(this, options);
-
-  this.width  = ko.observable(0);
-  this.height = ko.observable(0);
+  options = options || {};
   
+  // The dimensions are passed in as 0, which the GObject ctor will make into observables.
+  // The coordinates can be passed in through the options; if none are specified, the GObject
+  // ctor will created them as observables initialized to 0.
+  GObject.call(this, { width: 0, height: 0, x: options.x, y: options.y }, options);
+
   this.img = document.createElement('img');
   
-  //window.setTimeout( function() { this.img.src = options.url; }.bind(this), 1000 );
   var self = this;
   this.img.addEventListener('load', function() {
     self.width ( self.img.width  );
     self.height( self.img.height );
     self._notifyChange();
   });
-  this.img.src = options.url; // starts loading (if url is defined)
+  if (options.url) this.img.src = options.url; // starts loading (if url is defined)
 }
 
 Image.prototype = new GObject();
