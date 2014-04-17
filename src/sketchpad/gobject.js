@@ -6,8 +6,9 @@
 function GObject(options) {
 
   this.options = options || {};
-  this.x = this.options.x || 0;
-  this.y = this.options.y || 0;  
+  var x = this.options.x || 0, y = this.options.y || 0;
+  this.x = ko.isObservable(x) ? x : ko.observable(x);
+  this.y = ko.isObservable(y) ? y : ko.observable(y);
 }
 
 GObject.prototype.select = function() {
@@ -38,11 +39,13 @@ GObject.prototype.mouseDown = function(x, y) {
   if (ctx.isPointInPath(x, y)) { 
     console.log('HIT');
     this.select(); // should trigger redraw()
-    // Begin dragging
-    this._owner.captureMouse(this, 'grab');
-    this._dragging = {
-      offset: { x: x - this.x, y: y - this.y }
-    };
+    if (!this.options.no_dragging) {
+      // Begin dragging
+      this._owner.captureMouse(this, 'grab');
+      this._dragging = {
+        offset: { x: x - this.x(), y: y - this.y() }
+      };
+    }
     return true; // truthy means that mouseDown has been "consumed"
   }
 };
@@ -50,8 +53,8 @@ GObject.prototype.mouseDown = function(x, y) {
 GObject.prototype.mouseMove = function(x, y) {
 
   if (this._dragging) {
-    this.x = x - this._dragging.offset.x;
-    this.y = y - this._dragging.offset.y;
+    this.x(x - this._dragging.offset.x);
+    this.y(y - this._dragging.offset.y);
     this._owner.redraw();
     return true;
   }

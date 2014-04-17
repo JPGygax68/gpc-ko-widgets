@@ -24,14 +24,14 @@ Polygon.prototype.constructor = Polygon;
 
 Polygon.prototype._drawPath = function(ctx) {
   
-  ctx.translate( this.x,  this.y);
+  ctx.translate( this.x(),  this.y());
   
   ctx.beginPath();
   ctx.moveTo(this.points[0].x, this.points[0].y);
   for (var i = 1; i < this.points.length; i++) ctx.lineTo(this.points[i].x, this.points[i].y);
   ctx.closePath();
 
-  ctx.translate(-this.x, -this.y);
+  ctx.translate(-this.x(), -this.y());
 };
 
 Polygon.prototype._drawHandlePath = function(ctx, point) {
@@ -55,7 +55,7 @@ Polygon.prototype.draw = function(ctx, options) {
 
 Polygon.prototype.drawOutline = function(ctx, options) {
 
-  ctx.translate( this.x,  this.y);
+  ctx.translate( this.x(),  this.y());
   
   ctx.strokeStyle = 'rgb(0, 0, 0)';
   
@@ -67,7 +67,7 @@ Polygon.prototype.drawOutline = function(ctx, options) {
     ctx.stroke();
   }
   
-  ctx.translate(-this.x, -this.y);
+  ctx.translate(-this.x(), -this.y());
 }
 
 Polygon.prototype.mouseDown = function(x, y) {

@@ -20,12 +20,12 @@ Image.prototype.constructor = Image;
 
 Image.prototype._drawPath = function(ctx) {
   ctx.beginPath();
-  ctx.rect(this.x, this.y, this.img.width, this.img.height);
+  ctx.rect(this.x(), this.y(), this.img.width, this.img.height);
   ctx.closePath();
 };
 
 Image.prototype.draw = function(ctx, options) { 
-  ctx.drawImage(this.img, this.x, this.y); };
+  ctx.drawImage(this.img, this.x(), this.y()); };
 
 Image.prototype.drawOutline = function(ctx, options) { 
   

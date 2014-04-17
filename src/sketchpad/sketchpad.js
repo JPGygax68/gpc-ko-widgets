@@ -32,8 +32,8 @@ function SketchPad(width, height, options) {
   
   console.log('SketchPad() width:', ko.unwrap(width), ' height:', ko.unwrap(height));
   
-  this.width   = ko.isObservable(width ) ? width  : ko.observable(width );
-  this.height  = ko.isObservable(height) ? height : ko.observable(height);
+  this.width  = ko.isObservable(width ) ? width  : ko.observable(width );
+  this.height = ko.isObservable(height) ? height : ko.observable(height);
   
   this.width .subscribe( function() { window.setTimeout(this.refresh.bind(this), 1); }, this );
   this.height.subscribe( function() { window.setTimeout(this.refresh.bind(this), 1); }, this );
