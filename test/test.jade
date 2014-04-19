@@ -23,7 +23,8 @@ html
         <span data-bind="text: $data">...</span>
       </div>
     link(rel="stylesheet",href="test.css")
-
+    script(src="main.js")
+    
   body(onload="start()")
     div.navigation
       ul
@@ -44,5 +45,3 @@ html
     div(data-bind="if: page() === 'CommandPanel'")
       h1 Hello CommandPanel
       div(data-bind="template: { name: 'gkcpCommandPanel', data: commandpanel }")
-
-    script(src="main.js")

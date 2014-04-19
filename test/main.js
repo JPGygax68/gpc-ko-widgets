@@ -210,6 +210,8 @@ var data = {
   "click_areas": []
 };
 
+// Prepare our data model
+
 var myModel = ko.mapping.fromJS( data );
 
 var treeview = new TreeView(myModel, { onNewNode: onNewNode });
@@ -229,7 +231,7 @@ sketchpad.objects.push( new SketchPad.Polygon({x: 35, y: 35}) );
 var commandpanel = new CommandPanel();
 
 var myViewModel = { 
-  page: ko.observable('SketchPad'),
+  page: ko.observable('CommandPanel'),
   treeview : treeview,
   sketchpad: sketchpad,
   commandpanel: commandpanel,
