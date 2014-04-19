@@ -1,8 +1,9 @@
 "use strict";
 
 //var TreeView = gpc.kowidgets.TreeView;  // from global
-var TreeView  = require('treeview');   // CommonJS style
-var SketchPad = require('sketchpad');
+var TreeView     = require('treeview');   // CommonJS style
+var SketchPad    = require('sketchpad');
+var CommandPanel = require('commandpanel');
   
 /*
 var myViewModel = {
@@ -225,13 +226,17 @@ sketchpad.objects.push( new SketchPad.Image({url: 'data/SampleVial-Full.png'}) )
 sketchpad.objects.push( new SketchPad.Polygon({x: -5, y: -5}) );
 sketchpad.objects.push( new SketchPad.Polygon({x: 35, y: 35}) );
 
+var commandpanel = new CommandPanel();
+
 var myViewModel = { 
   page: ko.observable('SketchPad'),
   treeview : treeview,
   sketchpad: sketchpad,
+  commandpanel: commandpanel,
   
-  goTreeView : function() { this.page('TreeView' ); },
-  goSketchPad: function() { this.page('SketchPad'); },
+  goTreeView    : function() { this.page('TreeView'    ); },
+  goSketchPad   : function() { this.page('SketchPad'   ); },
+  goCommandPanel: function() { this.page('CommandPanel'); },
 };
 
 function start() {

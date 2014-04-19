@@ -1,3 +1,70 @@
+2014-04-19
+==========
+
+I'm about to begin working on the "Commands" module. To sum up what that is:
+
+The Commands module provides ways to represent and manage the commands that a user can send to a Widget.
+
+[Reminder: a Widget is defined as a reusable software component with a user-facing aspect (a usually visual representation, usually but not necessarily interactive.]
+
+The goal is to show the user what commands can be given to a Widget at any given time, and to facilitate the giving of these commands.
+
+To this end, Commands are associated with interactive representations called Command Buttons. Command Buttons can have keyboard shortcuts, but can always be triggered by a mouse click.
+
+Command Buttons could be presented to the user in any number of ways, but one idea worth looking at is the "Side Panel". This is a Panel that would most probably be "floating" over the rightmost 15-20% of the display's width, showing the Buttons of all Commands that are relevant in the current situation.
+
+Just displaying a list, top-down, of all available Commands could be helpful as-is, but the idea is to help the user by creating a visual association between the command and the visual representation of the command's *target*. This association could comprise several indications, but the most basic one would be to vertically align the Buttons with their *target zone*. [Other, possibly complementary options would be rectangular overlays, possibly even animations.]
+
+Commands are associated with view models (or parts thereof) via Command Sets; in other words, a command set represents, for the Commands module, the entirety of the commands that can be given to that view model (at that level).
+
+A command set is an object that can be used in any view model. The CommandSet class provides handlers for keyboard, focus and blur events, which can be bound declaratively in the standard Knockout way, or called from model-specific event handlers (in which case, making the command set part of the view model may not be necessary).
+
+
+Incidently, what exactly the "target" is depends on the widget. [In the case of the TreeView, it would the currently selected (and focused) node.]
+
+Widgets can be nested, building a "tree" each "node" of which can have a Command Set that the Side Panel must be able to present to the user. Because of this, it is often impractical to have each Widget instance create its own Command Set. Better create a Command Set that covers the needs of the whole widget class, then "re-connect" the Commands to a specific widget instance every time such an instance becomes *active* [which would usually be in response to a focus event].
+
+[How exactly to (re-)connect the commands is left to the widget code. If the widget consists of many elements, one approach could be to use a class-wide top-level "activeInstance" observable that all observables in the commands are subscribed to, which would make them update automatically through the Knockout dependency chains when the active instance changes. However, just traversing the actions and re-connecting them by code should work just as well.]
+
+Commands can have a keyboard shortcut definition; the idea behind that is to help users by displaying the shortcuts as part of the labels of the command buttons, thereby not only telling the user what key combination to use, but providing an alternate way to trigger the command as well (by clicking on the command button).
+
+In order for the Commands module to be able to trigger actions through their shortcuts, it must be informed of keyboard events. In order to make this as easy as possible, the view model used by the Commands module provides handlers that can be bound by (example) "keydown: $root.commands.keyDown, keyup: $root.commands.keyUp".
+
+---- SCRAPPING ALL THAT, TOO COMPLICATED ---------------
+
+---------------------
+
+Let's begin simple, then improve incrementally. Also, avoid trying to make it 100% specific to Knockout (while still using Knockout for the implementation).
+
+Command: name, description, shortcut, enabled, visible, target, method, parameters.
+
+----------------------
+
+- The Gulpfile is getting too long, and is already too complicated. Maybe it's time to create a Gulp-based build module of my own.
+  - Wrapping text files into string-defining CommonJS
+  - Generating bundles with browserify (what to require, and exclude)
+  - Use meaningful default locations (src, dist, testsrc, testbed), overridable
+  - Automate watching (by standardizing the way source files are specified, making it easy to create a "watch list")
+  - Using gulp-newer consistently 
+  - Support "special" builds (future)
+  
+- Based on this generic build framework, the KO Widgets Gulpfile can then define a task generator function that can be reused for each new widget.
+
+----------------------
+
+- Having modules refer to a "temp" directory is ok for generating bundles with browserify but sucks when using native Node-Webkit require(). Either:
+  a) generate to a subdirectory that will be considered part of the source (even though it really isn't) or
+  b) use the readFileSync() method:   http://stackoverflow.com/a/17502924/754534
+  
+  -> (b) doesn't work; I would actually need a combination of readDirSync() and readFileSync() to gather all the templates used by a widget. UNLESS I decide to import my templates one by one.
+  
+  ... so (c) the pragmatic solution: instead of calling the directory "temp", I'm now calling it "generated", which is at least less misleading.
+  
+2014-04-18
+==========
+
+- http://knockoutjs.com/documentation/custom-bindings-disposal.html
+
 2014-04-17
 ==========
 

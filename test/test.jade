@@ -10,6 +10,8 @@ html
     link(rel="stylesheet",href="scripts/gpc/kowidgets/treeview/treeview.css")
     script(src="scripts/gpc/kowidgets/sketchpad/sketchpad.js")
     link(rel="stylesheet",href="scripts/gpc/kowidgets/sketchpad/sketchpad.css")
+    script(src="scripts/gpc/kowidgets/commandpanel/commandpanel.js")
+    link(rel="stylesheet",href="scripts/gpc/kowidgets/commandpanel/commandpanel.css")
     script(type="text/html", id="tmplNumericField").
       <input type="number", data-bind="value: value, valueUpdate: 'input'"></input>
     script(type="text/html", id="tmplBooleanField").
@@ -25,8 +27,9 @@ html
   body(onload="start()")
     div.navigation
       ul
-        li(data-bind="css: { selected: page() === 'TreeView'  }, click: goTreeView" ) TreeView
-        li(data-bind="css: { selected: page() === 'SketchPad' }, click: goSketchPad") SketchPad
+        li(data-bind="css: { selected: page() === 'TreeView'     }, click: goTreeView"    ) TreeView
+        li(data-bind="css: { selected: page() === 'SketchPad'    }, click: goSketchPad"   ) SketchPad
+        li(data-bind="css: { selected: page() === 'CommandPanel' }, click: goCommandPanel") CommandPanel
           
     div(data-bind="if: page() === 'TreeView'")
       div(data-bind="template: { name: 'gktvTreeView', data: treeview }")
@@ -37,5 +40,9 @@ html
     div(data-bind="if: page() === 'SketchPad'")
       h1 Hello SketchPad
       div(data-bind="template: { name: 'gkspSketchPad', data: sketchpad }")
+
+    div(data-bind="if: page() === 'CommandPanel'")
+      h1 Hello CommandPanel
+      div(data-bind="template: { name: 'gkcpCommandPanel', data: commandpanel }")
 
     script(src="main.js")

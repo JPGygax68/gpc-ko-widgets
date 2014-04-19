@@ -16,7 +16,7 @@ var ko = require('knockout');
 
 require('../util/stringTemplateEngine');
 
-var templates = require('../../temp/sketchpad/templates')
+var templates = require('../../generated/sketchpad/templates')
   
 // Store our templates in the string template engine (guarded)
 if (typeof ko.templates['__HAS_SKETCHPAD_TEMPLATES__'] === 'undefined') {

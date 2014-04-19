@@ -6,7 +6,7 @@ require('../util/stringTemplateEngine');
 var Defs = require('./defs');
 var Node = require('./node');
 
-var templates = require('../../temp/treeview/templates')
+var templates = require('../../generated/treeview/templates')
   
 // Store our templates in the string template engine (guarded)
 if (typeof ko.templates['__HAS_TREEVIEW_TEMPLATES__'] === 'undefined') {

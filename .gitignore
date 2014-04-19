@@ -3,4 +3,4 @@ dist/*
 testbed/*
 *.bak
 *.pui
-temp/*
+generated/*

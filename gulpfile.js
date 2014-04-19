@@ -113,7 +113,7 @@ gulp.task('treeview-jade', [], function() {
   return gulp.src( ['./src/treeview/templates/*.jade'] )
     .pipe( jade({ pretty: true }) )
     .pipe( assembler('templates.js', {prefix: 'gktv'}) )
-    .pipe( gulp.dest('./temp/treeview/') );    
+    .pipe( gulp.dest('./generated/treeview/') );    
       
 });
 
@@ -122,11 +122,20 @@ gulp.task('sketchpad-jade', [], function() {
   return gulp.src( ['./src/sketchpad/templates/*.jade'] )
     .pipe( jade({ pretty: true }) )
     .pipe( assembler('templates.js', {prefix: 'gksp'}) )
-    .pipe( gulp.dest('./temp/sketchpad/') );    
+    .pipe( gulp.dest('./generated/sketchpad/') );    
       
 });
 
-gulp.task('templates', ['treeview-jade', 'sketchpad-jade']);
+gulp.task('commandpanel-jade', [], function() {
+
+  return gulp.src( ['./src/commandpanel/*.jade'] )
+    .pipe( jade({ pretty: true }) )
+    .pipe( assembler('templates.js', {prefix: 'gkcp'}) )
+    .pipe( gulp.dest('./generated/commandpanel/') );    
+      
+});
+
+gulp.task('templates', ['treeview-jade', 'sketchpad-jade', 'commandpanel-jade']);
 
 gulp.task('copy', [], function() {
 
@@ -171,7 +180,19 @@ gulp.task('browserify-sketchpad', [], function() {
     
 });
 
-gulp.task('browserify', ['browserify-treeview', 'browserify-sketchpad']);
+gulp.task('browserify-commandpanel', [], function() {
+
+  return browserify({ entries: ['./src/commandpanel/commandpanel.js'] })
+    .require('./src/commandpanel/commandpanel', {expose: 'commandpanel'})
+    .exclude('knockout')
+    .exclude('knockout-mapping')
+    .bundle()
+    .pipe( source('commandpanel.js') )
+    .pipe( gulp.dest('./dist/commandpanel/') );
+    
+});
+
+gulp.task('browserify', ['browserify-treeview', 'browserify-sketchpad', 'browserify-commandpanel']);
 
 gulp.task('requirejs', function(cb) {
   
@@ -234,6 +255,7 @@ gulp.task('browserify-test', [], function() {
     })
     .external('treeview')
     .external('sketchpad')
+    .external('commandpanel')
     .bundle()
     .pipe( source('main.js') )
     .pipe( gulp.dest('./testbed/') );
