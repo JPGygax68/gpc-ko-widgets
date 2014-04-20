@@ -1,1 +1,2 @@
-div.command-panel
+div.command-panel(data-bind="foreach: commands")
+  div.command-button(data-bind="text: name")

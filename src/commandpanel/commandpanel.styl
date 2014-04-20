@@ -6,4 +6,16 @@ div.command-panel {
   bottom: 0;
   right: 0;
   width: 15%;
+  padding: 0.5em;
+}
+
+button-color = silver;
+
+.command-button {
+  padding: 0.15em;
+  border: 0.1em solid black;
+  background-color: button-color;
+  cursor: default;
+  
+  &:hover { background-color: hsl(hue(button-color), saturation(button-color), lightness(button-color)+20%); }
 }

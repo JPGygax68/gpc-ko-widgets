@@ -214,27 +214,29 @@ var data = {
 
 var myModel = ko.mapping.fromJS( data );
 
-var treeview = new TreeView(myModel, { onNewNode: onNewNode });
-//treeview.showRoot(true);
-treeview.showValueColumn(true);
+var tv = new TreeView(myModel, { onNewNode: onNewNode });
+//tv.showRoot(true);
+tv.showValueColumn(true);
 
-var sketchpad = new SketchPad(640, 480);
+var sp = new SketchPad(640, 480);
 
-sketchpad.objects.subscribe( function(changes) {
+sp.objects.subscribe( function(changes) {
   console.log('SketchPad objects notification:', changes);
 }, this, 'arrayChange');
 
-sketchpad.objects.push( new SketchPad.Image({url: 'data/SampleVial-Full.png'}) );
-sketchpad.objects.push( new SketchPad.Polygon({x: -5, y: -5}) );
-sketchpad.objects.push( new SketchPad.Polygon({x: 35, y: 35}) );
+sp.objects.push( new SketchPad.Image({url: 'data/SampleVial-Full.png'}) );
+sp.objects.push( new SketchPad.Polygon({x: -5, y: -5}) );
+sp.objects.push( new SketchPad.Polygon({x: 35, y: 35}) );
 
-var commandpanel = new CommandPanel();
+var cp = new CommandPanel();
+var Command = CommandPanel.Command;
+cp.commands.push( new Command('Shoot the monkey', 'shootMonkey', null) );
 
 var myViewModel = { 
   page: ko.observable('CommandPanel'),
-  treeview : treeview,
-  sketchpad: sketchpad,
-  commandpanel: commandpanel,
+  treeview    : tv,
+  sketchpad   : sp,
+  commandpanel: cp,
   
   goTreeView    : function() { this.page('TreeView'    ); },
   goSketchPad   : function() { this.page('SketchPad'   ); },

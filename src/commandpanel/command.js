@@ -10,6 +10,7 @@ function Command(name, method, target, options) {
   this.method = method;
   this.target = target;
   
+  options = options || {}
   this.description = options.description;
   this.shortcut = options.shortcut;
   this.enabled = ko.observable(false);

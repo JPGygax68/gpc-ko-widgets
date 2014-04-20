@@ -14,7 +14,10 @@ if (typeof ko.templates['__HAS_COMMANDPANEL_TEMPLATES__'] === 'undefined') {
 
 function CommandPanel(commands) {
 
-  //this.commands = 
+  this.commands = ko.observableArray();
 }
+
+// The Command class must be made available
+CommandPanel.Command = Command;
 
 module.exports = CommandPanel;

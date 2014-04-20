@@ -176,6 +176,7 @@ gulp.task('browserify-test', [], function() {
       entries: ['./test/main.js'],
       debug: true
     })
+    // The "external" modules must be included manually (external script elements)
     .external('treeview')
     .external('sketchpad')
     .external('commandpanel')
