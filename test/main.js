@@ -245,6 +245,10 @@ var myViewModel = {
 
 function start() {
   ko.applyBindings(myViewModel);
+
+  var item5 = document.querySelector('ul > li:nth-child(5)');
+  cp.alignWithElement(item5);
+
 }
 
 //----

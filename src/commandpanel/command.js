@@ -2,6 +2,8 @@
 
 var ko = require('knockout');
 
+var util = require('../util/util');
+
 var Keyboard = require('../util/keyboard');
 
 function Command(name, method, target, options) {
@@ -10,11 +12,13 @@ function Command(name, method, target, options) {
   this.method = method;
   this.target = target;
   
-  options = options || {}
+  options = options || {};
   this.description = options.description;
   this.shortcut = options.shortcut;
   this.enabled = ko.observable(false);
   this.visible = ko.observable(false);  
+  
+  this._owner = null;
 }
 
 module.exports = Command;

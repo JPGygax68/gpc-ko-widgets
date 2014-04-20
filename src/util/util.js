@@ -19,7 +19,8 @@ function valueType(value) {
     which will be returned.
   - If the first argument is a function, that function will be used to create a 
     computed observable. SPECIAL NOTE: for the computation function to be able
-    to use "this", makeObservable() must be used via bind(), call() or apply().
+    to use "this", "this" must be made available to makeObservable() via bind(), 
+    call() or apply().
  */
 function makeObservable(value) {
   console.log('makeObservable()', value);

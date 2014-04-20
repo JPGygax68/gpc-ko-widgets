@@ -1,2 +1,2 @@
-div.command-panel(data-bind="foreach: commands")
+div.command-panel(data-bind="foreach: commands, style: { top: top()+'px' }")
   div.command-button(data-bind="text: name")
