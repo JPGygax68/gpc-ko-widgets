@@ -14,8 +14,8 @@ function Command(name, func, options) {
   options = options || {};
   this.description = options.description;
   this.shortcut = options.shortcut;
-  this.enabled = ko.observable(false);
-  this.visible = ko.observable(false);  
+  this.enabled = options.enabled ? options.enabled : ko.observable(true);
+  this.visible = options.visible ? options.visible : ko.observable(true);  
   
   this._owner = null;
 }

@@ -229,30 +229,28 @@ sp.objects.push( new SketchPad.Image({url: 'data/SampleVial-Full.png'}) );
 sp.objects.push( new SketchPad.Polygon({x: -5, y: -5}) );
 sp.objects.push( new SketchPad.Polygon({x: 35, y: 35}) );
 
-var cp; // Command Panel
-
 var list = {
 
-  selected_li: null,
+  selected_li: ko.observable(null),
   
   // We handle focus and blur ourselves
   
   focusIn: function(data, event) {
-    console.log('focusIn()', this, data);
+    //console.log('focusIn()', this, data);
     console.assert(event.target.tagName === 'LI');
-    this.selected_li = event.target;
+    this.selected_li( event.target );
     cp.alignWithElement(event.target);
   },
   
   blur: function(data, event) {
     console.log('blur');
-    this.selected_li = null;
+    this.selected_li( null );
   },
   
   // But we delegate keyboard events to the command panel
   
   keyDown: function(data, event) {
-    console.log('list.keyDown()', data, event);    
+    //console.log('list.keyDown()', data, event);    
     cp.delegate('keydown', data, event);
   },
   
@@ -262,26 +260,37 @@ var list = {
   },
   
   up: function() {
-    console.log('up');
+    //console.log('up');
     // TODO: turn the conditional into an assert once the command conditionals work
-    if (this.selected_li.previousElementSibling) {
-      this.goTo(this.selected_li.previousElementSibling);
+    if (this.selected_li().previousElementSibling) {
+      this.goTo(this.selected_li().previousElementSibling);
     }
   },
   
   down: function() {
-    console.log('down');
-    if (this.selected_li.nextElementSibling) {
-      this.goTo(list.selected_li.nextElementSibling);
+    //console.log('down');
+    if (this.selected_li().nextElementSibling) {
+      this.goTo(list.selected_li().nextElementSibling);
     }
   }
 }
 
-cp = new CommandPanel(list);
+var cp = new CommandPanel();
 var Command = CommandPanel.Command;
-//cp.commands.push( new Command('Shoot the monkey', 'shootMonkey') );
-cp.commands.push( new Command('Move Up'  , list.up  .bind(list), { shortcut: 'UP'   }) );
-cp.commands.push( new Command('Move Down', list.down.bind(list), { shortcut: 'DOWN' }) );
+cp.commands.push( new Command('Move Up', 
+  function() { list.up  (); }, { 
+    shortcut: 'UP', 
+    visible: ko.computed(function() { return !!(list.selected_li() && list.selected_li().previousElementSibling); })
+  } ) 
+);
+cp.commands.push( new Command('Move Down', 
+  function() { list.down(); }, { 
+    shortcut: 'DOWN',
+    visible: ko.computed(function() { return !!(list.selected_li() && list.selected_li().nextElementSibling); })
+  } ) 
+);
+
+cp.target( list );
 
 var myViewModel = { 
   page: ko.observable('CommandPanel'),

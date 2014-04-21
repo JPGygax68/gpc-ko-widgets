@@ -12,9 +12,9 @@ if (typeof ko.templates['__HAS_COMMANDPANEL_TEMPLATES__'] === 'undefined') {
   ko.templates['__HAS_COMMANDPANEL_TEMPLATES__'] = 'YES';
 }
 
-function CommandPanel(target) {
+function CommandPanel() {
 
-  this.target = target;
+  this.target = ko.observable(null);
   
   this.top = ko.observable(0);
   
@@ -31,7 +31,7 @@ function CommandPanel(target) {
 }
 
 CommandPanel.prototype._delegated_keydown = function(view_model, event) {
-  console.log('_delegated_keydown()');
+  //console.log('_delegated_keydown()');
   
   for (var i = 0; i < this.commands().length; i ++) {
     var cmd = this.commands()[i];
@@ -45,7 +45,7 @@ CommandPanel.prototype._delegated_keydown = function(view_model, event) {
 };
 
 CommandPanel.prototype.setTargetZone = function(x, y, w, h) {
-  console.log('CommandPanel::setTargetZone()', x, y, w, h);
+  //console.log('CommandPanel::setTargetZone()', x, y, w, h);
   
   this.top( y + h / 2 );
 };
@@ -56,7 +56,7 @@ CommandPanel.prototype.alignWithElement = function(elt) {
 };
 
 CommandPanel.prototype.delegate = function(event_name, view_model, event_data) {
-  console.log('CommandPanel::delegate()', event_name, view_model, event_data);
+  //console.log('CommandPanel::delegate()', event_name, view_model, event_data);
   
   return this['_delegated_'+event_name](view_model, event_data);
 };
@@ -64,5 +64,7 @@ CommandPanel.prototype.delegate = function(event_name, view_model, event_data) {
 // The Command class must be made available
 
 CommandPanel.Command = Command;
+
+// EXPORTS -----------------------
 
 module.exports = CommandPanel;
