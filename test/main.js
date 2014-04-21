@@ -4,7 +4,8 @@
 var TreeView     = require('treeview');   // CommonJS style
 var SketchPad    = require('sketchpad');
 var CommandPanel = require('commandpanel');
-  
+var Keyboard     = require('util/keyboard');
+
 /*
 var myViewModel = {
   treeView: {
@@ -231,6 +232,20 @@ sp.objects.push( new SketchPad.Polygon({x: 35, y: 35}) );
 var cp = new CommandPanel();
 var Command = CommandPanel.Command;
 cp.commands.push( new Command('Shoot the monkey', 'shootMonkey', null) );
+
+function list_keyDown(data, event) {
+  console.log('list_keyDown()', data, event);
+  
+  var target = event.target;
+  console.assert(target.tagName === 'LI');
+  
+  if (target.nextElementSibling) {
+    target.nextElementSibling.focus();
+  }
+  else if (target.previousElementSibling) {
+    target.previousElementSibling.focus();
+  }
+}
 
 var myViewModel = { 
   page: ko.observable('CommandPanel'),

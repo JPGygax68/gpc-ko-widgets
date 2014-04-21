@@ -12,6 +12,7 @@ html
     link(rel="stylesheet",href="scripts/gpc/kowidgets/sketchpad/sketchpad.css")
     script(src="scripts/gpc/kowidgets/commandpanel/commandpanel.js")
     link(rel="stylesheet",href="scripts/gpc/kowidgets/commandpanel/commandpanel.css")
+    script(src="scripts/gpc/kowidgets/util/keyboard.js")
     script(type="text/html", id="tmplNumericField").
       <input type="number", data-bind="value: value, valueUpdate: 'input'"></input>
     script(type="text/html", id="tmplBooleanField").
@@ -44,14 +45,14 @@ html
 
     div(data-bind="if: page() === 'CommandPanel'")
       h1 Hello CommandPanel
-      ul
-        li Item 1
-        li Item 2
-        li Item 3
-        li Item 4
-        li Item 5
-        li Item 6
-        li Item 7
-        li Item 8
-        li Item 9
+      ul(data-bind="event: { keydown: list_keyDown }")
+        li(tabindex="0") Item 1
+        li(tabindex="0") Item 2
+        li(tabindex="0") Item 3
+        li(tabindex="0") Item 4
+        li(tabindex="0") Item 5
+        li(tabindex="0") Item 6
+        li(tabindex="0") Item 7
+        li(tabindex="0") Item 8
+        li(tabindex="0") Item 9
       div(data-bind="template: { name: 'gkcpCommandPanel', data: commandpanel }")

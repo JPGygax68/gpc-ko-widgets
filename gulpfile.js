@@ -104,9 +104,45 @@ function assembler(filename, options) {
 
 // BUILD TASKS -----------------------------------------------
 
-/* Defines a task tree that builds a widget.
+function bundleTask(name, options) {
+
+  var task_name = name + '-browserify';
+  var options = options || {};
+  
+  var module_path = name.indexOf('/') >= 0 ? name : name + '/' + name; // TODO: replace with name + '/main' ?
+  if (path.extname(module_path) !== '.js') module_path += '.js';
+  
+  console.log('bundleTask()', module_path, path.dirname(module_path));
+  
+  gulp.task(task_name, [], function() {
+
+    return browserify({ entries: ['./src/'+module_path] })
+      .require('./src/'+module_path, {expose: name})
+      .exclude('knockout')
+      .exclude('knockout-mapping')
+      .bundle() // Use (e.g.): { standalone: 'gpc.kowidgets.TreeView' } to use globals
+      .pipe( source(path.basename(module_path)) )
+      .pipe( gulp.dest('./dist/'+path.dirname(module_path)+'/') );
+  });
+
+  return task_name;
+}
+
+// TODO: replace with a "style" task that also handles assets ?
+
+function stylusTask(name) {
+
+  gulp.task(name+'-stylus', [], function() {
+    return gulp.src('./src/'+name+'/*.styl')
+      .pipe( stylus({}) )
+      .pipe( prefix('last 20 versions', 'ie 8', 'ie 9') )
+      .pipe( gulp.dest('./dist/'+name+'/') );      
+  });
+}
+
+/* Defines a task tree that builds a widget bundle.
  */
-function widget(name, abbr) {
+function widgetBundle(name, abbr) {
 
   /* Translate Jade template files into a string dictionary.
    */
@@ -118,26 +154,9 @@ function widget(name, abbr) {
       .pipe( gulp.dest('./generated/'+name+'/') );    
   });
 
-  /* Browserify the widget's main module.
-   */
-  gulp.task(name+'-browserify', [], function() {
+  bundleTask(name);
 
-    return browserify({ entries: ['./src/'+name+'/'+name+'.js'] })
-      .require('./src/'+name+'/'+name, {expose: name})
-      .exclude('knockout')
-      .exclude('knockout-mapping')
-      .bundle() // Use (e.g.): { standalone: 'gpc.kowidgets.TreeView' } to use globals
-      .pipe( source(name+'.js') )
-      .pipe( gulp.dest('./dist/'+name+'/') );
-  });
-
-  gulp.task(name+'-stylus', [], function() {
-
-    return gulp.src('./src/'+name+'/*.styl')
-      .pipe( stylus({}) )
-      .pipe( prefix('last 20 versions', 'ie 8', 'ie 9') )
-      .pipe( gulp.dest('./dist/'+name+'/') );      
-  });
+  stylusTask(name);
 
   gulp.task(name+'-copy', [], function() {
 
@@ -150,7 +169,12 @@ function widget(name, abbr) {
   return 'widget-'+name;
 }
 
-gulp.task('build', [widget('treeview', 'gktv'), widget('sketchpad', 'gksp'), widget('commandpanel', 'gkcp')]);
+gulp.task('build', [
+  widgetBundle('treeview', 'gktv'), 
+  widgetBundle('sketchpad', 'gksp'), 
+  widgetBundle('commandpanel', 'gkcp'),
+  bundleTask('util/keyboard')
+]);
 
 // TEST HARNESS -------------------------------
 
