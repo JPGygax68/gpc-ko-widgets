@@ -36,7 +36,9 @@ CommandPanel.prototype._delegated_keydown = function(view_model, event) {
   for (var i = 0; i < this.commands().length; i ++) {
     var cmd = this.commands()[i];
     if (typeof cmd.shortcut !== 'undefined' && Keyboard.is(event, cmd.shortcut)) { 
-      cmd.trigger(); 
+      cmd.trigger();
+      event.preventDefault();
+      event.stopPropagation();
       break;
     }
   }

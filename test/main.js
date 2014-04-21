@@ -230,9 +230,8 @@ sp.objects.push( new SketchPad.Polygon({x: -5, y: -5}) );
 sp.objects.push( new SketchPad.Polygon({x: 35, y: 35}) );
 
 var cp; // Command Panel
-var list;
 
-list = {
+var list = {
 
   selected_li: null,
   
@@ -241,12 +240,13 @@ list = {
   focusIn: function(data, event) {
     console.log('focusIn()', this, data);
     console.assert(event.target.tagName === 'LI');
-    list.selected_li = event.target;
+    this.selected_li = event.target;
+    cp.alignWithElement(event.target);
   },
   
   blur: function(data, event) {
     console.log('blur');
-    list.selected_li = null;
+    this.selected_li = null;
   },
   
   // But we delegate keyboard events to the command panel
@@ -258,8 +258,6 @@ list = {
   
   goTo: function(element) {
     console.assert(element.tagName === 'LI');
-    cp.alignWithElement(element);
-    list.selected_li = element;
     element.focus();
   },
   
@@ -289,6 +287,7 @@ var myViewModel = {
   page: ko.observable('CommandPanel'),
   treeview    : tv,
   sketchpad   : sp,
+  list        : list,
   commandpanel: cp,
   
   goTreeView    : function() { this.page('TreeView'    ); },

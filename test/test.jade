@@ -45,7 +45,8 @@ html
 
     div(data-bind="if: page() === 'CommandPanel'")
       h1 Hello CommandPanel
-      ul(data-bind="event: { focusin: list.focusIn, blur: list.blur, keydown: list.keyDown }")
+      // ko with: list
+      ul(data-bind="event: { focusin: list.focusIn, blur: blur, keydown: keyDown }")
         li(tabindex="0") Item 1
         li(tabindex="0") Item 2
         li(tabindex="0") Item 3
@@ -55,4 +56,5 @@ html
         li(tabindex="0") Item 7
         li(tabindex="0") Item 8
         li(tabindex="0") Item 9
+      // /ko
       div(data-bind="template: { name: 'gkcpCommandPanel', data: commandpanel }")
