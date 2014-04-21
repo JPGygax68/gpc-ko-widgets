@@ -1,3 +1,3 @@
 div.command-panel(data-bind="style: { top: top()+'px' }")
   div.wrapper(data-bind="foreach: commands")
-        div.command-button(data-bind="text: name, style: { display: visible() ? 'block' : 'none' }")
+        div.command-button(data-bind="text: name, style: { display: visible() ? '' : 'none' }, css: { enabled: enabled() }")

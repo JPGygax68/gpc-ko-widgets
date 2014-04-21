@@ -280,13 +280,15 @@ var Command = CommandPanel.Command;
 cp.commands.push( new Command('Move Up', 
   function() { list.up  (); }, { 
     shortcut: 'UP', 
-    visible: ko.computed(function() { return !!(list.selected_li() && list.selected_li().previousElementSibling); })
+    enabled: ko.computed(function() { return !!(list.selected_li() && list.selected_li().previousElementSibling); })
+      // NOTE: this technique requires separate Command instances for each target that can be attached to the command panel
+      //  Not sure whether this could be a problem or not.
   } ) 
 );
 cp.commands.push( new Command('Move Down', 
   function() { list.down(); }, { 
     shortcut: 'DOWN',
-    visible: ko.computed(function() { return !!(list.selected_li() && list.selected_li().nextElementSibling); })
+    enabled: ko.computed(function() { return !!(list.selected_li() && list.selected_li().nextElementSibling); })
   } ) 
 );
 
