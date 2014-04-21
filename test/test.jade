@@ -45,7 +45,7 @@ html
 
     div(data-bind="if: page() === 'CommandPanel'")
       h1 Hello CommandPanel
-      ul(data-bind="event: { keydown: list_keyDown }")
+      ul(data-bind="event: { focusin: list.focusIn, blur: list.blur, keydown: list.keyDown }")
         li(tabindex="0") Item 1
         li(tabindex="0") Item 2
         li(tabindex="0") Item 3

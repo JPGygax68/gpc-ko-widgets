@@ -229,34 +229,61 @@ sp.objects.push( new SketchPad.Image({url: 'data/SampleVial-Full.png'}) );
 sp.objects.push( new SketchPad.Polygon({x: -5, y: -5}) );
 sp.objects.push( new SketchPad.Polygon({x: 35, y: 35}) );
 
-var cp = new CommandPanel();
-var Command = CommandPanel.Command;
-cp.commands.push( new Command('Shoot the monkey', 'shootMonkey', null) );
+var cp; // Command Panel
+var list;
 
-function list_keyDown(data, event) {
-  console.log('list_keyDown()', data, event);
+list = {
+
+  selected_li: null,
   
-  var target = event.target;
-  console.assert(target.tagName === 'LI');
+  // We handle focus and blur ourselves
   
-  if (Keyboard.is(event, 'DOWN')) {
-    if (target.nextElementSibling) {
-      focus(target.nextElementSibling);
+  focusIn: function(data, event) {
+    console.log('focusIn()', this, data);
+    console.assert(event.target.tagName === 'LI');
+    list.selected_li = event.target;
+  },
+  
+  blur: function(data, event) {
+    console.log('blur');
+    list.selected_li = null;
+  },
+  
+  // But we delegate keyboard events to the command panel
+  
+  keyDown: function(data, event) {
+    console.log('list.keyDown()', data, event);    
+    cp.delegate('keydown', data, event);
+  },
+  
+  goTo: function(element) {
+    console.assert(element.tagName === 'LI');
+    cp.alignWithElement(element);
+    list.selected_li = element;
+    element.focus();
+  },
+  
+  up: function() {
+    console.log('up');
+    // TODO: turn the conditional into an assert once the command conditionals work
+    if (this.selected_li.previousElementSibling) {
+      this.goTo(this.selected_li.previousElementSibling);
     }
-  }
-  else if (Keyboard.is(event, 'UP')) {
-    if (target.previousElementSibling) {
-      focus(target.previousElementSibling);
+  },
+  
+  down: function() {
+    console.log('down');
+    if (this.selected_li.nextElementSibling) {
+      this.goTo(list.selected_li.nextElementSibling);
     }
-  }
-  
-  //-----------
-  
-  function focus(elt) {
-    cp.alignWithElement(elt);
-    elt.focus();
   }
 }
+
+cp = new CommandPanel(list);
+var Command = CommandPanel.Command;
+//cp.commands.push( new Command('Shoot the monkey', 'shootMonkey') );
+cp.commands.push( new Command('Move Up'  , list.up  .bind(list), { shortcut: 'UP'   }) );
+cp.commands.push( new Command('Move Down', list.down.bind(list), { shortcut: 'DOWN' }) );
 
 var myViewModel = { 
   page: ko.observable('CommandPanel'),

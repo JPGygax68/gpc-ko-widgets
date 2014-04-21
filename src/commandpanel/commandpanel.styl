@@ -1,18 +1,24 @@
 div.command-panel {
-  box-sizing: border-box;
-  background-color: yellow;
-  opacity: 0.5;
   position: fixed;
   //top: 0;
   //bottom: 0;
   right: 20px;
   width: 300px;
-  padding: 0.5em;
+  
+  > .wrapper {
+    box-sizing: border-box;
+    padding: 0.5em;
+    background-color: yellow;
+    opacity: 0.5;
+    position: relative;
+    transform: translateY(-50%);
+  }
 }
 
 button-color = silver;
 
 .command-button {
+  margin: 0.15em 0;
   padding: 0.15em;
   border: 0.1em solid black;
   background-color: button-color;
