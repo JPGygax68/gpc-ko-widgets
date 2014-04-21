@@ -239,11 +239,22 @@ function list_keyDown(data, event) {
   var target = event.target;
   console.assert(target.tagName === 'LI');
   
-  if (target.nextElementSibling) {
-    target.nextElementSibling.focus();
+  if (Keyboard.is(event, 'DOWN')) {
+    if (target.nextElementSibling) {
+      focus(target.nextElementSibling);
+    }
   }
-  else if (target.previousElementSibling) {
-    target.previousElementSibling.focus();
+  else if (Keyboard.is(event, 'UP')) {
+    if (target.previousElementSibling) {
+      focus(target.previousElementSibling);
+    }
+  }
+  
+  //-----------
+  
+  function focus(elt) {
+    cp.alignWithElement(elt);
+    elt.focus();
   }
 }
 
