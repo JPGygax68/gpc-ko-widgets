@@ -43,7 +43,7 @@ html
       h1 Hello SketchPad
       div(data-bind="template: { name: 'gkspSketchPad', data: sketchpad }")
 
-    div(data-bind="if: page() === 'CommandPanel'")
+    div#command_panel(data-bind="if: page() === 'CommandPanel'")
       h1 Hello CommandPanel
       // ko with: list
       ul(data-bind="event: { focusin: list.focusIn, blur: blur, keydown: keyDown }")

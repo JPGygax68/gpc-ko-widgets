@@ -239,7 +239,7 @@ var list = {
     //console.log('focusIn()', this, data);
     console.assert(event.target.tagName === 'LI');
     this.selected_li( event.target );
-    cg.alignWithElement(event.target);
+    cg1.alignWithElement(event.target);
   },
   
   blur: function(data, event) {
@@ -251,7 +251,7 @@ var list = {
   
   keyDown: function(data, event) {
     //console.log('list.keyDown()', data, event);    
-    cg.delegate('keydown', data, event);
+    cg1.delegate('keydown', data, event);
   },
   
   goTo: function(element) {
@@ -278,10 +278,10 @@ var list = {
 var cp = new CommandPanel();
 var Command = CommandPanel.Command;
 
-var cg = new CommandPanel.Group();
-cp.groups.push(cg);
+var cg1 = new CommandPanel.Group();
+cp.groups.push(cg1);
 
-cg.commands.push( new Command('Move Up', 
+cg1.commands.push( new Command('Move Up', 
   function() { list.up  (); }, { 
     shortcut: 'UP', 
     enabled: ko.computed(function() { return !!(list.selected_li() && list.selected_li().previousElementSibling); })
@@ -289,14 +289,18 @@ cg.commands.push( new Command('Move Up',
       //  Not sure whether this could be a problem or not.
   } ) 
 );
-cg.commands.push( new Command('Move Down', 
+cg1.commands.push( new Command('Move Down', 
   function() { list.down(); }, { 
     shortcut: 'DOWN',
     enabled: ko.computed(function() { return !!(list.selected_li() && list.selected_li().nextElementSibling); })
   } ) 
 );
 
-cg.target( list );
+cg1.target( list );
+
+var cg2 = new CommandPanel.Group();
+cg2.commands.push( new Command('To paragraphs', function() { }, { enabled: ko.observable(true) } ) );
+cp.groups.push(cg2);
 
 var myViewModel = { 
   page: ko.observable('CommandPanel'),
@@ -313,9 +317,10 @@ var myViewModel = {
 function start() {
   ko.applyBindings(myViewModel);
 
-  var item5 = document.querySelector('ul > li:nth-child(5)');
-  cg.alignWithElement(item5);
-
+  var item5 = document.querySelector('#command_panel ul > li:nth-child(5)');
+  cg1.alignWithElement(item5);
+  
+  cg2.alignWithElement( document.querySelector('#command_panel ul') );
 }
 
 //----
