@@ -29,6 +29,7 @@ function Group() {
   this.commands = ko.observableArray();
 
   this.top = ko.observable(0);  
+  this.height = ko.observable(0);
 
   this.target = ko.observable(null);   
 
@@ -61,6 +62,7 @@ Group.prototype.setTargetZone = function(x, y, w, h) {
   //console.log('Group::setTargetZone()', x, y, w, h);
   
   this.top( y + h / 2 );
+  this.height( h );
 };
 
 Group.prototype.alignWithElement = function(elt) {

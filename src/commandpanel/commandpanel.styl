@@ -3,31 +3,41 @@ div.command-panel {
   top: 0;
   bottom: 0;
   right: 0;
-  width: 300px;
-  border-left: solid 1px grey;
+  width: 250px;
+  //border-left: solid 1px grey;
   background-color: rgba(255,255,255,0.2);
   
   > *.group {
     box-sizing: border-box;
     padding: 0.5em;
     background-color: yellow;
-    opacity: 0.5;
-    position: relative;
+    position: absolute;
+    left: 15px;
+    right: 5px;
     transform: translateY(-50%);
   }
-}
 
-button-color = silver;
+  .bracket {
+    position: absolute;
+    background-color: black; // TODO
+    left: 0;
+    width: 4px;
+    transform: translateY(-50%);
+  }
+  
+  button-color = silver;
 
-.command-button {
-  margin: 0.15em 0;
-  padding: 0.15em;
-  border: 0.1em solid black;
-  background-color: button-color;
-  cursor: default;
-  
-  &:hover { background-color: hsl(hue(button-color), saturation(button-color), lightness(button-color)+20%); }
-  
-  opacity : 0.5;
-  &.enabled { opacity: 1; }
+  .command-button {
+    margin: 0.15em 0;
+    padding: 0.15em;
+    border: 0.1em solid black;
+    background-color: button-color;
+    cursor: default;
+    
+    &:hover { background-color: hsl(hue(button-color), saturation(button-color), lightness(button-color)+20%); }
+    
+    opacity : 0.5;
+    &.enabled { opacity: 1; }
+  }
+
 }
