@@ -14,23 +14,34 @@ if (typeof ko.templates['__HAS_COMMANDPANEL_TEMPLATES__'] === 'undefined') {
 
 function CommandPanel() {
 
-  this.target = ko.observable(null);
-  
-  this.top = ko.observable(0);
-  
+  this.groups = ko.observableArray();  
+  this.groups.subscribe( function(changes) {
+    changes.forEach( function(change) {
+      //change.index, change.status, change.value
+      // So we don't have to pass owner when constructing objects
+      if (change.status === 'added') change.value._panel = this;
+    }, this);
+  }, this, 'arrayChange');  
+}
+
+function Group() {
+
   this.commands = ko.observableArray();
-  
+
+  this.top = ko.observable(0);  
+
+  this.target = ko.observable(null);   
+
   this.commands.subscribe( function(changes) {
     changes.forEach( function(change) {
       //change.index, change.status, change.value
       // So we don't have to pass owner when constructing objects
       if (change.status === 'added') change.value._owner = this;
     }, this);
-  }, this, 'arrayChange');
-  
+  }, this, 'arrayChange');  
 }
 
-CommandPanel.prototype._delegated_keydown = function(view_model, event) {
+Group.prototype._delegated_keydown = function(view_model, event) {
   //console.log('_delegated_keydown()');
   
   for (var i = 0; i < this.commands().length; i ++) {
@@ -46,26 +57,26 @@ CommandPanel.prototype._delegated_keydown = function(view_model, event) {
   }
 };
 
-CommandPanel.prototype.setTargetZone = function(x, y, w, h) {
-  //console.log('CommandPanel::setTargetZone()', x, y, w, h);
+Group.prototype.setTargetZone = function(x, y, w, h) {
+  //console.log('Group::setTargetZone()', x, y, w, h);
   
   this.top( y + h / 2 );
 };
 
-CommandPanel.prototype.alignWithElement = function(elt) {
+Group.prototype.alignWithElement = function(elt) {
   var rect = elt.getBoundingClientRect();
   this.setTargetZone(rect.left, rect.top, rect.width, rect.height);
 };
 
-CommandPanel.prototype.delegate = function(event_name, view_model, event_data) {
-  //console.log('CommandPanel::delegate()', event_name, view_model, event_data);
+Group.prototype.delegate = function(event_name, view_model, event_data) {
+  //console.log('Group::delegate()', event_name, view_model, event_data);
   
   return this['_delegated_'+event_name](view_model, event_data);
 };
 
-// The Command class must be made available
-
+// We make stuff available by attaching it to the constructor of the CommandPanel class.
 CommandPanel.Command = Command;
+CommandPanel.Group   = Group;
 
 // EXPORTS -----------------------
 

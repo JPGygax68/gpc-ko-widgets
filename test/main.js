@@ -239,7 +239,7 @@ var list = {
     //console.log('focusIn()', this, data);
     console.assert(event.target.tagName === 'LI');
     this.selected_li( event.target );
-    cp.alignWithElement(event.target);
+    cg.alignWithElement(event.target);
   },
   
   blur: function(data, event) {
@@ -251,7 +251,7 @@ var list = {
   
   keyDown: function(data, event) {
     //console.log('list.keyDown()', data, event);    
-    cp.delegate('keydown', data, event);
+    cg.delegate('keydown', data, event);
   },
   
   goTo: function(element) {
@@ -277,7 +277,11 @@ var list = {
 
 var cp = new CommandPanel();
 var Command = CommandPanel.Command;
-cp.commands.push( new Command('Move Up', 
+
+var cg = new CommandPanel.Group();
+cp.groups.push(cg);
+
+cg.commands.push( new Command('Move Up', 
   function() { list.up  (); }, { 
     shortcut: 'UP', 
     enabled: ko.computed(function() { return !!(list.selected_li() && list.selected_li().previousElementSibling); })
@@ -285,14 +289,14 @@ cp.commands.push( new Command('Move Up',
       //  Not sure whether this could be a problem or not.
   } ) 
 );
-cp.commands.push( new Command('Move Down', 
+cg.commands.push( new Command('Move Down', 
   function() { list.down(); }, { 
     shortcut: 'DOWN',
     enabled: ko.computed(function() { return !!(list.selected_li() && list.selected_li().nextElementSibling); })
   } ) 
 );
 
-cp.target( list );
+cg.target( list );
 
 var myViewModel = { 
   page: ko.observable('CommandPanel'),
@@ -310,7 +314,7 @@ function start() {
   ko.applyBindings(myViewModel);
 
   var item5 = document.querySelector('ul > li:nth-child(5)');
-  cp.alignWithElement(item5);
+  cg.alignWithElement(item5);
 
 }
 
