@@ -2,6 +2,23 @@
 
 var GObject = require('./gobject');
 
+// Helper functions -----------------------------------
+
+function setPointTo(point, x, y) {
+  if (ko.isObservable(point.x)) point.x(x); else point.x = x;
+  if (ko.isObservable(point.y)) point.y(y); else point.y = y;
+};
+
+function unwrapPoint(point) {
+  return { x: ko.unwrap(point.x), y: ko.unwrap(point.y) };
+};
+
+function getPointCoords(point) {
+  return [ ko.unwrap(point.x), ko.unwrap(point.y) ];
+};
+
+//------------------------------------------------------
+
 /* Polygon - very simple shape, basically just a path plus a fill and stroke style.
  */
  
@@ -27,8 +44,8 @@ Polygon.prototype._drawPath = function(ctx) {
   ctx.translate( this.x(),  this.y());
   
   ctx.beginPath();
-  ctx.moveTo(this.points[0].x, this.points[0].y);
-  for (var i = 1; i < this.points.length; i++) ctx.lineTo(this.points[i].x, this.points[i].y);
+  ctx.moveTo.apply(ctx, getPointCoords(this.points[0]));
+  for (var i = 1; i < this.points.length; i++) ctx.lineTo.apply(ctx, getPointCoords(this.points[i]));
   ctx.closePath();
 
   ctx.translate(-this.x(), -this.y());
@@ -36,7 +53,7 @@ Polygon.prototype._drawPath = function(ctx) {
 
 Polygon.prototype._drawHandlePath = function(ctx, point) {
   ctx.beginPath();
-  ctx.rect(point.x - 3.5, point.y - 3.5, 7, 7);
+  ctx.rect(ko.unwrap(point.x) - 3.5, ko.unwrap(point.y) - 3.5, 7, 7);
   ctx.closePath();
 };
 
@@ -44,7 +61,7 @@ Polygon.prototype.draw = function(ctx, options) {
   
   options = options || {};
   
-  console.log('Polygon::draw(), selected:', options.selected);
+  //console.log('Polygon::draw(), selected:', options.selected);
   
   ctx.fillStyle   = options.selected ? 'rgba(255, 100, 100, 0.5)' : 'rgba(128, 128, 128, 0.5)';
   ctx.strokeStyle = 'rgba(0, 0, 0, 0.5)';
@@ -71,7 +88,7 @@ Polygon.prototype.drawOutline = function(ctx, options) {
 }
 
 Polygon.prototype.mouseDown = function(x, y) {
-  console.log('Polygon::mouseDown()', x, y);
+  //console.log('Polygon::mouseDown()', x, y);
   
   var ctx = this._owner.display_context;
   
@@ -102,13 +119,11 @@ Polygon.prototype.mouseDown = function(x, y) {
 };
 
 Polygon.prototype.mouseMove = function(x, y) {
-  console.log('Polygon::mouseMove()', x, y);
+  //console.log('Polygon::mouseMove()', x, y);
   
   if (this._dragging_handle >= 0) {
     var i = this._dragging_handle;
-    var point = this.points[i];
-    point.x = x - this.x();
-    point.y = y - this.y();
+    setPointTo(this.points[i], x - this.x(), y - this.y());
     this._owner.redraw();
   }
   else {
@@ -117,7 +132,7 @@ Polygon.prototype.mouseMove = function(x, y) {
 };
 
 Polygon.prototype.mouseUp = function(x, y) {
-  console.log('Polygon::mouseUp()', x, y);
+  //console.log('Polygon::mouseUp()', x, y);
   
   if (this._dragging_handle >= 0) {
     this._owner.releaseMouse();

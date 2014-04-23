@@ -69,13 +69,13 @@ function SketchPad(width, height, options) {
 }
 
 SketchPad.prototype._drawObject = function(obj, options) {
-  console.log('SketchPad::_drawObject()');
+  //console.log('SketchPad::_drawObject()');
   
   obj.draw(this.display_context, options);
 };
 
 SketchPad.prototype._drawOutline = function(obj, options) {
-  console.log('SketchPad::_drawOutline()');
+  //console.log('SketchPad::_drawOutline()');
   
   if (obj.drawOutline) obj.drawOutline(this.overlay_context, options);
 };
@@ -204,6 +204,7 @@ SketchPad.prototype.releaseMouse = function() {
 // Public methods ----------------------------------------------------
 
 SketchPad.prototype.refresh = function() {
+  //console.log('SketchPad::refresh()');
   
   if (this.display_context) {
     this.redraw();
@@ -212,7 +213,7 @@ SketchPad.prototype.refresh = function() {
 };
 
 SketchPad.prototype.redraw = function() {
-  console.log('SketchPad::redraw()');
+  //console.log('SketchPad::redraw()');
   
   this._prepareDisplayContext();
   //this.display_context.translate( 0.5, 0.5 );

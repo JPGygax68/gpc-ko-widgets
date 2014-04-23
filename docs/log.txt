@@ -1,3 +1,14 @@
+2014-04-22
+==========
+
+I've begun work on the command panel. I have brackets visually marking the "zones" that the commands in a given group would act upon; and as it is, the group panels are also moving to be on the exact right of that zone.
+
+That is not good enough though. I must prevent group panels from overlapping each other; and there must be some logic as to their respective placement.
+
+To achieve this, command group panels should be able to take a "priority" parameter, which will place them higher up. The group panels should still try to get close to their target zones though.
+
+
+
 2014-04-19
 ==========
 
