@@ -35,21 +35,19 @@ GObject.prototype._notifyChange = function() {
 };
 
 // Implement in descendants
-GObject.prototype.draw      = function(context, options) { throw new Error(this.constructor.toString()+' does not implement draw()!'); };
+GObject.prototype.draw = function(context, options) { throw new Error(this.constructor.toString()+' does not implement draw()!'); };
   // options: selected (boolean)
   
-/* The default implementation of mouseDown() requires a method _drawPath(ctx) to be implemented.
+/* The default implementation of testMouseDown() requires a method _drawPath(ctx) to be implemented.
  */
-GObject.prototype.mouseDown = function(x, y) {
+GObject.prototype.testMouseDown = function(ctx, x, y) {
   
   if (!this._drawPath) { console.log('no _drawPath() method'); return false; }
-  
-  var ctx = this._owner.display_context;
   
   // Hit inside the polygon ?
   this._drawPath(ctx);
   if (ctx.isPointInPath(x, y)) { 
-    console.log('HIT');
+    //console.log('HIT');
     this.select(); // should trigger redraw()
     if (!this.options.no_dragging) {
       // Begin dragging
@@ -62,7 +60,7 @@ GObject.prototype.mouseDown = function(x, y) {
   }
 };
 
-GObject.prototype.mouseMove = function(x, y) {
+GObject.prototype.mouseDrag = function(x, y) {
 
   if (this._dragging) {
     this.x(x - this._dragging.offset.x);

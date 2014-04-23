@@ -41,14 +41,15 @@ Polygon.prototype.constructor = Polygon;
 
 Polygon.prototype._drawPath = function(ctx) {
   
-  ctx.translate( this.x(),  this.y());
+  ctx.save();
+  ctx.translate( this.x(), this.y() );
   
   ctx.beginPath();
   ctx.moveTo.apply(ctx, getPointCoords(this.points[0]));
   for (var i = 1; i < this.points.length; i++) ctx.lineTo.apply(ctx, getPointCoords(this.points[i]));
   ctx.closePath();
 
-  ctx.translate(-this.x(), -this.y());
+  ctx.restore();
 };
 
 Polygon.prototype._drawHandlePath = function(ctx, point) {
@@ -87,39 +88,37 @@ Polygon.prototype.drawOutline = function(ctx, options) {
   ctx.translate(-this.x(), -this.y());
 }
 
-Polygon.prototype.mouseDown = function(x, y) {
-  //console.log('Polygon::mouseDown()', x, y);
-  
-  var ctx = this._owner.display_context;
+Polygon.prototype.testMouseDown = function(ctx, x, y) {
+  //console.log('Polygon::testMouseDown()', x, y);
   
   // Hit on one of the handles ?
-  var hit = false;
+  var handle_hit = false;
   ctx.translate( this.x(),  this.y());
   for (var i = 0; i < this.points.length; i++) {
     var point = this.points[i];
     this._drawHandlePath(ctx, point);
     if (ctx.isPointInPath(x, y)) { 
       console.log('HIT on handle #'+i);
-      this.select(); // TODO: good idea ? make it optional ?
       this._owner.captureMouse(this);
       this._dragging_handle = i;
       this._selected_handle = i;
-      hit = true;
+      handle_hit = true;
       break;
     }
   }
   ctx.translate(-this.x(), -this.y());
   
-  if (hit) {
-    this._owner.redraw();
+  if (handle_hit) {
+    this.select(); // triggers redraw
     return true;
   }
-  
-  return GObject.prototype.mouseDown.apply(this, arguments);
+  else {  
+    return GObject.prototype.testMouseDown.apply(this, arguments);
+  }
 };
 
-Polygon.prototype.mouseMove = function(x, y) {
-  //console.log('Polygon::mouseMove()', x, y);
+Polygon.prototype.mouseDrag = function(x, y) {
+  //console.log('Polygon::mouseDrag()', x, y);
   
   if (this._dragging_handle >= 0) {
     var i = this._dragging_handle;
@@ -127,7 +126,7 @@ Polygon.prototype.mouseMove = function(x, y) {
     this._owner.redraw();
   }
   else {
-    return GObject.prototype.mouseMove.apply(this, arguments);
+    return GObject.prototype.mouseDrag.apply(this, arguments);
   }
 };
 

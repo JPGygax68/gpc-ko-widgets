@@ -68,6 +68,22 @@ function SketchPad(width, height, options) {
   }, this);
 }
 
+SketchPad.prototype.init = function(element) {
+  console.log('SketchPad::init()', element);
+
+  // Obtain container element
+  this.container = element.getElementsByClassName('container')[0];
+  
+  // Obtain contexts for both canvases ("display" and "overlay")
+  this.display_context = element.getElementsByClassName('display')[0].getContext('2d');
+  this.overlay_context = element.getElementsByClassName('overlay')[0].getContext('2d');
+  //this.overlay_context.translate( this.margin(), this.margin() );
+  
+  if (this._redraw_required()) window.setTimeout( this.redraw.bind(this), 0 );
+};
+
+// TODO: SketchPad.prototype.detach()
+
 SketchPad.prototype._drawObject = function(obj, options) {
   //console.log('SketchPad::_drawObject()');
   
@@ -77,7 +93,9 @@ SketchPad.prototype._drawObject = function(obj, options) {
 SketchPad.prototype._drawOutline = function(obj, options) {
   //console.log('SketchPad::_drawOutline()');
   
+  //console.time('_drawOutline');
   if (obj.drawOutline) obj.drawOutline(this.overlay_context, options);
+  //console.timeEnd('_drawOutline');
 };
 
 SketchPad.prototype._objectChanged = function(obj) {
@@ -86,35 +104,17 @@ SketchPad.prototype._objectChanged = function(obj) {
   this.refresh();
 };
 
-SketchPad.prototype._prepareDisplayContext = function() {
+SketchPad.prototype._getDisplay = function(dont_clear) {
 
-  var ctx = this.display_context;
-  
-  ctx.clearRect(0, 0, this.width(), this.height());
-  
-  return ctx;
+  if (!dont_clear) this.display_context.clearRect(0, 0, this.width(), this.height());
+  return this.display_context;
 };
 
-SketchPad.prototype._doneWithDisplayContext = function() {
-  
-  // NO-OP, exists for symmetry
-};
+SketchPad.prototype._getOverlay = function(dont_clear) {
 
-SketchPad.prototype._prepareOverlayContext = function() {
-  
-  var ctx = this.overlay_context;
-  
-  ctx.clearRect(0, 0, this.width() + 2 * this.margin(), this.height() + 2 * this.margin() );
-  
-  ctx.save();  
-  ctx.translate( this.margin(), this.margin() );
-  
-  return ctx; // just a convenience
-};
-
-SketchPad.prototype._doneWithOverlayContext = function() {
-  
-  this.overlay_context.restore();
+  this.overlay_context.setTransform(1, 0, 0, 1, this.margin(), this.margin() );
+  if (!dont_clear) this.overlay_context.clearRect(-this.margin(), -this.margin(), this.width() + 2 * this.margin(), this.height() + 2 * this.margin() );
+  return this.overlay_context;
 };
 
 SketchPad.prototype._getRelativeMouseCoords = function(e) {  
@@ -122,8 +122,8 @@ SketchPad.prototype._getRelativeMouseCoords = function(e) {
   
   var elt_pos = getPosition(e.target);
   
-  return { x: e.pageX - elt_pos.x - this.margin(), 
-           y: e.pageY - elt_pos.y - this.margin() };
+  return { x: e.pageX - elt_pos.x, // - this.margin(), 
+           y: e.pageY - elt_pos.y  /* - this.margin() */ };
 
   //------------
   
@@ -137,22 +137,28 @@ SketchPad.prototype._getRelativeMouseCoords = function(e) {
 // Event handlers ----------------------------------------------------
 
 SketchPad.prototype.mouseDown = function(target, e) {
-  console.log('SketchPad::mouseDown()', e);
+  //console.log('SketchPad::mouseDown()', e);
+  console.time('mouseDown');
+  
+  this._getOverlay(true);
   
   var pos = this._getRelativeMouseCoords(e);
   
   // Selected object first
-  if (this.selectedObject() && this.selectedObject().mouseDown(pos.x, pos.y)) return;
+  if (!(this.selectedObject() && this.selectedObject().testMouseDown(this.overlay_context, pos.x, pos.y))) {
   
-  // Inverse Z order
-  for (var i = this.objects().length; -- i >= 0; ) {
-    var obj = this.objects()[i];
-    if (obj !== this.selectedObject() && obj.mouseDown(pos.x, pos.y)) break;
+    // Inverse Z order
+    for (var i = this.objects().length; -- i >= 0; ) {
+      var obj = this.objects()[i];
+      if (obj !== this.selectedObject() && obj.testMouseDown(this.overlay_context, pos.x, pos.y)) break;
+    }
   }
+  
+  console.timeEnd('mouseDown');
 };
 
 SketchPad.prototype.mouseUp = function(target, e) {
-  console.log('SketchPad::mouseUp()', e);
+  //console.log('SketchPad::mouseUp()');
   
   if (this._mouse_owner) {
     var pos = this._getRelativeMouseCoords(e);
@@ -165,17 +171,17 @@ SketchPad.prototype.mouseMove = function(target, e) {
 
   if (this._mouse_owner) {
     var pos = this._getRelativeMouseCoords(e);  
-    this._mouse_owner.mouseMove(pos.x, pos.y);
+    this._mouse_owner.mouseDrag(pos.x, pos.y);
   }
 };
 
 SketchPad.prototype.mouseOut = function(target, e) {
-  console.log('SketchPad::mouseOut()', e);
+  //console.log('SketchPad::mouseOut()');
 
   if (this._mouse_owner) {
     var pos = this._getRelativeMouseCoords(e);  
     this._mouse_owner.mouseUp(pos.x, pos.y);
-    this.releaseMouse();
+    //this.releaseMouse();
   }
 };
 
@@ -185,7 +191,7 @@ SketchPad.prototype.captureMouse = function(obj, cursor) {
   console.log('SketchPad::captureMouse()');
   
   // You caught it, you own it
-  this._mouse_owner = obj;
+  this._mouse_owner = obj;  
   
   // Change cursor style (if asked for)
   this.container.style.cursor = '-webkit-'+cursor;
@@ -206,18 +212,16 @@ SketchPad.prototype.releaseMouse = function() {
 SketchPad.prototype.refresh = function() {
   //console.log('SketchPad::refresh()');
   
-  if (this.display_context) {
-    this.redraw();
-  }
+  if (this.display_context) this.redraw();
   else this._redraw_required(true);
 };
 
 SketchPad.prototype.redraw = function() {
   //console.log('SketchPad::redraw()');
+  console.time('redraw');
   
-  this._prepareDisplayContext();
-  //this.display_context.translate( 0.5, 0.5 );
-  this._prepareOverlayContext();
+  this._getDisplay();
+  this._getOverlay();
   
   this.objects().forEach( function(obj) { 
     var selected = obj === this.selectedObject();
@@ -225,8 +229,7 @@ SketchPad.prototype.redraw = function() {
     this._drawOutline(obj, { selected: selected });
   }, this );
 
-  this._doneWithDisplayContext();
-  this._doneWithOverlayContext();
+  console.timeEnd('redraw');
 };
 
 // Other initialization --------------------------------------------
@@ -237,32 +240,19 @@ SketchPad.Polygon = Polygon;
 
 // Custom binding --------------------------------------------------
 
-ko.bindingHandlers.gpc_kowidgets_designer = {
+ko.bindingHandlers.gpc_kowidgets_sketchpad = {
   
   init: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
     // This will be called when the binding is first applied to an element
     // Set up any initial state, event handlers, etc. here
     
-    var instance = bindingContext.$rawData;
-    
-    console.log('instrumentViewer.init()', 'element:', element, 'value:', valueAccessor(), 'instance:', instance);
-
-    // Obtain container element
-    instance.container = element.getElementsByClassName('container')[0];
-    
-    // Obtain contexts for both canvases ("display" and "overlay")
-    instance.display_context = element.getElementsByClassName('display')[0].getContext('2d');
-    instance.overlay_context = element.getElementsByClassName('overlay')[0].getContext('2d');
-    
-    if (instance._redraw_required()) window.setTimeout( instance.redraw.bind(instance), 0 );
+    bindingContext.$rawData.init(element);
   },
   
   update: function(element, valueAccessor, allBindings, viewModel, bindingContext) {
     // This will be called once when the binding is first applied to an element,
     // and again whenever the associated observable changes value.
     // Update the DOM element based on the supplied values here.
-    //var instance = bindingContext.$rawData;
-    //instance.refresh();
   }
 };
 
