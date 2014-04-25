@@ -1,7 +1,6 @@
-//- TODO: this needs to be converted into a proper, named template (i.e. a widget)
 
 div.gpc-ko-widget.sketchpad(data-bind="gpc_kowidgets_sketchpad: $data")
   div.zoom_factor
-  div.container(data-bind="style: { width: (width()+2*margin())+'px', height: (height()+2*margin())+'px' }")
-    canvas.display(data-bind="attr: { width: width(), height: height() }, style: { left: margin()+'px', top: margin()+'px' }")
-    canvas.overlay(data-bind="event: { mousedown: mouseDown, mouseup: mouseUp, mousemove: mouseMove, mouseout: mouseOut }, attr: { width: width()+2*margin(), height: height()+2*margin() }")
+  div.container(data-bind="style: { width: (width()*zoom()+2*margin())+'px', height: (height()*zoom()+2*margin())+'px' }")
+    canvas.display(data-bind="attr: { width: width()*zoom(), height: height()*zoom() }, style: { left: margin()+'px', top: margin()+'px' }")
+    canvas.overlay(data-bind="event: { mousedown: mouseDown, mouseup: mouseUp, mousemove: mouseMove, mouseout: mouseOut }, attr: { width: width()*zoom()+2*margin(), height: height()*zoom()+2*margin() }")

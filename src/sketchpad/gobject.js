@@ -39,8 +39,10 @@ GObject.prototype.draw = function(context, options) { throw new Error(this.const
   // options: selected (boolean)
   
 /* The default implementation of testMouseDown() requires a method _drawPath(ctx) to be implemented.
+  TODO: clean up the interface: make it clear the context is set up so that it must be used with relative mouse coordinates;
+    also, ctx shouldn't be the first arg but the last, or in options, as it's not always needed; and put scaled coords first ?
  */
-GObject.prototype.testMouseDown = function(ctx, x, y) {
+GObject.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
   
   if (!this._drawPath) { console.log('no _drawPath() method'); return false; }
   
@@ -53,24 +55,24 @@ GObject.prototype.testMouseDown = function(ctx, x, y) {
       // Begin dragging
       this._owner.captureMouse(this, 'grab');
       this._dragging = {
-        offset: { x: x - this.x(), y: y - this.y() }
+        offset: { x: scaled_x - this.x(), y: scaled_y - this.y() }
       };
     }
     return true; // truthy means that mouseDown has been "consumed"
   }
 };
 
-GObject.prototype.mouseDrag = function(x, y) {
+GObject.prototype.mouseDrag = function(x, y, scaled_x, scaled_y) {
 
   if (this._dragging) {
-    this.x(x - this._dragging.offset.x);
-    this.y(y - this._dragging.offset.y);
+    this.x(scaled_x - this._dragging.offset.x);
+    this.y(scaled_y - this._dragging.offset.y);
     this._owner.redraw();
     return true;
   }
 };
 
-GObject.prototype.mouseUp = function(x, y) {
+GObject.prototype.mouseUp = function(x, y, scaled_x, scaled_y) {
 
   if (this._dragging) {
     this._owner.releaseMouse();

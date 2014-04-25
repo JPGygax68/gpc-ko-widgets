@@ -34,6 +34,7 @@ function SketchPad(width, height, options) {
   
   this.width  = ko.isObservable(width ) ? width  : ko.observable(width );
   this.height = ko.isObservable(height) ? height : ko.observable(height);
+  this.zoom   = ko.isObservable(this.options.zoom) ? options.zoom : ko.observable(1);
   
   this.width .subscribe( function() { window.setTimeout(this.refresh.bind(this), 1); }, this );
   this.height.subscribe( function() { window.setTimeout(this.refresh.bind(this), 1); }, this );
@@ -106,6 +107,8 @@ SketchPad.prototype._objectChanged = function(obj) {
 
 SketchPad.prototype._getDisplay = function(dont_clear) {
 
+  this.display_context.setTransform(1, 0, 0, 1, 0, 0);
+  this.display_context.scale( this.zoom(), this.zoom() );
   if (!dont_clear) this.display_context.clearRect(0, 0, this.width(), this.height());
   return this.display_context;
 };
@@ -113,6 +116,7 @@ SketchPad.prototype._getDisplay = function(dont_clear) {
 SketchPad.prototype._getOverlay = function(dont_clear) {
 
   this.overlay_context.setTransform(1, 0, 0, 1, this.margin(), this.margin() );
+  this.overlay_context.scale( this.zoom(), this.zoom() );
   if (!dont_clear) this.overlay_context.clearRect(-this.margin(), -this.margin(), this.width() + 2 * this.margin(), this.height() + 2 * this.margin() );
   return this.overlay_context;
 };
@@ -134,6 +138,10 @@ SketchPad.prototype._getRelativeMouseCoords = function(e) {
   }
 };
 
+SketchPad.prototype._scalePosition = function(pos) {
+  return { x: pos.x / this.zoom(), y: pos.y / this.zoom() };
+};
+
 // Event handlers ----------------------------------------------------
 
 SketchPad.prototype.mouseDown = function(target, e) {
@@ -143,14 +151,15 @@ SketchPad.prototype.mouseDown = function(target, e) {
   this._getOverlay(true);
   
   var pos = this._getRelativeMouseCoords(e);
+  var scaled = this._scalePosition(pos);
   
   // Selected object first
-  if (!(this.selectedObject() && this.selectedObject().testMouseDown(this.overlay_context, pos.x, pos.y))) {
+  if (!(this.selectedObject() && this.selectedObject().testMouseDown(this.overlay_context, pos.x, pos.y, scaled.x, scaled.y))) {
   
     // Inverse Z order
     for (var i = this.objects().length; -- i >= 0; ) {
       var obj = this.objects()[i];
-      if (obj !== this.selectedObject() && obj.testMouseDown(this.overlay_context, pos.x, pos.y)) break;
+      if (obj !== this.selectedObject() && obj.testMouseDown(this.overlay_context, pos.x, pos.y, scaled.x, scaled.y)) break;
     }
   }
   
@@ -162,7 +171,8 @@ SketchPad.prototype.mouseUp = function(target, e) {
   
   if (this._mouse_owner) {
     var pos = this._getRelativeMouseCoords(e);
-    this._mouse_owner.mouseUp(pos.x, pos.y);
+    var scaled = this._scalePosition(pos);
+    this._mouse_owner.mouseUp(pos.x, pos.y, scaled.x, scaled.y);
   }
 };
 
@@ -171,7 +181,8 @@ SketchPad.prototype.mouseMove = function(target, e) {
 
   if (this._mouse_owner) {
     var pos = this._getRelativeMouseCoords(e);  
-    this._mouse_owner.mouseDrag(pos.x, pos.y);
+    var scaled = this._scalePosition(pos);
+    this._mouse_owner.mouseDrag(pos.x, pos.y, scaled.x, scaled.y);
   }
 };
 
@@ -180,7 +191,8 @@ SketchPad.prototype.mouseOut = function(target, e) {
 
   if (this._mouse_owner) {
     var pos = this._getRelativeMouseCoords(e);  
-    this._mouse_owner.mouseUp(pos.x, pos.y);
+    var scaled = this._scalePosition(pos);
+    this._mouse_owner.mouseUp(pos.x, pos.y, scaled.x, scaled.y);
     //this.releaseMouse();
   }
 };

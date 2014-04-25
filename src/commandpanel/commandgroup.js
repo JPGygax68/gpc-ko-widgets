@@ -43,6 +43,7 @@ CommandGroup.prototype.setTargetZone = function(x, y, w, h) {
   
   this.top( y + h / 2 );
   this.height( h );
+  
 };
 
 CommandGroup.prototype.alignWithElement = function(elt) {

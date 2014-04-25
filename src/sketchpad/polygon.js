@@ -88,7 +88,7 @@ Polygon.prototype.drawOutline = function(ctx, options) {
   ctx.translate(-this.x(), -this.y());
 }
 
-Polygon.prototype.testMouseDown = function(ctx, x, y) {
+Polygon.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
   //console.log('Polygon::testMouseDown()', x, y);
   
   // Hit on one of the handles ?
@@ -117,12 +117,12 @@ Polygon.prototype.testMouseDown = function(ctx, x, y) {
   }
 };
 
-Polygon.prototype.mouseDrag = function(x, y) {
+Polygon.prototype.mouseDrag = function(x, y, scaled_x, scaled_y) {
   //console.log('Polygon::mouseDrag()', x, y);
   
   if (this._dragging_handle >= 0) {
     var i = this._dragging_handle;
-    setPointTo(this.points[i], x - this.x(), y - this.y());
+    setPointTo(this.points[i], scaled_x - this.x(), scaled_y - this.y());
     this._owner.redraw();
   }
   else {
@@ -130,7 +130,7 @@ Polygon.prototype.mouseDrag = function(x, y) {
   }
 };
 
-Polygon.prototype.mouseUp = function(x, y) {
+Polygon.prototype.mouseUp = function(x, y, scaled_x, scaled_y) {
   //console.log('Polygon::mouseUp()', x, y);
   
   if (this._dragging_handle >= 0) {
