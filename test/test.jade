@@ -40,7 +40,11 @@ html
       div(style="clear: both")
       
     div(data-bind="if: page() === 'SketchPad'")
-      h1 Hello SketchPad
+      h1 SketchPad Test
+      div
+        button(onclick="sp.zoomPercent(50);") 50%
+        button(onclick="sp.zoomPercent(100);") 100%
+        button(onclick="sp.zoomPercent(200);") 200%
       div(data-bind="template: { name: 'gkspSketchPad', data: sketchpad }")
 
     div#command_panel(data-bind="if: page() === 'CommandPanel'")

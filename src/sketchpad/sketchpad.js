@@ -37,8 +37,14 @@ function SketchPad(width, height, options) {
   this.height = ko.isObservable(height) ? height : ko.observable(height);
   this.zoom   = ko.isObservable(this.options.zoom) ? options.zoom : ko.observable(1);
   
+  this.zoomPercent = ko.computed({
+    read : function() { return Math.floor(this.zoom() * 100); },
+    write: function(value) { this.zoom( value / 100 ); }
+  }, this);
+  
   this.width .subscribe( function() { window.setTimeout(this.refresh.bind(this), 1); }, this );
   this.height.subscribe( function() { window.setTimeout(this.refresh.bind(this), 1); }, this );
+  this.zoom  .subscribe( function() { window.setTimeout(this.refresh.bind(this), 1); }, this );
   
   this.margin  = ko.observable(DEFAULT_MARGIN);
 
