@@ -121,8 +121,8 @@ SketchPad.prototype._getOverlay = function(dont_clear) {
   return this.overlay_context;
 };
 
-SketchPad.prototype._getRelativeMouseCoords = function(e) {  
-  //console.log('_getRelativeMouseCoords:', e);
+SketchPad.prototype._getRelativeMousePos = function(e) {  
+  //console.log('_getRelativeMousePos:', e);
   
   var elt_pos = getPosition(e.target);
   
@@ -138,9 +138,30 @@ SketchPad.prototype._getRelativeMouseCoords = function(e) {
   }
 };
 
+SketchPad.prototype._getScaledMousePos = function(e) {  
+  //console.log('_getScaledMouseCoords:', e);
+  
+  var elt_pos = getPosition(e.target);
+  
+  var scale = 1 / this.zoom();
+  
+  return { x: scale * (e.pageX - elt_pos.x - this.margin()), 
+           y: scale * (e.pageY - elt_pos.y - this.margin()) };
+
+  //------------
+  
+  function getPosition(elt) {
+    var pos = elt.offsetParent ? getPosition(elt.offsetParent) : { x: 0, y: 0 };
+    pos.x += elt.offsetLeft, pos.y += elt.offsetTop;
+    return pos;
+  }
+};
+
+/*
 SketchPad.prototype._scalePosition = function(pos) {
   return { x: pos.x / this.zoom(), y: pos.y / this.zoom() };
 };
+*/
 
 // Event handlers ----------------------------------------------------
 
@@ -150,8 +171,8 @@ SketchPad.prototype.mouseDown = function(target, e) {
   
   this._getOverlay(true);
   
-  var pos = this._getRelativeMouseCoords(e);
-  var scaled = this._scalePosition(pos);
+  var pos = this._getRelativeMousePos(e);
+  var scaled = this._getScaledMousePos(e);
   
   // Selected object first
   if (!(this.selectedObject() && this.selectedObject().testMouseDown(this.overlay_context, pos.x, pos.y, scaled.x, scaled.y))) {
@@ -170,8 +191,8 @@ SketchPad.prototype.mouseUp = function(target, e) {
   //console.log('SketchPad::mouseUp()');
   
   if (this._mouse_owner) {
-    var pos = this._getRelativeMouseCoords(e);
-    var scaled = this._scalePosition(pos);
+    var pos = this._getRelativeMousePos(e);
+    var scaled = this._getScaledMousePos(e);
     this._mouse_owner.mouseUp(pos.x, pos.y, scaled.x, scaled.y);
   }
 };
@@ -180,8 +201,8 @@ SketchPad.prototype.mouseMove = function(target, e) {
   //console.log('SketchPad::mouseMove()', e);
 
   if (this._mouse_owner) {
-    var pos = this._getRelativeMouseCoords(e);  
-    var scaled = this._scalePosition(pos);
+    var pos = this._getRelativeMousePos(e);  
+    var scaled = this._getScaledMousePos(e);
     this._mouse_owner.mouseDrag(pos.x, pos.y, scaled.x, scaled.y);
   }
 };
@@ -190,8 +211,8 @@ SketchPad.prototype.mouseOut = function(target, e) {
   //console.log('SketchPad::mouseOut()');
 
   if (this._mouse_owner) {
-    var pos = this._getRelativeMouseCoords(e);  
-    var scaled = this._scalePosition(pos);
+    var pos = this._getRelativeMousePos(e);  
+    var scaled = this._getScaledMousePos(e);
     this._mouse_owner.mouseUp(pos.x, pos.y, scaled.x, scaled.y);
     //this.releaseMouse();
   }

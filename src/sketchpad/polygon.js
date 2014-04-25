@@ -2,6 +2,10 @@
 
 var GObject = require('./gobject');
 
+// Constants ------------------------------------------
+
+var HANDLE_SIZE = 7;
+
 // Helper functions -----------------------------------
 
 function setPointTo(point, x, y) {
@@ -53,8 +57,9 @@ Polygon.prototype._drawPath = function(ctx) {
 };
 
 Polygon.prototype._drawHandlePath = function(ctx, point) {
+  var scale = 1 / this._owner.zoom();
   ctx.beginPath();
-  ctx.rect(ko.unwrap(point.x) - 3.5, ko.unwrap(point.y) - 3.5, 7, 7);
+  ctx.rect(ko.unwrap(point.x) - HANDLE_SIZE * scale / 2, ko.unwrap(point.y) - HANDLE_SIZE * scale/ 2, HANDLE_SIZE * scale, HANDLE_SIZE * scale);
   ctx.closePath();
 };
 
