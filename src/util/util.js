@@ -29,7 +29,14 @@ function makeObservable(value) {
   else                             return ko.observable(value);
 }
 
+function getAbsoluteElementPosition(elt) {
+  var pos = elt.offsetParent ? getAbsoluteElementPosition(elt.offsetParent) : { x: 0, y: 0 };
+  pos.x += elt.offsetLeft, pos.y += elt.offsetTop;
+  return pos;
+}
+
 module.exports = {
   valueType: valueType,
-  makeObservable: makeObservable
+  makeObservable: makeObservable,
+  getAbsoluteElementPosition: getAbsoluteElementPosition
 };

@@ -2,6 +2,7 @@
 
 var Polygon = require('./polygon');
 var Image   = require('./image');
+var util    = require('../util/util');
 
 // A few constants -------------------------------------------------
 
@@ -124,37 +125,21 @@ SketchPad.prototype._getOverlay = function(dont_clear) {
 SketchPad.prototype._getRelativeMousePos = function(e) {  
   //console.log('_getRelativeMousePos:', e);
   
-  var elt_pos = getPosition(e.target);
+  var elt_pos = util.getAbsoluteElementPosition(e.target);
   
   return { x: e.pageX - elt_pos.x, // - this.margin(), 
            y: e.pageY - elt_pos.y  /* - this.margin() */ };
-
-  //------------
-  
-  function getPosition(elt) {
-    var pos = elt.offsetParent ? getPosition(elt.offsetParent) : { x: 0, y: 0 };
-    pos.x += elt.offsetLeft, pos.y += elt.offsetTop;
-    return pos;
-  }
 };
 
 SketchPad.prototype._getScaledMousePos = function(e) {  
   //console.log('_getScaledMouseCoords:', e);
   
-  var elt_pos = getPosition(e.target);
+  var elt_pos = util.getAbsoluteElementPosition(e.target);
   
   var scale = 1 / this.zoom();
   
   return { x: scale * (e.pageX - elt_pos.x - this.margin()), 
            y: scale * (e.pageY - elt_pos.y - this.margin()) };
-
-  //------------
-  
-  function getPosition(elt) {
-    var pos = elt.offsetParent ? getPosition(elt.offsetParent) : { x: 0, y: 0 };
-    pos.x += elt.offsetLeft, pos.y += elt.offsetTop;
-    return pos;
-  }
 };
 
 /*
