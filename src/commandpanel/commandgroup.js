@@ -8,7 +8,8 @@ function CommandGroup() {
 
   this.commands = ko.observableArray();
 
-  this.top = ko.observable(0);  
+  this.position = ko.observable(0);  
+  this.attachmentOffset = ko.observable(0);
   this.height = ko.observable(0);
 
   this.target = ko.observable(null);   
@@ -39,11 +40,12 @@ CommandGroup.prototype._delegated_keydown = function(view_model, event) {
 };
 
 CommandGroup.prototype.setTargetZone = function(x, y, w, h) {
-  //console.log('CommandGroup::setTargetZone()', x, y, w, h);
+  console.log('CommandGroup::setTargetZone()', x, y, w, h);
   
-  this.top( y + h / 2 - this._panel.element.getBoundingClientRect().top );
   this.height( h );
-  
+  this.position( y - this._panel.element.getBoundingClientRect().top );
+
+  this._panel.reflow(this);
 };
 
 CommandGroup.prototype.alignWithElement = function(elt) {

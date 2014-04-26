@@ -1,3 +1,8 @@
+2014-04-26
+==========
+
+- Observation about Knockout: when it is necessary to operate with the view itself (i.e. the DOM elements), the view model is the wrong starting point. Instead, one must start at the root element, look at contained elements and use ko.dataFor() to obtain the associated parts of the view model.
+
 2014-04-25
 ==========
 
