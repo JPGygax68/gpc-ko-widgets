@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "GPC Knockout-based widget library",
   "main": "src/main.js",
+  "lib": "src/",
   "directories": {
     "doc": "docs"
   },

@@ -1,5 +1,6 @@
 "use strict";
 
+var GObject = require('./gobject');
 var Polygon = require('./polygon');
 var Image   = require('./image');
 var util    = require('../util/util');
@@ -38,7 +39,7 @@ function SketchPad(width, height, options) {
   this.zoom   = ko.isObservable(this.options.zoom) ? options.zoom : ko.observable(1);
   
   this.zoomPercent = ko.computed({
-    read : function() { return Math.floor(this.zoom() * 100); },
+    read : function() { return Math.floor(this.zoom() * 100 + 0.49); },
     write: function(value) { this.zoom( value / 100 ); }
   }, this);
   
@@ -148,12 +149,6 @@ SketchPad.prototype._getScaledMousePos = function(e) {
            y: scale * (e.pageY - elt_pos.y - this.margin()) };
 };
 
-/*
-SketchPad.prototype._scalePosition = function(pos) {
-  return { x: pos.x / this.zoom(), y: pos.y / this.zoom() };
-};
-*/
-
 // Event handlers ----------------------------------------------------
 
 SketchPad.prototype.mouseDown = function(target, e) {
@@ -162,7 +157,7 @@ SketchPad.prototype.mouseDown = function(target, e) {
   
   this._getOverlay(true);
   
-  var pos = this._getRelativeMousePos(e);
+  var pos    = this._getRelativeMousePos(e);
   var scaled = this._getScaledMousePos(e);
   
   // Selected object first
@@ -191,11 +186,26 @@ SketchPad.prototype.mouseUp = function(target, e) {
 SketchPad.prototype.mouseMove = function(target, e) {
   //console.log('SketchPad::mouseMove()', e);
 
+  var pos    = this._getRelativeMousePos(e);  
+  var scaled = this._getScaledMousePos(e);
+  
+  // Has the mouse been "captured" by any of the objects ?
   if (this._mouse_owner) {
-    var pos = this._getRelativeMousePos(e);  
-    var scaled = this._getScaledMousePos(e);
     this._mouse_owner.mouseDrag(pos.x, pos.y, scaled.x, scaled.y);
   }
+
+  // Check for hover (inverse Z order)
+  var must_redraw = false;
+  for (var i = this.objects().length; -- i >= 0; ) {
+    var obj = this.objects()[i];
+    var hovered = obj !== this.selectedObject() && obj.containsPosition(this.overlay_context, pos.x, pos.y, scaled.x, scaled.y);
+    if (hovered !== obj.options.hovered) {
+      obj.options.hovered = hovered;
+      if (obj.options.hovered) console.log('hovered');
+      must_redraw = true;
+    }
+  }
+  if (must_redraw) this.redraw();
 };
 
 SketchPad.prototype.mouseOut = function(target, e) {
@@ -240,7 +250,7 @@ SketchPad.prototype.refresh = function() {
   else this._redraw_required(true);
 };
 
-SketchPad.prototype.redraw = function() {
+SketchPad.prototype.redraw = function(options) {
   //console.log('SketchPad::redraw()');
   console.time('redraw');
   
@@ -249,8 +259,8 @@ SketchPad.prototype.redraw = function() {
   
   this.objects().forEach( function(obj) { 
     var selected = obj === this.selectedObject();
-    this._drawObject (obj, { selected: selected });
-    this._drawOutline(obj, { selected: selected });
+    this._drawObject (obj, {selected: selected});
+    this._drawOutline(obj, {selected: selected});
   }, this );
 
   console.timeEnd('redraw');
@@ -259,6 +269,8 @@ SketchPad.prototype.redraw = function() {
 // Other initialization --------------------------------------------
 
 // Attach object classes to SketchPad constructor
+// TODO: do this in a special source file "sketchpad-bundle.js" or so
+SketchPad.Object  = GObject;
 SketchPad.Image   = Image;
 SketchPad.Polygon = Polygon;
 

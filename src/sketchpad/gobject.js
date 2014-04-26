@@ -1,5 +1,7 @@
 "use strict";
 
+// TODO: need to document the predefined/reserved object options somewhere!
+
 var _    = require('underscore');
 
 var util = require('../util/util');
@@ -38,17 +40,25 @@ GObject.prototype._notifyChange = function() {
 GObject.prototype.draw = function(context, options) { throw new Error(this.constructor.toString()+' does not implement draw()!'); };
   // options: selected (boolean)
   
-/* The default implementation of testMouseDown() requires a method _drawPath(ctx) to be implemented.
+/* The default implementation of containsPosition() requires a method _drawPath(ctx) to be implemented.
   TODO: clean up the interface: make it clear the context is set up so that it must be used with relative mouse coordinates;
     also, ctx shouldn't be the first arg but the last, or in options, as it's not always needed; and put scaled coords first ?
+    NOTE: reflect any changes to testMouseDown() as well
  */
-GObject.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
+GObject.prototype.containsPosition = function(ctx, x, y, scaled_x, scaled_y) {
   
   if (!this._drawPath) { console.log('no _drawPath() method'); return false; }
   
   // Hit inside the polygon ?
-  this._drawPath(ctx);
-  if (ctx.isPointInPath(x, y)) { 
+  this._drawPath(ctx);  
+  return ctx.isPointInPath(x, y);
+};
+
+/* TODO: see containsPosition()
+ */
+GObject.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
+  
+  if (this.containsPosition(ctx, x, y, scaled_x, scaled_y)) { 
     //console.log('HIT');
     this.select(); // should trigger redraw()
     if (!this.options.no_dragging) {

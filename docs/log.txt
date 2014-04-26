@@ -1,3 +1,8 @@
+2014-04-25
+==========
+
+- SketchPad zoom: outline widths are scaled, shouldn't be ?
+
 2014-04-22
 ==========
 

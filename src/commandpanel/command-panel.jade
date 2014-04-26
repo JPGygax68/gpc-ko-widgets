@@ -1,4 +1,4 @@
-div.command-panel
+div.gpc-ko-widget.command-panel(data-bind="gpc_kowidgets_commandpanel")
   // ko foreach: groups
   div.group(data-bind="style: { top: top()+'px' }, foreach: commands")
     div.command-button(data-bind="text: name, style: { display: visible() ? '' : 'none' }, css: { enabled: enabled() }")

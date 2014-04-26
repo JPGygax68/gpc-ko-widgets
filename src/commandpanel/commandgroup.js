@@ -41,7 +41,7 @@ CommandGroup.prototype._delegated_keydown = function(view_model, event) {
 CommandGroup.prototype.setTargetZone = function(x, y, w, h) {
   //console.log('CommandGroup::setTargetZone()', x, y, w, h);
   
-  this.top( y + h / 2 );
+  this.top( y + h / 2 - this._panel.element.getBoundingClientRect().top );
   this.height( h );
   
 };
