@@ -93,18 +93,18 @@ SketchPad.prototype.init = function(element) {
 
 // TODO: SketchPad.prototype.detach()
 
-SketchPad.prototype._drawObject = function(obj, options) {
-  //console.log('SketchPad::_drawObject()');
+SketchPad.prototype._renderObject = function(obj, options) {
+  //console.log('SketchPad::_renderObject()');
   
-  obj.draw(this.display_context, options);
+  obj.render(this.display_context, options);
 };
 
-SketchPad.prototype._drawOutline = function(obj, options) {
-  //console.log('SketchPad::_drawOutline()');
+SketchPad.prototype._renderOutline = function(obj, options) {
+  //console.log('SketchPad::_renderOutline()');
   
-  //console.time('_drawOutline');
+  //console.time('_renderOutline');
   if (obj.drawOutline) obj.drawOutline(this.overlay_context, options);
-  //console.timeEnd('_drawOutline');
+  //console.timeEnd('_renderOutline');
 };
 
 SketchPad.prototype._objectChanged = function(obj) {
@@ -259,8 +259,8 @@ SketchPad.prototype.redraw = function(options) {
   
   this.objects().forEach( function(obj) { 
     var selected = obj === this.selectedObject();
-    this._drawObject (obj, {selected: selected});
-    this._drawOutline(obj, {selected: selected});
+    this._renderObject (obj, {selected: selected});
+    this._renderOutline(obj, {selected: selected});
   }, this );
 
   console.timeEnd('redraw');

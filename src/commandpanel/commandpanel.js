@@ -61,8 +61,7 @@ CommandPanel.prototype.reflow = function(focused_group) {
   // Sort by position
   var focused = positions[focused_index];
   positions.sort( function(a, b) { return a.pos - b.pos; } );  
-  var focused_index = positions.indexOf(focused);
-  
+  var focused_index = positions.indexOf(focused);  
   console.log('focused_index:', focused_index, 'focused element:', focused_elt);
   
   // Re-arrange predecessors upward from focused element

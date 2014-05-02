@@ -1,7 +1,21 @@
+2014-04-27
+==========
+
+- Bug: mouse position is not scroll-adjusted!
+
+- I'm a bit concerned about documentation - how to make sure I'll be able to use this stuff after 6 months interruption?
+  - The test harness will help.
+  - It may be time to think about defining a meta-language that will allow extracting documentation bits directly from the code.
+    -> This should be the same meta-language that will also allow template-based coding.
+
 2014-04-26
 ==========
 
 - Observation about Knockout: when it is necessary to operate with the view itself (i.e. the DOM elements), the view model is the wrong starting point. Instead, one must start at the root element, look at contained elements and use ko.dataFor() to obtain the associated parts of the view model.
+
+----------
+
+- Command Group reflow is working, but a redesign will be needed: groups should never, or at least almost never, just flip from being above to being below.
 
 2014-04-25
 ==========

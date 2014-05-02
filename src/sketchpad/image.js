@@ -32,12 +32,12 @@ Image.prototype.constructor = Image;
 
 Image.prototype._drawPath = function(ctx) {
   ctx.beginPath();
-  ctx.rect(this.x(), this.y(), this.img.width, this.img.height);
+  ctx.rect(0, 0, this.img.width, this.img.height);
   ctx.closePath();
 };
 
 Image.prototype.draw = function(ctx, options) { 
-  ctx.drawImage(this.img, this.x(), this.y());
+  ctx.drawImage(this.img, 0, 0);
 };
 
 Image.prototype.drawOutline = function(ctx, options) { 
@@ -45,9 +45,11 @@ Image.prototype.drawOutline = function(ctx, options) {
   options = options || {};
   
   if (options.selected) {
+    this.applyTransformations(ctx);
     this._drawPath(ctx);
     ctx.strokeStyle = 'rgba(255, 50, 50, 0.5)';
     ctx.stroke();
+    this.undoTransformations(ctx);
   }
 };
 

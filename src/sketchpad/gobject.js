@@ -19,8 +19,9 @@ function GObject(props, options) {
     _.each(props, function(prop, name) { if (typeof prop !== 'undefined') this[name] = this.makeObservable(prop); }, this);
   }
   
-  if (!this.x) this.x = this.makeObservable(0);
-  if (!this.y) this.y = this.makeObservable(0);
+  if (!this.x       ) this.x        = this.makeObservable(0);
+  if (!this.y       ) this.y        = this.makeObservable(0);
+  if (!this.rotation) this.rotation = this.makeObservable(0);
 }
 
 GObject.prototype.makeObservable = util.makeObservable;
@@ -36,10 +37,30 @@ GObject.prototype._notifyChange = function() {
   if (this._owner) this._owner._objectChanged(this);
 };
 
+GObject.prototype.applyTransformations = function(ctx) {
+
+  ctx.translate( this.x(), this.y() );
+  // TODO: rotation
+};
+
+GObject.prototype.undoTransformations = function(ctx) {
+
+  ctx.translate( -this.x(), -this.y() );
+  // TODO: rotation
+};
+
 // Implement in descendants
 GObject.prototype.draw = function(context, options) { throw new Error(this.constructor.toString()+' does not implement draw()!'); };
   // options: selected (boolean)
-  
+
+/** The render() method applies transformations, draw()s the object, the undoes the transformations.
+ */
+GObject.prototype.render = function(ctx, options) {  
+  this.applyTransformations(ctx);
+  this.draw(ctx, options);
+  this.undoTransformations(ctx);
+};
+
 /* The default implementation of containsPosition() requires a method _drawPath(ctx) to be implemented.
   TODO: clean up the interface: make it clear the context is set up so that it must be used with relative mouse coordinates;
     also, ctx shouldn't be the first arg but the last, or in options, as it's not always needed; and put scaled coords first ?
@@ -50,8 +71,11 @@ GObject.prototype.containsPosition = function(ctx, x, y, scaled_x, scaled_y) {
   if (!this._drawPath) { console.log('no _drawPath() method'); return false; }
   
   // Hit inside the polygon ?
+  this.applyTransformations(ctx);
   this._drawPath(ctx);  
-  return ctx.isPointInPath(x, y);
+  var result = ctx.isPointInPath(x, y);
+  this.undoTransformations(ctx);
+  return result;
 };
 
 /* TODO: see containsPosition()
@@ -59,7 +83,7 @@ GObject.prototype.containsPosition = function(ctx, x, y, scaled_x, scaled_y) {
 GObject.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
   
   if (this.containsPosition(ctx, x, y, scaled_x, scaled_y)) { 
-    //console.log('HIT');
+    console.log('calling this.select()');
     this.select(); // should trigger redraw()
     if (!this.options.no_dragging) {
       // Begin dragging

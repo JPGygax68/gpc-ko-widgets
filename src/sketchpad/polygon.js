@@ -45,15 +45,10 @@ Polygon.prototype.constructor = Polygon;
 
 Polygon.prototype._drawPath = function(ctx) {
   
-  ctx.save();
-  ctx.translate( this.x(), this.y() );
-  
   ctx.beginPath();
   ctx.moveTo.apply(ctx, getPointCoords(this.points[0]));
   for (var i = 1; i < this.points.length; i++) ctx.lineTo.apply(ctx, getPointCoords(this.points[i]));
   ctx.closePath();
-
-  ctx.restore();
 };
 
 Polygon.prototype._drawHandlePath = function(ctx, point) {
@@ -98,7 +93,7 @@ Polygon.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
   
   // Hit on one of the handles ?
   var handle_hit = false;
-  ctx.translate( this.x(),  this.y());
+  this.applyTransformations(ctx);
   for (var i = 0; i < this.points.length; i++) {
     var point = this.points[i];
     this._drawHandlePath(ctx, point);
@@ -111,7 +106,7 @@ Polygon.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
       break;
     }
   }
-  ctx.translate(-this.x(), -this.y());
+  this.undoTransformations(ctx);
   
   if (handle_hit) {
     this.select(); // triggers redraw
