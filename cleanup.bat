@@ -1,8 +1,8 @@
 @echo off
 
 git add * --all
-if %errorlevel% equ 0 git commit -m "Automatic commit (programmer forgot)"
-if %errorlevel% equ 0 git pull origin
-if %errorlevel% equ 0 git push origin --all
+git commit -m "Automatic commit (programmer forgot)"
+git pull origin
+git push origin --all
 
 :end
