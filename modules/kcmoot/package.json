@@ -1,0 +1,8 @@
+{
+  "browserify": {
+    "transform": [ "browserify-shim" ]
+  },
+  "browserify-shim": {
+    "./transform-tracker.js": "Transform"
+  }
+}

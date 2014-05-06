@@ -226,7 +226,7 @@ sp.objects.subscribe( function(changes) {
 }, this, 'arrayChange');
 
 sp.objects.push( new SketchPad.Image({url: 'data/SampleVial-Full.png'}) );
-sp.objects.push( new SketchPad.Polygon({x: -5, y: -5}) );
+sp.objects.push( new SketchPad.Polygon({x: -5, y: -5, rotation: 35*Math.PI/180}) );
 sp.objects.push( new SketchPad.Polygon({x: 35, y: 35}) );
 
 var list = {
@@ -303,7 +303,7 @@ cg2.commands.push( new Command('To paragraphs', function() { }, { enabled: ko.ob
 cp.groups.push(cg2);
 
 var myViewModel = { 
-  page: ko.observable('CommandPanel'),
+  page: ko.observable('SketchPad'), //'CommandPanel'),
   treeview    : tv,
   sketchpad   : sp,
   list        : list,

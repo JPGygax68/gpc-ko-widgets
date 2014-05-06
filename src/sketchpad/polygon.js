@@ -73,7 +73,7 @@ Polygon.prototype.draw = function(ctx, options) {
 
 Polygon.prototype.drawOutline = function(ctx, options) {
 
-  ctx.translate( this.x(),  this.y());
+  this.applyTransformations(ctx);
   
   ctx.strokeStyle = 'rgb(0, 0, 0)';
   
@@ -85,7 +85,7 @@ Polygon.prototype.drawOutline = function(ctx, options) {
     ctx.stroke();
   }
   
-  ctx.translate(-this.x(), -this.y());
+  this.undoTransformations(ctx);
 }
 
 Polygon.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
@@ -122,7 +122,14 @@ Polygon.prototype.mouseDrag = function(x, y, scaled_x, scaled_y) {
   
   if (this._dragging_handle >= 0) {
     var i = this._dragging_handle;
-    setPointTo(this.points[i], scaled_x - this.x(), scaled_y - this.y());
+
+    var ctx = this._owner.overlay_context;
+    this.applyTransformations(ctx);
+    var matrix = ctx.currentTransformInverse;
+    var xx = x * matrix[0] + y * matrix[2] + matrix[4], yy = x * matrix[1] + y * matrix[3] + matrix[5];
+    this.undoTransformations(ctx);
+  
+    setPointTo(this.points[i], xx, yy); //scaled_x - this.x(), scaled_y - this.y());
     this._owner.redraw();
   }
   else {

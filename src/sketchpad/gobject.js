@@ -22,6 +22,8 @@ function GObject(props, options) {
   if (!this.x       ) this.x        = this.makeObservable(0);
   if (!this.y       ) this.y        = this.makeObservable(0);
   if (!this.rotation) this.rotation = this.makeObservable(0);
+  if (!this.pivot_x ) this.pivot_x  = this.makeObservable(0);
+  if (!this.pivot_y ) this.pivot_y  = this.makeObservable(0);
 }
 
 GObject.prototype.makeObservable = util.makeObservable;
@@ -40,13 +42,13 @@ GObject.prototype._notifyChange = function() {
 GObject.prototype.applyTransformations = function(ctx) {
 
   ctx.translate( this.x(), this.y() );
-  // TODO: rotation
+  ctx.rotate   ( this.rotation()    );
 };
 
 GObject.prototype.undoTransformations = function(ctx) {
 
+  ctx.rotate   ( -this.rotation()     );
   ctx.translate( -this.x(), -this.y() );
-  // TODO: rotation
 };
 
 // Implement in descendants

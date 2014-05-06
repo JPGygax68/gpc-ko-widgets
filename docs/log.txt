@@ -1,3 +1,16 @@
+2014-05-06
+==========
+
+I've asked myself whether SketchPad was worth pursuing further in its current form, and I think the answer is no.
+
+I believe it makes more sense to create a new knockout widget based on an existing library like paper.js. paper.js seems to offer the necessary features. What remains to do is find ways to synchronize between drawn objects and the observable date they represent.
+
+With SketchPad, I've so far sidestepped that need (imperfectly) by creating drawables that use observables for point positions, but of course that approach has narrow limits.
+
+What is needed are adapters, which should probably consist of very little code plus good descriptions (or metadata? constraint-checkers?) of how to translate existing data into graphical objects of the kind that paper.js (or another library) supports.
+
+The little bit of code that could be provided may help with avoiding synchronization loops. Object.observe() may be worth a try for the other direction.
+
 2014-04-27
 ==========
 

@@ -1,5 +1,8 @@
 "use strict";
 
+//var Transform = require('transform-tracker');
+var dummy = require('canvas-currenttransform');
+
 var GObject = require('./gobject');
 var Polygon = require('./polygon');
 var Image   = require('./image');
@@ -85,7 +88,9 @@ SketchPad.prototype.init = function(element) {
   
   // Obtain contexts for both canvases ("display" and "overlay")
   this.display_context = element.getElementsByClassName('display')[0].getContext('2d');
+  //this.display_context.transform = new Transform(this.display_context);
   this.overlay_context = element.getElementsByClassName('overlay')[0].getContext('2d');
+  //this.overlay_context.transform = new Transform(this.overlay_context);
   //this.overlay_context.translate( this.margin(), this.margin() );
   
   if (this._redraw_required()) window.setTimeout( this.redraw.bind(this), 0 );
@@ -133,7 +138,7 @@ SketchPad.prototype._getRelativeMousePos = function(e) {
   //console.log('_getRelativeMousePos:', e);
   
   var elt_pos = util.getAbsoluteElementPosition(e.target);
-  
+
   return { x: e.pageX - elt_pos.x, // - this.margin(), 
            y: e.pageY - elt_pos.y  /* - this.margin() */ };
 };

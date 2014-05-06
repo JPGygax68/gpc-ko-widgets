@@ -1,2 +1,1 @@
-@echo off
-gulp test
+browserify src/sketchpad/sketchpad.js modules/kcmoot/transform-tracker.js --transform="browserify-shim" --require="./src/sketchpad/sketchpad.js:sketchpad" --require="./modules/kcmoot/transform-tracker:Transform" >testbed/scripts/gpc/kowidgets/sketchpad/sketchpad.js
