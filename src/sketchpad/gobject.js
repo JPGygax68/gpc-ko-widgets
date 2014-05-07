@@ -51,6 +51,17 @@ GObject.prototype.undoTransformations = function(ctx) {
   ctx.translate( -this.x(), -this.y() );
 };
 
+GObject.prototype.inverseTransformPoint = function(ctx, x, y) {
+
+  this.applyTransformations(ctx);
+  var matrix = ctx.currentTransformInverse;
+  this.undoTransformations(ctx);
+  return {
+    x: x * matrix[0] + y * matrix[2] + matrix[4], 
+    y: x * matrix[1] + y * matrix[3] + matrix[5]
+  };
+}
+
 // Implement in descendants
 GObject.prototype.draw = function(context, options) { throw new Error(this.constructor.toString()+' does not implement draw()!'); };
   // options: selected (boolean)
@@ -98,7 +109,10 @@ GObject.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
   }
 };
 
-GObject.prototype.mouseDrag = function(x, y, scaled_x, scaled_y) {
+/**
+    ctx     a canvas context that can be used to transform x, y
+ */
+GObject.prototype.mouseDrag = function(x, y, scaled_x, scaled_y, ctx) {
 
   if (this._dragging) {
     this.x(scaled_x - this._dragging.offset.x);

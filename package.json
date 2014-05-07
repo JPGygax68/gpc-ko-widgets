@@ -38,7 +38,6 @@
   "browser": {
     "knockout": "./modules/knockout/knockout-3.1.0.js",
     "knockout-mapping": "./modules/knockout/knockout.mapping-latest.js",
-    "transform-tracker": "./modules/kcmoot/transform-tracker.js",
     "canvas-currenttransform": "./modules/pseudomatty/canvas-currenttransform.js"
   },
   "browserify": {

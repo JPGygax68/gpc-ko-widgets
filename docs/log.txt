@@ -1,3 +1,13 @@
+2014-05-07
+==========
+
+Last night I found out the (very) hard way what an unfriendly beast browserify-shim is. Here are the lessons learned:
+
+- I didn't, and still don't, know how to programmatically specify options for browserify-shim when it's being used as a transform. Passing a "shim" property in the browserify config object (as I've seen done) appears to have no effect whatsoever.
+
+- What does work is a package.json file placed alongside the Javascript file(s) being bundled. This is a total nuisance if the package provider does not provide a "browserify-shim" property (and most don't yet). [Just wrote the author about this as a comment to a Github issue.]
+
+
 2014-05-06
 ==========
 

@@ -117,19 +117,13 @@ Polygon.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
   }
 };
 
-Polygon.prototype.mouseDrag = function(x, y, scaled_x, scaled_y) {
+Polygon.prototype.mouseDrag = function(x, y, scaled_x, scaled_y, ctx) {
   //console.log('Polygon::mouseDrag()', x, y);
   
   if (this._dragging_handle >= 0) {
     var i = this._dragging_handle;
-
-    var ctx = this._owner.overlay_context;
-    this.applyTransformations(ctx);
-    var matrix = ctx.currentTransformInverse;
-    var xx = x * matrix[0] + y * matrix[2] + matrix[4], yy = x * matrix[1] + y * matrix[3] + matrix[5];
-    this.undoTransformations(ctx);
-  
-    setPointTo(this.points[i], xx, yy); //scaled_x - this.x(), scaled_y - this.y());
+    var pt = this.inverseTransformPoint(ctx, x, y);  
+    setPointTo(this.points[i], pt.x, pt.y); //scaled_x - this.x(), scaled_y - this.y());
     this._owner.redraw();
   }
   else {

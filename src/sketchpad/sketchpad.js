@@ -196,7 +196,7 @@ SketchPad.prototype.mouseMove = function(target, e) {
   
   // Has the mouse been "captured" by any of the objects ?
   if (this._mouse_owner) {
-    this._mouse_owner.mouseDrag(pos.x, pos.y, scaled.x, scaled.y);
+    this._mouse_owner.mouseDrag(pos.x, pos.y, scaled.x, scaled.y, this.overlay_context);
   }
 
   // Check for hover (inverse Z order)
