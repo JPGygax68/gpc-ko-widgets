@@ -8,6 +8,8 @@ var Keyboard = require('../util/keyboard');
 
 function Node(treeview, parent, data, index, label, options) {
   
+  // TODO: establish rules about which properties are observables, and which are static
+  
   var self = this;
   
   var options = options || {};  
@@ -383,7 +385,8 @@ Node.prototype.addChildNode = function(label, data, options) {
 
 // STATIC METHODS ---------------------------
 
-/* This is a factory function that creates a node representing an "item".
+/** This is a factory function that creates a node representing an "item"
+    that is part of a data model.
  */
 Node.fromModel = function(item, treeview, options) {
 
@@ -408,13 +411,14 @@ Node.fromModel = function(item, treeview, options) {
       
       if (typeof usage !== 'undefined') { 
         // TODO: special usage options
+        if (usage instanceof Node) node = usage;
       }
       
       if (isArray(item)) {
         if (!node.leaf()) {
           var subitems = _.filter(ko.unwrap(item), function(subitem) { return isObject(subitem); } );
           _.each(subitems, function(subitem, index) {
-            var child = makeChildNode(subitem);
+            var child = makeChildNode(subitem, index);
             if (child) {
               // TODO: recurse depending on item type
               node.children.push( child );

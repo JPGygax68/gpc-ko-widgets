@@ -26,4 +26,7 @@ function TreeView(model, options) {
   this.rootNode = Node.fromModel(model, this, options);
 }
 
+// TODO: provide factory methods instead ?
+TreeView.Node = Node;
+
 module.exports = TreeView;
