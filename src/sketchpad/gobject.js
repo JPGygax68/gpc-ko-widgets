@@ -99,7 +99,7 @@ GObject.prototype.containsPosition = function(ctx, x, y, scaled_x, scaled_y) {
 GObject.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
   
   if (this.containsPosition(ctx, x, y, scaled_x, scaled_y)) { 
-    console.log('calling this.select()');
+    //console.log('calling this.select()');
     this.select(); // should trigger redraw()
     if (!this.options.no_dragging) {
       // Begin dragging

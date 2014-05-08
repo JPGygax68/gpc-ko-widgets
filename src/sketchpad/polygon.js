@@ -98,7 +98,7 @@ Polygon.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {
     var point = this.points[i];
     this._drawHandlePath(ctx, point);
     if (ctx.isPointInPath(x, y)) { 
-      console.log('HIT on handle #'+i);
+      //console.log('HIT on handle #'+i);
       this._owner.captureMouse(this);
       this._dragging_handle = i;
       this._selected_handle = i;

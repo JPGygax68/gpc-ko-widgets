@@ -107,9 +107,7 @@ SketchPad.prototype._renderObject = function(obj, options) {
 SketchPad.prototype._renderOutline = function(obj, options) {
   //console.log('SketchPad::_renderOutline()');
   
-  //console.time('_renderOutline');
   if (obj.drawOutline) obj.drawOutline(this.overlay_context, options);
-  //console.timeEnd('_renderOutline');
 };
 
 SketchPad.prototype._objectChanged = function(obj) {
@@ -158,7 +156,6 @@ SketchPad.prototype._getScaledMousePos = function(e) {
 
 SketchPad.prototype.mouseDown = function(target, e) {
   //console.log('SketchPad::mouseDown()', e);
-  console.time('mouseDown');
   
   this._getOverlay(true);
   
@@ -257,7 +254,6 @@ SketchPad.prototype.refresh = function() {
 
 SketchPad.prototype.redraw = function(options) {
   //console.log('SketchPad::redraw()');
-  console.time('redraw');
   
   this._getDisplay();
   this._getOverlay();
@@ -267,8 +263,6 @@ SketchPad.prototype.redraw = function(options) {
     this._renderObject (obj, {selected: selected});
     this._renderOutline(obj, {selected: selected});
   }, this );
-
-  console.timeEnd('redraw');
 };
 
 // Other initialization --------------------------------------------
