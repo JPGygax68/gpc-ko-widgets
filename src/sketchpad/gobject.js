@@ -19,11 +19,10 @@ function GObject(props, options) {
     _.each(props, function(prop, name) { if (typeof prop !== 'undefined') this[name] = this.makeObservable(prop); }, this);
   }
   
-  if (!this.x       ) this.x        = this.makeObservable(0);
-  if (!this.y       ) this.y        = this.makeObservable(0);
-  if (!this.rotation) this.rotation = this.makeObservable(0);
-  if (!this.pivot_x ) this.pivot_x  = this.makeObservable(0);
-  if (!this.pivot_y ) this.pivot_y  = this.makeObservable(0);
+  _.each('x,y,rotation,pivot_x,pivot_y'.split(','), function(name) {
+    if (!this[name]) this[name] = this.makeObservable(0);
+    if (ko.isObservable(this[name])) this[name].subscribe( this._notifyChange.bind(this) );
+  }, this);
 }
 
 GObject.prototype.makeObservable = util.makeObservable;

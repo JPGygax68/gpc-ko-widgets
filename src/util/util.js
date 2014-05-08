@@ -25,7 +25,7 @@ function valueType(value) {
 function makeObservable(value) {
   console.log('makeObservable()', value);
   if      (ko.isObservable(value)) return value;
-  else if (_.isFunction(value)   ) { console.log('here:', this); return ko.computed(value, this); }
+  else if (_.isFunction(value)   ) return ko.computed(value, this);
   else                             return ko.observable(value);
 }
 

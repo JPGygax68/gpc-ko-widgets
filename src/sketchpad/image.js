@@ -13,8 +13,14 @@ function Image(options) {
   
   // The dimensions are passed in as 0, which the GObject ctor will make into observables.
   // The coordinates can be passed in through the options; if none are specified, the GObject
-  // ctor will created them as observables initialized to 0.
-  GObject.call(this, { width: 0, height: 0, x: options.x, y: options.y }, options);
+  // ctor will create them as observables initialized to 0.
+  GObject.call(this, { 
+    width: 0, height: 0, 
+    x: options.x, y: options.y,
+    rotation: options.rotation,
+    pivot_x: options.pivot_x,
+    pivot_y: options.pivot_y
+  }, options);
 
   this.img = document.createElement('img');
   
