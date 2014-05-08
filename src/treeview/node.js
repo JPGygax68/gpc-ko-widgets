@@ -249,6 +249,16 @@ Node.prototype.canCreateNewItems = function() {
 	return !!this.onCreateNewChild;
 };
 
+// QUERIES ---------------------
+
+Node.prototype.isAncestorCalled = function(removal, name) {
+
+  var ancestor = this;
+  for (var i = 0; i < removal; i ++) if (!ancestor.parent) return false; else ancestor = ancestor.parent;
+  
+  return ko.unwrap(ancestor.index) === name;
+};
+
 // ACTIONS ---------------------
 
 // Note: Actions return true when successful
