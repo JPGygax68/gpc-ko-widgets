@@ -16,7 +16,9 @@ function GObject(props, options) {
   this.options = options || {};
   
   if (props) {
-    _.each(props, function(prop, name) { if (typeof prop !== 'undefined') this[name] = this.makeObservable(prop); }, this);
+    _.each(props, function(prop, name) { 
+      if (typeof prop !== 'undefined') this[name] = this.makeObservable(prop); 
+    }, this);
   }
   
   _.each('x,y,rotation,pivot_x,pivot_y'.split(','), function(name) {
@@ -40,14 +42,16 @@ GObject.prototype._notifyChange = function() {
 
 GObject.prototype.applyTransformations = function(ctx) {
 
-  ctx.translate( this.x(), this.y() );
+  ctx.translate( this.x() + this.pivot_x(), this.y() + this.pivot_y());
   ctx.rotate   ( this.rotation()    );
+  ctx.translate( -this.pivot_x(), -this.pivot_y());
 };
 
 GObject.prototype.undoTransformations = function(ctx) {
 
+  ctx.translate(  this.pivot_x(),  this.pivot_y());
   ctx.rotate   ( -this.rotation()     );
-  ctx.translate( -this.x(), -this.y() );
+  ctx.translate( -this.pivot_x() -this.x(), -this.pivot_y() -this.y() );
 };
 
 GObject.prototype.inverseTransformPoint = function(ctx, x, y) {
