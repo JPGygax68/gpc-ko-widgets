@@ -88,10 +88,7 @@ SketchPad.prototype.init = function(element) {
   
   // Obtain contexts for both canvases ("display" and "overlay")
   this.display_context = element.getElementsByClassName('display')[0].getContext('2d');
-  //this.display_context.transform = new Transform(this.display_context);
   this.overlay_context = element.getElementsByClassName('overlay')[0].getContext('2d');
-  //this.overlay_context.transform = new Transform(this.overlay_context);
-  //this.overlay_context.translate( this.margin(), this.margin() );
   
   if (this._redraw_required()) window.setTimeout( this.redraw.bind(this), 0 );
 };
@@ -107,7 +104,11 @@ SketchPad.prototype._renderObject = function(obj, options) {
 SketchPad.prototype._renderOutline = function(obj, options) {
   //console.log('SketchPad::_renderOutline()');
   
-  if (obj.drawOutline) obj.drawOutline(this.overlay_context, options);
+  if (obj.drawOutline) {
+    obj.applyTransformations(this.overlay_context);
+    obj.drawOutline(this.overlay_context, options);
+    obj.undoTransformations(this.overlay_context);
+  }
 };
 
 SketchPad.prototype._objectChanged = function(obj) {

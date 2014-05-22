@@ -53,8 +53,9 @@ Polygon.prototype._drawPath = function(ctx) {
 
 Polygon.prototype._drawHandlePath = function(ctx, point) {
   var scale = 1 / this._owner.zoom();
+  var coords = getPointCoords(point);
   ctx.beginPath();
-  ctx.rect(ko.unwrap(point.x) - HANDLE_SIZE * scale / 2, ko.unwrap(point.y) - HANDLE_SIZE * scale/ 2, HANDLE_SIZE * scale, HANDLE_SIZE * scale);
+  ctx.rect(coords.x - HANDLE_SIZE * scale / 2, coords.y - HANDLE_SIZE * scale/ 2, HANDLE_SIZE * scale, HANDLE_SIZE * scale);
   ctx.closePath();
 };
 
@@ -73,19 +74,15 @@ Polygon.prototype.draw = function(ctx, options) {
 
 Polygon.prototype.drawOutline = function(ctx, options) {
 
-  this.applyTransformations(ctx);
-  
   ctx.strokeStyle = 'rgb(0, 0, 0)';
   
   for (var i = 0; i < this.points.length; i++) {
     var point = this.points[i];
     this._drawHandlePath(ctx, point);
-    ctx.fillStyle = i === this._selected_handle ? 'rgba(255, 100, 100, 0.5)' : 'rgba(128, 128, 128, 0.5';
+    ctx.fillStyle = i === this._selected_handle ? 'rgba(255, 100, 100, 0.5)' : 'rgba(128, 128, 128, 0.5)';
     ctx.fill();
     ctx.stroke();
   }
-  
-  this.undoTransformations(ctx);
 }
 
 Polygon.prototype.testMouseDown = function(ctx, x, y, scaled_x, scaled_y) {

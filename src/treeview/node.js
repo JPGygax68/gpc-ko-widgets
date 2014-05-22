@@ -280,8 +280,8 @@ Node.prototype.goNextNode = function() {
       do {
         sibling = node.parent._getSiblingOf(node, 1);
         node = node.parent;
-      } while (!sibling);
-      sibling.hasFocus(true);
+      } while (node.parent && !sibling);
+      if (sibling) sibling.hasFocus(true);
       return true;
     }
   }

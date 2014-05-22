@@ -1,3 +1,12 @@
+
+2014-05-09
+==========
+
+- The hook Node.onCreateNewItem can create new children, but there is no way as of yet give an indication to the user which nodes support that feature, and which don't.
+
+- TODO: suppress hover highlighting while dragging
+
+
 2014-05-07
 ==========
 
