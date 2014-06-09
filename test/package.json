@@ -1,0 +1,10 @@
+{
+  "name": "gpc-ko-widgets-test",
+  "description": "Test page for the GPC KO Widgets collection",
+  "dependencies": {
+    "gulp-stylus": "^1.0.2",
+    "underscore": "^1.6.0",
+    "knockout": "^3.1.0",
+    "nib": "^1.0.2"
+  }
+}

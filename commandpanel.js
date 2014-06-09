@@ -12,11 +12,11 @@
  
 var ko = require('knockout');
 
-var Command = require('./command');
+var Command = require('./lib/commandpanel/command');
 
-var CommandGroup = require('./commandgroup');
+var CommandGroup = require('./lib/commandpanel/commandgroup');
 
-var templates = require('../../generated/commandpanel/templates');
+var templates = require('./generated/commandpanel/templates');
   
 // Store our templates in the string template engine (guarded)
 if (typeof ko.templates['__HAS_COMMANDPANEL_TEMPLATES__'] === 'undefined') {

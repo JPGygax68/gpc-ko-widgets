@@ -2,11 +2,11 @@
 
 var ko = require('knockout');
 
-require('../util/stringTemplateEngine');
-var Defs = require('./defs');
-var Node = require('./node');
+require('./lib/util/stringTemplateEngine');
+var Defs = require('./lib/treeview/defs');
+var Node = require('./lib/treeview/node');
 
-var templates = require('../../generated/treeview/templates')
+var templates = require('./generated/treeview/templates')
   
 // Store our templates in the string template engine (guarded)
 if (typeof ko.templates['__HAS_TREEVIEW_TEMPLATES__'] === 'undefined') {

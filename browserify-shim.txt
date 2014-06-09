@@ -1,0 +1,4 @@
+  "browserify-shim": {
+    "knockout": "global:ko",
+    "knockout.mapping": { "depends": [ "knockout:ko" ] }
+  }

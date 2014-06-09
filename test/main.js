@@ -1,10 +1,9 @@
 "use strict";
 
 //var TreeView = gpc.kowidgets.TreeView;  // from global
-var TreeView     = require('treeview');   // CommonJS style
-var SketchPad    = require('sketchpad');
-var CommandPanel = require('commandpanel');
-var Keyboard     = require('util/keyboard');
+var TreeView     = require('gpc-ko-widgets/treeview');   // CommonJS style
+var SketchPad    = require('gpc-ko-widgets/sketchpad');
+var CommandPanel = require('gpc-ko-widgets/commandpanel');
 
 /*
 var myViewModel = {
@@ -314,7 +313,7 @@ var myViewModel = {
   goCommandPanel: function() { this.page('CommandPanel'); },
 };
 
-function start() {
+window.start = function() {
   ko.applyBindings(myViewModel);
 
   var item5 = document.querySelector('#command_panel ul > li:nth-child(5)');

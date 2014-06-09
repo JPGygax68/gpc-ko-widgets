@@ -1,12 +1,16 @@
 "use strict";
 
+var ko = require('knockout');
+
 //var Transform = require('transform-tracker');
 var dummy = require('canvas-currenttransform');
 
-var GObject = require('./gobject');
-var Polygon = require('./polygon');
-var Image   = require('./image');
-var util    = require('../util/util');
+var GObject = require('./lib/sketchpad/gobject');
+var Polygon = require('./lib/sketchpad/polygon');
+var Image   = require('./lib/sketchpad/image');
+var util    = require('./lib/util/util');
+require('./lib/util/stringTemplateEngine');
+
 
 // A few constants -------------------------------------------------
 
@@ -17,11 +21,7 @@ var VERTEX_HANDLE_HEIGHT = VERTEX_HANDLE_WIDTH;
 
 // Required modules ------------------------------------------------
 
-var ko = require('knockout');
-
-require('../util/stringTemplateEngine');
-
-var templates = require('../../generated/sketchpad/templates')
+var templates = require('./generated/sketchpad/templates')
   
 // Store our templates in the string template engine (guarded)
 if (typeof ko.templates['__HAS_SKETCHPAD_TEMPLATES__'] === 'undefined') {

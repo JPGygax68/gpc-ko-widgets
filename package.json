@@ -1,14 +1,14 @@
 {
   "name": "gpc-ko-widgets",
-  "version": "0.0.1",
+  "version": "0.0.5",
   "description": "GPC Knockout-based widget library",
-  "main": "src/main.js",
-  "lib": "src/",
+  "main": "treeview.js",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "install": "gulp build"
   },
   "keywords": [
     "GPC",
@@ -20,33 +20,28 @@
   "author": "Jean-Pierre Gygax",
   "license": "MIT",
   "devDependencies": {
-    "gulp-jade": "^0.4.2",
-    "requirejs": "^2.1.11",
-    "gulp-stylus": "0.0.13",
-    "gulp-autoprefixer": "0.0.6",
-    "urequire": "^0.6.13-1",
-    "through2": "^0.4.1",
-    "underscore": "^1.6.0",
-    "vinyl-source-stream": "^0.1.1",
-    "browserify-shim": "^3.3.1",
-    "browserify": "^3.32.0",
-    "through": "^2.3.4"
+    "gulp-jade": "",
+    "requirejs": "",
+    "gulp-stylus": "",
+    "gulp-autoprefixer": "",
+    "urequire": "",
+    "through2": "",
+    "underscore": "",
+    "vinyl-source-stream": "",
+    "browserify": "",
+    "through": "",
+    "gulp": "",
+    "gulp-util": "",
+    "browserify-shim": ""
   },
   "dependencies": {
-    "almond": "^0.2.9"
+    "almond": "",
+    "knockout": ">=3.1.0"
   },
   "browser": {
-    "knockout": "./modules/knockout/knockout-3.1.0.js",
-    "knockout-mapping": "./modules/knockout/knockout.mapping-latest.js",
     "canvas-currenttransform": "./modules/pseudomatty/canvas-currenttransform.js"
   },
   "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
-  },
-  "browserify-shim": {
-    "knockout": "global:ko",
-    "knockout.mapping": { "depends": [ "knockout:ko" ] }
+    "transform": []
   }
 }
