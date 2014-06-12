@@ -6,5 +6,11 @@
     "underscore": "^1.6.0",
     "knockout": "^3.1.0",
     "nib": "^1.0.2"
+  },
+  "devDependencies": {
+    "cssify": "^0.5.1"
+  },
+  "browserify": {
+    "transform": ["cssify"]
   }
 }

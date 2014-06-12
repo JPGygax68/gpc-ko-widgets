@@ -10,7 +10,7 @@ var Polygon = require('./lib/sketchpad/polygon');
 var Image   = require('./lib/sketchpad/image');
 var util    = require('./lib/util/util');
 require('./lib/util/stringTemplateEngine');
-
+require('./generated/sketchpad/sketchpad.css');
 
 // A few constants -------------------------------------------------
 

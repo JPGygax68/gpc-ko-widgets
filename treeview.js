@@ -5,6 +5,7 @@ var ko = require('knockout');
 require('./lib/util/stringTemplateEngine');
 var Defs = require('./lib/treeview/defs');
 var Node = require('./lib/treeview/node');
+require('./generated/treeview/treeview.css');
 
 var templates = require('./generated/treeview/templates')
   

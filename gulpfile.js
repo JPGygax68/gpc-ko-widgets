@@ -175,7 +175,7 @@ function stylusTask(name) {
     return gulp.src('./lib/'+name+'/*.styl')
       .pipe( stylus({}) )
       .pipe( prefix('last 20 versions', 'ie 8', 'ie 9') )
-      .pipe( gulp.dest('./dist/'+name+'/') );      
+      .pipe( gulp.dest('./generated/'+name+'/') );      
   });
 }
 
@@ -217,6 +217,6 @@ gulp.task('build', [
 
 // DEFAULT TASK / WATCHES -----------------------
 
-// gulp.task('default', ['build'], function() {
-  // gulp.watch(['./**/*'], ['build']);
-// });
+gulp.task('default', ['build'], function() {
+  gulp.watch(['./**.js', './lib/**.*'], ['build']);
+});
