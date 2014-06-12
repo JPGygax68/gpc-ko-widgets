@@ -41,7 +41,7 @@ gulp.task('browserify', [], function() {
     //.external('treeview')
     //.external('sketchpad')
     //.external('commandpanel')
-    .bundle({pretty:true})
+    .bundle()
     .pipe( source('main.js') )
     .pipe( gulp.dest('./output/') );
     
@@ -76,5 +76,5 @@ gulp.task('build', ['jade', 'css', 'browserify', 'copy', 'copy-modules', 'copy-n
 // DEFAULT TASK / WATCHES -----------------------
 
 gulp.task('default', ['build'], function() {
-  gulp.watch(['./**/*'], ['build']);
+  gulp.watch(['./*.js', './*.jade'], ['build']);
 });

@@ -1,5 +1,8 @@
 "use strict";
 
+var ko = require('knockout');
+console.log('ko:', ko);
+
 //var TreeView = gpc.kowidgets.TreeView;  // from global
 var TreeView     = require('gpc-ko-widgets/treeview');   // CommonJS style
 var SketchPad    = require('gpc-ko-widgets/sketchpad');
@@ -313,6 +316,8 @@ var myViewModel = {
   goCommandPanel: function() { this.page('CommandPanel'); },
 };
 
+window.sp = sp;
+
 window.start = function() {
   ko.applyBindings(myViewModel);
 
@@ -320,7 +325,7 @@ window.start = function() {
   cg1.alignWithElement(item5);
   
   cg2.alignWithElement( document.querySelector('#command_panel ul') );
-}
+};
 
 //----
 

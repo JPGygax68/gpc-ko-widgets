@@ -210,8 +210,8 @@ function widgetBundle(name, abbr) {
 
 gulp.task('build', [
   widgetBundle('treeview', 'gktv'), 
-  //widgetBundle('sketchpad', 'gksp'), 
-  //widgetBundle('commandpanel', 'gkcp')
+  widgetBundle('sketchpad', 'gksp'), 
+  widgetBundle('commandpanel', 'gkcp')
   //bundleTask('util/keyboard')
 ]);
 
