@@ -17,7 +17,7 @@ First, obtain the package via `npm install gpc-ko-widgets`.
 GPC-KO-Widgets is built for consumption via [browserify](https://github.com/substack/node-browserify). Browserify not only handles module imports, but CSS injection as well by making use of the excellent [cssify](https://github.com/davidguttman/cssify) transform.
 
 
-First off, your code will of course need [knockout](http://knockoutjs.com/), as well as its pluging [knockout-mapping](http://knockoutjs.com/documentation/plugins-mapping.html):
+First off, your code will of course need [knockout](http://knockoutjs.com/), as well as its plugin [knockout-mapping](http://knockoutjs.com/documentation/plugins-mapping.html):
 
 ```js
 var ko = require('knockout');
@@ -60,6 +60,11 @@ window.start = function() {
 
 And that's it! Thanks to Browserify and friends, you don't have to worry about copying CSS files and referencing them from your HTML.
 
+Known issues
+------------
+
+- Required CSS images are not being inlined - haven't had time yet to figure out how to do this.
+ 
 More to come
 ------------
 
