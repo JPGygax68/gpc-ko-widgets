@@ -1,10 +1,16 @@
 "use strict";
 
+// TODO: this whole file needs to be basically done from scratch,
+// as it no longer serves the same purpose: it used to be responsible
+// for creating bundles, but its future task will (most likely) be 
+// confined to Jade and Stylus.
+
 var gulp = require('gulp');
 var gutil = require('gulp-util');
 //var concat = require('gulp-concat');
 var jade = require('gulp-jade');
 var stylus = require('gulp-stylus');
+var stylus_itself = require('stylus');
 var browserify = require('browserify');
 var shim = require('browserify-shim');
 var rjs = require('requirejs');
@@ -173,7 +179,7 @@ function stylusTask(name) {
 
   gulp.task(name+'-stylus', [], function() {
     return gulp.src('./lib/'+name+'/*.styl')
-      .pipe( stylus({}) )
+      .pipe( stylus({ url: stylus_itself.url() }) )
       .pipe( prefix('last 20 versions', 'ie 8', 'ie 9') )
       .pipe( gulp.dest('./generated/'+name+'/') );      
   });
@@ -193,7 +199,7 @@ function widgetBundle(name, abbr) {
       .pipe( gulp.dest('./generated/'+name+'/') );    
   });
 
-  bundleTask(name);
+  //bundleTask(name);
 
   stylusTask(name);
 
@@ -203,7 +209,7 @@ function widgetBundle(name, abbr) {
       .pipe( gulp.dest('./dist/'+name+'/') );
   });
 
-  gulp.task('widget-'+name, [name+'-jade', name+'-browserify', name+'-stylus', name+'-copy']);
+  gulp.task('widget-'+name, [name+'-jade', /*name+'-browserify',*/ name+'-stylus', name+'-copy']);
   
   return 'widget-'+name;
 }

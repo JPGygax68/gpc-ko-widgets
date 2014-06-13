@@ -1,6 +1,6 @@
 {
   "name": "gpc-ko-widgets",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "description": "GPC Knockout-based widget library",
   "main": "treeview.js",
   "directories": {
