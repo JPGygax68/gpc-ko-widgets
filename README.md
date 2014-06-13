@@ -33,7 +33,7 @@ var TreeView = require('gpc-ko-widgets/treeview');
 Instantiating a widget is a matter of using Knockout's `template` binding, like so:
 
 ```html
-div(data-bind="template: { name: 'gktvTreeView', data: treeview }")
+div(data-bind="template: { name: 'gktvTreeView', data: myTreeview }")
 ```
 
 ... and providing a TreeView object as part of your Knockout view-model:
