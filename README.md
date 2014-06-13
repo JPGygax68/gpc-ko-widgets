@@ -6,30 +6,28 @@ GPC-KO-Widgets
 Disclaimer
 ----------
 
-At its present state, this project is little more than a proof of concept, though it does contain one usable widget (`TreeView`).
+In its present state, this project is little more than a proof of concept, though it does contain one usable widget (`TreeView`).
 
 
 Quick Start
 -----------
 
-Obtain this package via `npm install gpc-ko-widgets`.
+First, obtain the package via `npm install gpc-ko-widgets`.
 
-There are two basic ways to use this package. The "quick" way is to use one or more of the provided JavaScript "bundles", each of which provides the full code for a particular widget (i.e. with all the internal dependencies, but without Knockout).
-
-The other way is to use [browserify](https://github.com/substack/node-browserify) to manage the dependencies of your project.
+GPC-KO-Widgets is built for consumption via [browserify](https://github.com/substack/node-browserify). Browserify not only handles module imports, but CSS injection as well by making use of the excellent [cssify](https://github.com/davidguttman/cssify) transform.
 
 
-### A) Using the bundles
+First off, your code will of course need [knockout](http://knockoutjs.com/), as well as its pluging [knockout-mapping](http://knockoutjs.com/documentation/plugins-mapping.html):
 
-Find the directory `node_modules/gpc-ko-widgets/dist/`, and then the subdirectory corresponding to the widget you need (e.g. `treeview`). Copy the contents of that subdirectory to a subdirectory `gpc-ko-widgets`of your site's `scripts` directory (which can be named differently of course). [Note: it is of course possible to set aside a subdirectory for each widget if you use more than one, but it shouldn't be necessary; the filenames should not clash.]
+```js
+var ko = require('knockout');
+var ko.mappings = require('knockout.mappings');
+```
 
-To use the widget, the `head` section of your HTML needs to include both the bundle and the CSS file, on top of Knockout:
+To be able to use a widget, your code must also import the module implementing its view model:
 
-```html
-<script type="text/javascript" src="scripts/knockout/knockout.min.js"></script>
-<script type="text/javascript" src="scripts/knockout/knockout.mapping-latest.js"></script>
-<script type="text/javascript" src="scripts/gpc-ko-widgets/treeview.js"></script>
-<link rel="stylesheet" href="scripts/gpc-ko-widgets/treeview.css"/>
+```js
+var TreeView = require('gpc-ko-widgets/treeview');
 ```
 
 Instantiating a widget is a matter of using Knockout's `template` binding, like so:
@@ -38,26 +36,31 @@ Instantiating a widget is a matter of using Knockout's `template` binding, like 
 div(data-bind="template: { name: 'gktvTreeView', data: treeview }")
 ```
 
-... and preparing the data model prior to initializing Knockout:
+... and providing a TreeView object as part of your Knockout view-model:
 
 ```javascript
 var myTree = {
     'Item 1': {},
     'Item 2': {
         'Subitem 2.1': {},
-        'Subitem 2.2': {}
-    }
+        'Subitem 2.2': {},
+    },
+    'Item 3': {}
 };
 
 var myViewModel = { 
-  treeview    : new TreeView( ko.mapping.fromJS(myTree) ),
-  /* other KO viewmodel parts */
+    myTreeview: new gpc.kowidgets.TreeView( ko.mapping.fromJS(myTree) ),
 };
 
-function start() {
-    /* ... other initialization */
+/* Called from body.onload (or as part of jQuery "ready" function) */
+window.start = function() {
     ko.applyBindings(myViewModel);
 }
-
 ```
 
+And that's it! Thanks to Browserify and friends, you don't have to worry about copying CSS files and referencing them from your HTML.
+
+More to come
+------------
+
+There is quite a bit more to say about this project, but I'm out time at the moment. Stay tuned for an explanation of how GPC-KO-Widgets leverages both [Jade](http://jade-lang.com/) and Knockout templates, and how it uses actual data models on top of Knockout's usual view models.
