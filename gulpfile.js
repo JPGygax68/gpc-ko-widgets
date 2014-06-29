@@ -179,7 +179,9 @@ function stylusTask(name) {
 
   gulp.task(name+'-stylus', [], function() {
     return gulp.src('./lib/'+name+'/*.styl')
-      .pipe( stylus({ url: stylus_itself.url() }) )
+      .pipe( stylus({ 
+        define: { 'url': stylus_itself.url() }
+      }) )
       .pipe( prefix('last 20 versions', 'ie 8', 'ie 9') )
       .pipe( gulp.dest('./generated/'+name+'/') );      
   });
