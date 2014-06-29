@@ -60,11 +60,6 @@ window.start = function() {
 
 And that's it! Thanks to Browserify and friends, you don't have to worry about copying CSS files and referencing them from your HTML.
 
-Known issues
-------------
-
-- Required CSS images are not being inlined - haven't had time yet to figure out how to do this.
- 
 More to come
 ------------
 
