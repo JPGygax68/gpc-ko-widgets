@@ -2,7 +2,7 @@
   "name": "gpc-ko-widgets",
   "version": "0.0.7",
   "description": "GPC Knockout-based widget library",
-  "main": "treeview.js",
+  "main": "./lib/main.js",
   "directories": {
     "doc": "docs"
   },
@@ -32,7 +32,8 @@
     "through": "",
     "gulp": "",
     "gulp-util": "",
-    "browserify-shim": ""
+    "browserify-shim": "",
+    "cssify": ""
   },
   "dependencies": {
     "almond": "",
@@ -42,6 +43,6 @@
     "canvas-currenttransform": "./modules/pseudomatty/canvas-currenttransform.js"
   },
   "browserify": {
-    "transform": []
+    "transform": ["cssify"]
   }
 }
